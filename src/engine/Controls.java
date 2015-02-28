@@ -17,7 +17,7 @@ public class Controls {
 	private static int lastX;
 	private static int lastY;
 
-	public static void update(Camera camera, long dt){
+	public static void update(Camera camera, float dt){
 		
 		while(Keyboard.next()){
 			int key = Keyboard.getEventKey();
@@ -75,7 +75,7 @@ public class Controls {
 		lastY = Mouse.getY(); 
 	}
 
-	private static void handleRelease(int key, Camera camera, long dt) {
+	private static void handleRelease(int key, Camera camera, float dt) {
 
 		if (key == KEY_Z)
 			camera.movementGoal.z = 0;
@@ -90,7 +90,7 @@ public class Controls {
 			camera.movementGoal.x = 0;
 	}
 
-	private static void handlePress(int key, Camera camera, long dt) {
+	private static void handlePress(int key, Camera camera, float dt) {
 
 		if (key == KEY_Z)
 			camera.movementGoal.z = camSpeed;

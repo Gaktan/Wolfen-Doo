@@ -1,35 +1,33 @@
 package engine;
 
-import java.util.Random;
-
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.animation.AnimatedActor;
 import engine.game.GameWolfen;
-import engine.shapes.Shape;
-import engine.shapes.ShapeCubeTexture;
-import engine.shapes.ShapeInsideOutCubeColor;
+import engine.shapes.*;
 
-@SuppressWarnings("unused")
 public class Map implements Displayable{
 
 	private EntityActor sky;
 	public DisplayableArray2D list;
 	public int x, y;
 
-	public GameWolfen game; 
+	public GameWolfen game;
 
 	public Map(GameWolfen game) {
-		list = new DisplayableArray2D(0, 0);
+		this(game, 20, 20);
+	}
+
+	public Map(GameWolfen game, int x, int y){
+		list = new DisplayableArray2D(x, y);
 
 		this.game = game;
 
 		sky = new EntityActor(new ShapeInsideOutCubeColor(game.shaderProgramSky));
 
-		x = y = 20;
+		this.x = x;
+		this.y = y;
 
-		//generate();
-		//fullRandom();
 	}
 
 	public void setSize(int x, int y){
@@ -40,7 +38,7 @@ public class Map implements Displayable{
 	}
 
 	@Override
-	public void update(long dt) {
+	public void update(float dt) {
 		list.update(dt);
 
 		int x = (int) (game.camera.position.x + 0.5f);
@@ -71,29 +69,29 @@ public class Map implements Displayable{
 		sky.render(camera);
 		list.render(camera);
 	}
-	/*
-	public void generate(){
+
+	public void buildMapFromString(String st){
 
 		list = new DisplayableArray2D(x, y);
 
 		setSky();
 
+		//ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall.png");
+		ShapeQuadTexture shapeCube = new ShapeQuadTexture(game.shaderProgramTexBill, "wall.png");
+
 		for(int i = 0; i < x; i++){
 			for(int j = 0; j < y; j++){
-				//char c = map.charAt((i * x) + j);
-				char c = 'O';
+				char c = st.charAt((i * y) + j);
 				if(c == 'O'){
-					newWall(x - i - 1, j, game.shapeOrdinaryWall, true);
-				}
-				if(c == 'X'){
-					newActor(x - i - 1, j, game.shapePillar, true);
+					//newWall(x - i - 1, j, shapeCube, true);
+					newActor(x - i - 1, j, shapeCube, false);
 				}
 			}
 		}
 
 		setOrientation();
 	}
-	 */
+
 	public void newActor(float x, float y, Shape shape, boolean solid){
 		x = this.x - x - 1;
 		EntityActor e = new EntityActor(shape);
@@ -102,7 +100,7 @@ public class Map implements Displayable{
 
 		list.add(e, (int)x, (int)y);
 	}
-	
+
 	public void newAnimatedActor(float x, float y, Shape shape, boolean solid){
 		x = this.x - x - 1;
 		AnimatedActor e = new AnimatedActor(shape, 512, 128);
@@ -120,35 +118,7 @@ public class Map implements Displayable{
 
 		list.add(e, (int)x, (int)y);
 	}
-	/*
-	public void fullRandom(){
 
-		setSky();
-
-		list = new DisplayableArray2D(x, y);
-
-		for(int i = 0; i < x; i++){
-			for(int j = 0; j < y; j++){
-
-				if(i == 0 || i == x-1 || j == 0 || j == y-1){
-					newWall(i, j, game.shapeOrdinaryWall, true);
-					continue;
-				}
-
-				int rand = new Random().nextInt(100);
-
-				if(rand < 25){
-					newWall(i, j, game.shapeOrdinaryWall, true);
-				}
-				else if(rand < 30){
-					newActor(i, j, game.shapePillar, true);
-				}
-			}
-		}
-
-		setOrientation();
-	}
-	 */
 	public void setOrientation() {
 		for(int i = 0; i < x; i++){
 			for(int j = 0; j < y; j++){
@@ -194,10 +164,10 @@ public class Map implements Displayable{
 		}
 
 		EntityWall ew = (EntityWall) d;
-		
+
 		if(!actor.isSolid() && !ew.isSolid())
 			return;
-		
+
 		if(!ew.isSolid())
 			stb.append(c);
 
@@ -207,4 +177,6 @@ public class Map implements Displayable{
 		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x, 1, y);
 		sky.position = new Vector3f(x / 2, 0, y / 2);
 	}
+
+
 }

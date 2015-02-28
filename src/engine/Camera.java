@@ -55,7 +55,7 @@ public class Camera extends Entity{
 	}
 
 	@Override
-	public void update(long elapsedTime) {
+	public void update(float elapsedTime) {
 		float dt = (float) elapsedTime / slipperyLevel;
 
 		movement = MathUtil.approach(movementGoal, movement, dt);

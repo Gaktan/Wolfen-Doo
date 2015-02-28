@@ -1,11 +1,11 @@
-package engine;
+package engine.generator;
 
 import java.util.HashMap;
 
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import shaders.ShaderProgram;
+import engine.Map;
 import engine.game.GameWolfen;
 import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
@@ -186,7 +186,7 @@ public class MapReader {
 			return game.shaderProgramTexBill;
 
 		if(shaderProgram.equals(PROGRAM_BILLBOARD_ANIMATED))
-			return game.shaderAnimatedBillboard;
+			return game.shaderProgramTexBill;
 
 		return null;
 	}

@@ -8,19 +8,13 @@ import org.lwjgl.opengl.DisplayMode;
 public abstract class Game{    
 
 	private static Game instance;
-	
-	/** frames per second */
-	private int fps;
-	
-	/** last fps time */
-	private long lastFPS;
-	
+
 	/**  
-	 * limit the fos
+	 * limit the fps
 	 * <= 0 for no limit
 	 */
 	private int limitFPS = 60;
-	
+
 	public Game(){
 		this(800, 600);
 	}
@@ -35,9 +29,9 @@ public abstract class Game{
 			Display.create();
 			setDisplayMode(width, height);
 			Display.setResizable(true);
-			
+
 			// setFullscreen(true);
-			
+
 			if(limitFPS <= 0)
 				Display.setVSyncEnabled(false);
 			else
@@ -51,19 +45,14 @@ public abstract class Game{
 		}
 	}
 
-	// The gameloop. Runs at 60 fps
 	private void gameLoop(){
-		long lastFrame = getCurrentTime();
-		long thisFrame = getCurrentTime();
-		
-		lastFPS = thisFrame;
+		float lastFrame = getCurrentTime();
+		float thisFrame = getCurrentTime();
 
 		init();
 
 		while (!Display.isCloseRequested()){
 			thisFrame = getCurrentTime();
-			
-			updateFPS();
 
 			update(thisFrame - lastFrame);
 			render();
@@ -202,20 +191,8 @@ public abstract class Game{
 	/**
 	 * @return Current time in milliseconds.
 	 */
-	public static long getCurrentTime(){
-		return Sys.getTime() * 1000 / Sys.getTimerResolution();
-	}
-
-	/**
-	 * Calculate the FPS and set it in the title bar
-	 */
-	public void updateFPS() {
-		if (getCurrentTime() - lastFPS > 1000) {
-			Display.setTitle("FPS: " + fps);
-			fps = 0;
-			lastFPS += 1000;
-		}
-		fps++;
+	public static float getCurrentTime(){
+		return (float) Sys.getTime() * 1000 / Sys.getTimerResolution();
 	}
 
 	/**
@@ -235,9 +212,9 @@ public abstract class Game{
 
 	/**
 	 * Update the logic of the game.
-	 * @param elapsedTime Time elapsed since last frame.
+	 * @param f Time elapsed since last frame.
 	 */
-	public abstract void update(long elapsedTime);
+	public abstract void update(float f);
 
 	/**
 	 * Render to screen.
@@ -253,7 +230,7 @@ public abstract class Game{
 	 * Dispose created resources.
 	 */
 	public abstract void dispose();
-	
+
 	public int getWidth(){
 		return Display.getWidth();
 	}
@@ -261,7 +238,7 @@ public abstract class Game{
 	public int getHeight(){
 		return Display.getHeight();
 	}
-	
+
 	public static Game getInstance(){
 		return instance;
 	}

@@ -2,7 +2,7 @@ package engine;
 
 public interface Displayable {
 
-	public void update(long dt);
+	public void update(float dt);
 	
 	public void render(Camera camera);
 }

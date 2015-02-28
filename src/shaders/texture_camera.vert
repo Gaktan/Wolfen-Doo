@@ -13,8 +13,9 @@ uniform vec3 u_texCoord;
 out vec2 TexCoord;
 
 void main()
-{	    
-	gl_Position = u_projection * (u_view * u_model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0));
+{	 
+	mat4 model = u_model * 10;
+	gl_Position = (model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0));
 	
 	float x = u_texCoord.x;
 	float y = u_texCoord.y;

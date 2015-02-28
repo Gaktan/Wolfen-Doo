@@ -3,21 +3,22 @@ package engine.game;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import engine.BitMapFont;
 import engine.Camera;
 import engine.Controls;
 import engine.DisplayableList;
 import engine.Map;
-import engine.MapReader;
 import engine.animation.AnimatedActor;
+import engine.generator.MazeGenerator;
 import engine.shapes.*;
 import shaders.ShaderProgram;
 
 public class GameWolfen extends Game{
 
 	public ShaderProgram shaderProgramTex;
-	public ShaderProgram shaderAnimatedBillboard;
 	public ShaderProgram shaderProgramSky;
 	public ShaderProgram shaderProgramTexBill;
+	public ShaderProgram shaderProgramTexCamera;
 
 	public Camera camera;
 
@@ -29,6 +30,11 @@ public class GameWolfen extends Game{
 	/* TEMP STUFF */
 
 	public AnimatedActor animatedActorTest;
+	public BitMapFont bmf;
+	public long elapsedTime;
+	public Fps fps;
+	public long l_fps;
+	public float total;
 
 	@Override
 	public void init() {
@@ -53,17 +59,19 @@ public class GameWolfen extends Game{
 		GL11.glFrontFace(GL11.GL_CW);
 
 		shaderProgramTex = new ShaderProgram("shaders/texture");
-		shaderAnimatedBillboard = new ShaderProgram("shaders/animated_billboard");
 		shaderProgramSky = new ShaderProgram("shaders/sky_color");
 		shaderProgramTexBill = new ShaderProgram("shaders/texture_billboard");
+		shaderProgramTexCamera = new ShaderProgram("shaders/texture_camera");
 
 		camera = new Camera(45, (float) getWidth() / (float) getHeight(), 0.1f, 100f);
-		camera.setPosition(new Vector3f(15, 0, 3));
+		camera.setPosition(new Vector3f(0, 0, 0));
 
-		shapeAnimatedSmurf = new ShapeQuadTexture(shaderAnimatedBillboard, "mul_test.png");
+		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test.png");
 
-		MapReader mr = new MapReader(this, "maps/01.map");
-		map = mr.createMap();
+
+		//MapReader mr = new MapReader(this, "maps/01.map");
+		//map = mr.createMap();
+		map = new MazeGenerator(this, 51, 31).generate();
 
 		ac = new DisplayableList();
 
@@ -72,24 +80,47 @@ public class GameWolfen extends Game{
 		animatedActorTest = new AnimatedActor(shapeAnimatedSmurf, 512, 128);
 		animatedActorTest.position = new Vector3f(5, 0, 10);
 		ac.add(animatedActorTest);
+
+
+		bmf = new BitMapFont(this, "char.png", 256, 16);
+		//DisplayableList dl = bmf.createString(new Vector3f(0, 1, 0), new Vector3f(0, 0, 1),  "Je mange des Chips!");
+		//ac.add(dl);
+
+		fps = new Fps();
 	}
 
 	@Override
-	public void update(long elapsedTime) {
+	public void update(float elapsedTime) {
 		Controls.update(camera, elapsedTime);
+
+		total += elapsedTime;
+
+		if(total > elapsedTime * 100){
+			ac.remove(map);
+			map = new MazeGenerator(this, 51, 31).generate();
+			ac.add(map);
+			
+			total = 0;
+		}
 
 		ac.update(elapsedTime);
 		camera.update(elapsedTime);
+
+		l_fps = fps.calcFPS();
 	}
 
 	@Override
 	public void render() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-		GL11.glClearColor(1, 1, 1, 1);
+		GL11.glClearColor(0, 0, 0, 1);
 
 		camera.apply();
 		ac.render(camera);
+		bmf.drawString(new Vector3f(-.95f, .95f, 0), "pos: " + Math.round(camera.position.x) + ", "
+				+ Math.round(camera.position.z), camera);
+
+		bmf.drawString(new Vector3f(-.95f, .85f, 0), "fps : " + l_fps, camera);
 	}
 
 	@Override

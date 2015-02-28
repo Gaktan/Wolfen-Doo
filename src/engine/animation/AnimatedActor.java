@@ -33,7 +33,7 @@ public class AnimatedActor extends EntityActor{
 	}
 
 	@Override
-	public void update(long dt) {
+	public void update(float dt) {
 
 		time += 0.01f;
 

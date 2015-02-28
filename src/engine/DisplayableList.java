@@ -20,7 +20,7 @@ public class DisplayableList implements Displayable{
 	}
 
 	@Override
-	public void update(long dt) {
+	public void update(float dt) {
 		for(Displayable d : list){
 			d.update(dt);
 		}

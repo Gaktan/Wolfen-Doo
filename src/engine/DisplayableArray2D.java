@@ -13,7 +13,7 @@ public class DisplayableArray2D implements Displayable{
 	}
 
 	@Override
-	public void update(long dt) {
+	public void update(float dt) {
 		for(int i = 0; i < sizeX; i++){
 			for(int j = 0; j < sizeY; j++){
 				if(list[i][j] != null){

@@ -50,7 +50,7 @@ public class Animation {
 		setDelay(1000.0f);
 	}
 
-	public void updateFrame(long dt){
+	public void updateFrame(float dt){
 		if(pause)
 			return;
 
