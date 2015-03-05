@@ -1,6 +1,8 @@
 package engine;
 
-public interface Displayable {
+import engine.entities.Camera;
+
+public interface Displayable{
 
 	public void update(float dt);
 	

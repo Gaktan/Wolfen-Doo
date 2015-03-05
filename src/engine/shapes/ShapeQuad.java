@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import shaders.ShaderProgram;
+import engine.game.ShaderProgram;
 
 public class ShapeQuad extends Shape {
 

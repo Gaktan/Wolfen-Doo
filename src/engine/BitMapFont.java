@@ -3,10 +3,10 @@ package engine;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import engine.entities.Camera;
+import engine.entities.EntityActor;
 import engine.game.GameWolfen;
 import engine.shapes.ShapeQuadTexture;
-import engine.util.MathUtil;
-import engine.util.TextureUtil;
 
 public class BitMapFont {
 
@@ -16,13 +16,9 @@ public class BitMapFont {
 	
 	private float imageFactor;
 
-	private String chars;
-
 	private ShapeQuadTexture shape;
 
 	public BitMapFont(GameWolfen game, String path, int imageSize, int charSize) {
-		StringBuffer sb = new StringBuffer();
-
 		shape = new ShapeQuadTexture(game.shaderProgramTexCamera, path);
 
 		this.imageSize = imageSize;
@@ -30,12 +26,6 @@ public class BitMapFont {
 		amountOfChars = charSize*charSize;
 		
 		imageFactor = (float) charSize / imageSize;
-
-		for(int i = 0; i < amountOfChars; i++){
-			sb.append((char) i); 
-		}
-
-		chars = sb.toString();
 	}
 
 	public DisplayableList createString(Vector3f position, String str){

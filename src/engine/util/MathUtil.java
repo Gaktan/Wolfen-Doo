@@ -40,7 +40,11 @@ public class MathUtil {
 	}
 	
 	public static float random(float min, float max){
-		return min + (float)(new Random().nextFloat() * (max - min) + 1);
+		return min + (new Random().nextFloat() * (max - min));
+	}
+	
+	public static float randomNegPos(float min, float max){
+		return new Random().nextFloat() * max + (min/2);
 	}
 
 }

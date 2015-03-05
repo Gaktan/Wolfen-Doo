@@ -10,8 +10,8 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import engine.game.ShaderProgram;
 import engine.util.TextureUtil;
-import shaders.ShaderProgram;
 
 public class ShapeQuadTexture extends Shape {
 

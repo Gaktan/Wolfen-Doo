@@ -1,4 +1,4 @@
-package engine;
+package engine.entities;
 
 import engine.shapes.ShapeCubeTexture;
 

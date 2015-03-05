@@ -1,7 +1,7 @@
 package engine.generator;
 
-import engine.Map;
 import engine.game.GameWolfen;
+import engine.game.Map;
 
 public abstract class Generator {
 

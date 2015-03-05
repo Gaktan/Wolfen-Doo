@@ -1,7 +1,5 @@
-package engine.animation;
+package engine.entities;
 
-import engine.Camera;
-import engine.EntityActor;
 import engine.shapes.Shape;
 
 public class AnimatedActor extends EntityActor{
@@ -44,15 +42,10 @@ public class AnimatedActor extends EntityActor{
 			a_current.resume();
 
 		a_current.updateFrame(dt);
+		
+		textureCoordinate = a_current.getCurrentUV();
 
 		super.update(dt);
-	}
-
-	@Override
-	public void setUniforms(Camera camera) {
-		super.setUniforms(camera);
-
-		shape.getShaderProgram().setUniform("u_texCoord", a_current.getCurrentUV());
 	}
 
 	public void setAnimation(Animation a){

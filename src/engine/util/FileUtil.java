@@ -3,8 +3,8 @@ package engine.util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import shaders.ShaderProgram;
 import engine.game.Game;
+import engine.game.ShaderProgram;
 
 public class FileUtil{
 

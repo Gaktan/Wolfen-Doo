@@ -1,6 +1,6 @@
 package engine.shapes;
 
-import shaders.ShaderProgram;
+import engine.game.ShaderProgram;
 
 public abstract class Shape {
 	

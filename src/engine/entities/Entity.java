@@ -1,6 +1,8 @@
-package engine;
+package engine.entities;
 
 import org.lwjgl.util.vector.Vector3f;
+
+import engine.Displayable;
 
 public abstract class Entity implements Displayable{
 

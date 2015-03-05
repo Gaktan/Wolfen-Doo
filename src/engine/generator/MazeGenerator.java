@@ -6,8 +6,8 @@ import java.util.Stack;
 
 import org.lwjgl.util.vector.Vector2f;
 
-import engine.Map;
 import engine.game.GameWolfen;
+import engine.game.Map;
 
 public class MazeGenerator extends Generator{
 	

@@ -1,4 +1,4 @@
-package engine;
+package engine.entities;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
@@ -9,15 +9,15 @@ import engine.util.MatrixUtil;
 
 public class Camera extends Entity{
 
-	Matrix4f projection;
+	public Matrix4f projection;
 	private Matrix4f view;
-	Vector3f movementGoal;
-	Vector3f movement;
+	public Vector3f movementGoal;
+	public Vector3f movement;
 	
 	private float slipperyLevel = 1000.0f;
 	
 	// Camera rotation
-	EAngle viewAngle;
+	public EAngle viewAngle;
 
 	private float fov, aspect, zNear, zFar;
 

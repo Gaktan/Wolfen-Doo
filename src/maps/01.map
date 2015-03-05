@@ -3,7 +3,7 @@ width{20}
 height{20}
 
 actor{O, texture, cube_texture, wall.png, 1, 1, 0}
-actor{X, billboard_texture, quad_texture, pillar.png, 0, 0, 1}
+actor{X, billboard_texture, quad_texture, pillar.png, 0, 0, 0}
 actor{A, texture, cube_texture, wall.png, 1, 0, 0}
 actor{W, billboard_animated, quad_texture, mul_test.png, 0, 0, 1}
 

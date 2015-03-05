@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
-import shaders.ShaderProgram;
+import engine.game.ShaderProgram;
 
 public class ShapeInsideOutCubeColor extends Shape {
 	

@@ -1,12 +1,13 @@
 package engine.generator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import shaders.ShaderProgram;
-import engine.Map;
 import engine.game.GameWolfen;
+import engine.game.Map;
+import engine.game.ShaderProgram;
 import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
 import engine.shapes.ShapeInsideOutCubeColor;
@@ -130,13 +131,17 @@ public class MapReader {
 					boolean solid = (wallSolid.y == 1);
 					boolean animated = (wallSolid.z == 1);
 
-					if(animated)
+					if(animated){
 						map.newAnimatedActor(i, j, shape, solid);
+					}
 
-					else if(wall)
+					else if(wall){
 						map.newWall(i, j, (ShapeCubeTexture) shape, solid);
-					else
+					}
+					
+					else{
 						map.newActor(i, j, shape, solid);
+					}
 				}
 			}
 		}

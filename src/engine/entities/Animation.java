@@ -1,4 +1,4 @@
-package engine.animation;
+package engine.entities;
 
 import java.util.Arrays;
 

@@ -1,5 +1,7 @@
 package engine;
 
+import engine.entities.Camera;
+
 public class DisplayableArray2D implements Displayable{
 
 	public Displayable[][] list;

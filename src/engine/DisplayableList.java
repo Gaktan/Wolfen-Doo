@@ -3,6 +3,8 @@ package engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import engine.entities.Camera;
+
 public class DisplayableList implements Displayable{
 	
 	private List<Displayable> list;

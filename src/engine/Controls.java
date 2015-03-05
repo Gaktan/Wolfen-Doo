@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import engine.entities.Camera;
 import engine.game.Game;
 import engine.game.GameWolfen;
 
@@ -51,9 +52,6 @@ public class Controls {
 		if(isKeyDown(KEY_ESCAPE))
 			Game.end();
 
-		/*
-		 * Mouse things
-		 */
 
 		handleMouse(camera);  	
 	}
@@ -61,8 +59,6 @@ public class Controls {
 	private static void handleMouse(Camera camera) {
 		int mouseMovedX = Mouse.getX() - lastX;
 		int mouseMovedY = Mouse.getY() - lastY;
-
-		//camera.addRotation(-mouseMovedY*sensitivit y, mouseMovedX*sensitivity, 0);
 		
 		camera.viewAngle.pitch -= mouseMovedY * sensitivity;
 		camera.viewAngle.yaw += mouseMovedX * sensitivity;

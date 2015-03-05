@@ -4,14 +4,14 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.BitMapFont;
-import engine.Camera;
 import engine.Controls;
 import engine.DisplayableList;
-import engine.Map;
-import engine.animation.AnimatedActor;
+import engine.entities.AnimatedActor;
+import engine.entities.Camera;
+import engine.entities.ParticleSystem;
+import engine.generator.MapReader;
 import engine.generator.MazeGenerator;
 import engine.shapes.*;
-import shaders.ShaderProgram;
 
 public class GameWolfen extends Game{
 
@@ -64,14 +64,14 @@ public class GameWolfen extends Game{
 		shaderProgramTexCamera = new ShaderProgram("shaders/texture_camera");
 
 		camera = new Camera(45, (float) getWidth() / (float) getHeight(), 0.1f, 100f);
-		camera.setPosition(new Vector3f(0, 0, 0));
+		camera.setPosition(new Vector3f(2, 0, 2));
 
 		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test.png");
 
 
-		//MapReader mr = new MapReader(this, "maps/01.map");
-		//map = mr.createMap();
-		map = new MazeGenerator(this, 51, 31).generate();
+		MapReader mr = new MapReader(this, "maps/01.map");
+		map = mr.createMap();
+		//map = new MazeGenerator(this, 51, 31).generate();
 
 		ac = new DisplayableList();
 
@@ -87,6 +87,9 @@ public class GameWolfen extends Game{
 		//ac.add(dl);
 
 		fps = new Fps();
+		
+		ParticleSystem ps = new ParticleSystem(this, new Vector3f(4, 0, 4));
+		ac.add(ps);
 	}
 
 	@Override
@@ -94,7 +97,7 @@ public class GameWolfen extends Game{
 		Controls.update(camera, elapsedTime);
 
 		total += elapsedTime;
-
+/*
 		if(total > elapsedTime * 100){
 			ac.remove(map);
 			map = new MazeGenerator(this, 51, 31).generate();
@@ -102,7 +105,7 @@ public class GameWolfen extends Game{
 			
 			total = 0;
 		}
-
+*/
 		ac.update(elapsedTime);
 		camera.update(elapsedTime);
 

@@ -9,15 +9,15 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import shaders.ShaderProgram;
+import engine.game.ShaderProgram;
 
 public class ShapeCubeTexture extends ShapeQuadTexture {
-	
+
 	private static IntBuffer i_n;
 	private static IntBuffer i_s;
 	private static IntBuffer i_e;
 	private static IntBuffer i_w;
-	
+
 	private String orientation;
 
 	public ShapeCubeTexture(ShaderProgram shaderProgram, String texture) {
@@ -59,8 +59,8 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 				2, 6, 1,
 		});
 		indices.flip();
-		*/
-		
+		 */
+
 		i_n = BufferUtils.createIntBuffer(2 * 3);
 		i_n.put(new int[]{
 				// front
@@ -68,7 +68,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 				3, 2, 0,
 		});
 		i_n.flip();
-		
+
 		i_s = BufferUtils.createIntBuffer(2 * 3);
 		i_s.put(new int[]{
 				// back
@@ -76,7 +76,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 				4, 5, 7,
 		});
 		i_s.flip();
-		
+
 		i_e = BufferUtils.createIntBuffer(2 * 3);
 		i_e.put(new int[]{
 				// right
@@ -84,7 +84,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 				2, 6, 1,
 		});
 		i_e.flip();
-		
+
 		i_w = BufferUtils.createIntBuffer(2 * 3);
 		i_w.put(new int[]{
 				// left
@@ -130,10 +130,10 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 	@Override
 	public void render() {
 		// GL11.glDrawElements(GL11.GL_TRIANGLES, 24, GL11.GL_UNSIGNED_INT, 0);
-		
+
 		if(orientation == null || orientation.isEmpty())
 			return;
-		
+
 		if(orientation.contains("n")){
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_n);
 		}
@@ -147,10 +147,25 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_w);
 		}		
 	}
-	
+
+	@Override
+	public void preRender() {
+		super.preRender();
+
+		GL20.glEnableVertexAttribArray(1);
+	}
+
+	@Override
+	public void postRender() {
+		super.postRender();
+
+		GL20.glDisableVertexAttribArray(1);
+	}
+
+
 	public void render(String orientation){
 		this.orientation = orientation;
-		
+
 		render();
 	}
 }

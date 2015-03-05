@@ -1,9 +1,14 @@
-package engine;
+package engine.game;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import engine.animation.AnimatedActor;
-import engine.game.GameWolfen;
+import engine.Displayable;
+import engine.DisplayableArray2D;
+import engine.entities.AnimatedActor;
+import engine.entities.Camera;
+import engine.entities.Entity;
+import engine.entities.EntityActor;
+import engine.entities.EntityWall;
 import engine.shapes.*;
 
 public class Map implements Displayable{
@@ -76,15 +81,15 @@ public class Map implements Displayable{
 
 		setSky();
 
-		//ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall.png");
-		ShapeQuadTexture shapeCube = new ShapeQuadTexture(game.shaderProgramTexBill, "wall.png");
+		ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall.png");
+		//ShapeQuadTexture shapeCube = new ShapeQuadTexture(game.shaderProgramTexBill, "wall.png");
 
 		for(int i = 0; i < x; i++){
 			for(int j = 0; j < y; j++){
 				char c = st.charAt((i * y) + j);
 				if(c == 'O'){
-					//newWall(x - i - 1, j, shapeCube, true);
-					newActor(x - i - 1, j, shapeCube, false);
+					newWall(x - i - 1, j, shapeCube, true);
+					//newActor(x - i - 1, j, shapeCube, false);
 				}
 			}
 		}
@@ -115,7 +120,7 @@ public class Map implements Displayable{
 		EntityWall e = new EntityWall(shape);
 		e.position = new Vector3f(x, 0, y);
 		e.setSolid(solid);
-
+		
 		list.add(e, (int)x, (int)y);
 	}
 
@@ -177,6 +182,4 @@ public class Map implements Displayable{
 		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x, 1, y);
 		sky.position = new Vector3f(x / 2, 0, y / 2);
 	}
-
-
 }
