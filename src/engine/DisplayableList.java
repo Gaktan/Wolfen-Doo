@@ -7,7 +7,8 @@ import engine.entities.Camera;
 
 public class DisplayableList implements Displayable{
 	
-	private List<Displayable> list;
+	public List<Displayable> list;
+	private boolean delete = false;
 	
 	public DisplayableList() {
 		list = new ArrayList<Displayable>();
@@ -22,10 +23,21 @@ public class DisplayableList implements Displayable{
 	}
 
 	@Override
-	public void update(float dt) {
+	public boolean update(float dt) {
+		
+		List<Displayable> deleteList = new ArrayList<Displayable>();
+		
 		for(Displayable d : list){
-			d.update(dt);
+			boolean b = d.update(dt);
+			if(!b)
+				deleteList.add(d);
 		}
+		
+		for(Displayable d : deleteList){
+			list.remove(d);
+		}
+		
+		return !delete;
 	}
 
 	@Override
@@ -33,6 +45,11 @@ public class DisplayableList implements Displayable{
 		for(Displayable d : list){
 			d.render(camera);
 		}
+	}
+
+	@Override
+	public void delete() {
+		delete = true;
 	}
 
 }

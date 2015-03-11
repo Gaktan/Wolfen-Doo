@@ -7,6 +7,7 @@ public class DisplayableArray2D implements Displayable{
 	public Displayable[][] list;
 	private int sizeX;
 	private int sizeY;
+	private boolean delete = false;
 
 	public DisplayableArray2D(int sizeX, int sizeY) {
 		list = new Displayable[sizeX][sizeY];
@@ -15,14 +16,21 @@ public class DisplayableArray2D implements Displayable{
 	}
 
 	@Override
-	public void update(float dt) {
+	public boolean update(float dt) {
 		for(int i = 0; i < sizeX; i++){
 			for(int j = 0; j < sizeY; j++){
 				if(list[i][j] != null){
-					list[i][j].update(dt);
+					
+					boolean b = list[i][j].update(dt);
+					
+					if(!b){
+						list[i][j] = null;
+					}
 				}
 			}
 		}
+		
+		return !delete;
 	}
 
 	@Override
@@ -48,6 +56,10 @@ public class DisplayableArray2D implements Displayable{
 		if(x < 0 || y < 0 || x > list.length -1 || y > list[0].length -1)
 			return null;
 		return list[x][y];
+	}
+	
+	public void delete(){
+		delete = true;
 	}
 
 	@Override

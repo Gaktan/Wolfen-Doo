@@ -2,15 +2,21 @@ package engine.entities;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Color;
 
 import engine.shapes.Shape;
 import engine.util.MatrixUtil;
+import engine.util.TextureUtil;
 
 public class EntityActor extends Entity{
 
 	public Shape shape;
 	public Vector3f textureCoordinate;
 	public float scale;
+	public Color color;
+	
+	/* TEMP */
+	private float time;
 
 	public EntityActor(Shape shape) {
 		super();
@@ -19,6 +25,8 @@ public class EntityActor extends Entity{
 		scale = 1f;
 		
 		this.shape = shape;
+		
+		color = Color.white;
 	}
 
 	@Override
@@ -37,7 +45,11 @@ public class EntityActor extends Entity{
 		shape.getShaderProgram().setUniform("u_view", camera.getMatrixView());
 		
 		shape.getShaderProgram().setUniform("u_texCoord", textureCoordinate);
-
+		
+		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3f(color));
+		
+		shape.getShaderProgram().setUniform("u_time", time+=0.07f);
+		
 		Matrix4f newPos = MatrixUtil.vectorToMatrix(position);
 		newPos = newPos.scale(new Vector3f(scale, scale, scale));
 		

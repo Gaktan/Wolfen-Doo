@@ -55,7 +55,7 @@ public class Camera extends Entity{
 	}
 
 	@Override
-	public void update(float elapsedTime) {
+	public boolean update(float elapsedTime) {
 		float dt = (float) elapsedTime / slipperyLevel;
 
 		movement = MathUtil.approach(movementGoal, movement, dt);
@@ -73,7 +73,7 @@ public class Camera extends Entity{
 		
 		Vector3f.add(forward, right, velocity);
 		
-		super.update(elapsedTime);
+		return super.update(elapsedTime);
 	}
 
 	public Matrix4f getMatrixView(){

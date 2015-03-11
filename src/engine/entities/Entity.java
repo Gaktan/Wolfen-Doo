@@ -9,18 +9,26 @@ public abstract class Entity implements Displayable{
 	public Vector3f position;
 	protected Vector3f velocity;
 	private boolean solid;
+	private boolean delete;
 
 	public Entity(){
 		position = new Vector3f();
 
 		velocity = new Vector3f();
 	}
+	
+	@Override
+	public void delete(){
+		delete = true;
+	}
 
 	@Override
-	public void update(float dt){
+	public boolean update(float dt){
 		this.position.x += (velocity.getX() * dt / 100.0f);
 		this.position.y += (velocity.getY() * dt / 100.0f);
 		this.position.z += (velocity.getZ() * dt / 100.0f);
+		
+		return !delete;
 	}
 
 	@Override

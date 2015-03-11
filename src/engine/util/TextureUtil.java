@@ -5,6 +5,9 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -41,6 +44,14 @@ public class TextureUtil {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		return textureID;
+	}
+	
+	public static Vector3f colorToVector3f(Color color){
+		return new Vector3f(color.r, color.g, color.b);
+	}
+	
+	public static Vector4f colorToVector4f(Color color){
+		return new Vector4f(color.r, color.g, color.b, color.a);
 	}
 
 }

@@ -87,8 +87,8 @@ public class GameWolfen extends Game{
 		//ac.add(dl);
 
 		fps = new Fps();
-		
-		ParticleSystem ps = new ParticleSystem(this, new Vector3f(4, 0, 4));
+
+		ParticleSystem ps = new ParticleSystem(this, new Vector3f(4, 0, 4), 800);
 		ac.add(ps);
 	}
 
@@ -97,15 +97,15 @@ public class GameWolfen extends Game{
 		Controls.update(camera, elapsedTime);
 
 		total += elapsedTime;
-/*
+		/*
 		if(total > elapsedTime * 100){
 			ac.remove(map);
 			map = new MazeGenerator(this, 51, 31).generate();
 			ac.add(map);
-			
+
 			total = 0;
 		}
-*/
+		 */
 		ac.update(elapsedTime);
 		camera.update(elapsedTime);
 

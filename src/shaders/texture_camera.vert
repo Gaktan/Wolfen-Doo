@@ -8,8 +8,10 @@ uniform mat4 u_projection;
 
 uniform mat4 u_model;
 
+uniform vec3 u_color;
 uniform vec3 u_texCoord;
 
+out vec4 Color;
 out vec2 TexCoord;
 
 void main()
@@ -37,5 +39,6 @@ void main()
 		texCoord.y = (y+1) * factor;
 	}
     
+	Color = vec4(u_color, 1.0);
 	TexCoord = texCoord;
 }

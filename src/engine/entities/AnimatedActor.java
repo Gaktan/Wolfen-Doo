@@ -31,7 +31,7 @@ public class AnimatedActor extends EntityActor{
 	}
 
 	@Override
-	public void update(float dt) {
+	public boolean update(float dt) {
 
 		time += 0.01f;
 
@@ -45,7 +45,7 @@ public class AnimatedActor extends EntityActor{
 		
 		textureCoordinate = a_current.getCurrentUV();
 
-		super.update(dt);
+		return super.update(dt);
 	}
 
 	public void setAnimation(Animation a){

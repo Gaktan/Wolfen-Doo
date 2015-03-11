@@ -16,6 +16,7 @@ public class Map implements Displayable{
 	private EntityActor sky;
 	public DisplayableArray2D list;
 	public int x, y;
+	private boolean delete;
 
 	public GameWolfen game;
 
@@ -43,8 +44,11 @@ public class Map implements Displayable{
 	}
 
 	@Override
-	public void update(float dt) {
-		list.update(dt);
+	public boolean update(float dt) {
+		boolean b = list.update(dt);
+		
+		if(!b)
+			return false;
 
 		int x = (int) (game.camera.position.x + 0.5f);
 		int z = (int) (game.camera.position.z + 0.5f);
@@ -67,6 +71,8 @@ public class Map implements Displayable{
 				}
 			}
 		}
+		
+		return !delete;
 	}
 
 	@Override
@@ -181,5 +187,10 @@ public class Map implements Displayable{
 	public void setSky(){
 		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x, 1, y);
 		sky.position = new Vector3f(x / 2, 0, y / 2);
+	}
+
+	@Override
+	public void delete() {
+		delete = true;
 	}
 }

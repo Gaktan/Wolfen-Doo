@@ -6,49 +6,83 @@ import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.game.GameWolfen;
+import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 
 public class ParticleSystem implements Displayable{
-	
+
 	public ArrayList<Particle> list;
 	private GameWolfen game;
 	private Vector3f position;
-	
-	public ParticleSystem(GameWolfen game, Vector3f position) {
+	private ShapeQuadTexture blood1Shape;
+	private ShapeQuadTexture blood2Shape;
+	private int life;
+
+	public ParticleSystem(GameWolfen game, Vector3f position, int life) {
 		list = new ArrayList<Particle>();
-		
+
 		this.game = game;
 		this.position = position;
-		
+		this.life = life;
+
+		blood1Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood.png");
+		blood2Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood2.png");
+
 		for(int i = 0; i < 200; i++){
 			newGhostParticle();
 		}
 	}
 
 	@Override
-	public void update(float dt) {
+	public boolean update(float dt) {
+
+		if(life > 0)
+			life--;
 		
-		ArrayList<Particle> destroyList = new ArrayList<Particle>();
-		
-		for(Particle p : list){
-			if(p.life < 0){
-				destroyList.add(p);
-				continue;
+		if(life == -1 || !list.isEmpty()){
+
+			ArrayList<Particle> destroyList = new ArrayList<Particle>();
+
+			for(Particle p : list){
+/*
+				if(p.life < 200)
+					p.actor.shape = blood2Shape;
+*/
+
+				boolean b = p.update(dt);
+				
+				if(!b){
+					destroyList.add(p);
+				}
 			}
-			
-			p.update(dt);
+
+			for(Particle p : destroyList){
+				list.remove(p);
+				if(life > 0)
+					newParticle(400);
+			}
+		}
+		else{
+			return false;
 		}
 		
-		for(Particle p : destroyList){
-			list.remove(p);
-			newParticle(400);
-		}
+		return true;
 	}
-	
+
 	private void newParticle(int maxLife){
-		list.add(new Particle(game, "pillar.png", (int) MathUtil.random(100, maxLife), position));
+		int r = (int) MathUtil.random(0, 2);
+
+		switch(r){
+		case 0:
+			list.add(new Particle(game, blood1Shape, (int) MathUtil.random(100, 100), position));
+			break;
+		case 1:
+			list.add(new Particle(game, blood2Shape, (int) MathUtil.random(100, maxLife), position));
+			break;
+		}
+
 	}
-	
+
 	private void newGhostParticle(){
 		list.add(new Particle((int) MathUtil.random(0, 50)));
 	}
@@ -58,6 +92,11 @@ public class ParticleSystem implements Displayable{
 		for(Particle p : list){
 			p.render(camera);
 		}
+	}
+
+	@Override
+	public void delete() {
+		life = 0;
 	}
 
 }
