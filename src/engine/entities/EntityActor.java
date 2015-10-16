@@ -14,19 +14,16 @@ public class EntityActor extends Entity{
 	public Vector3f textureCoordinate;
 	public float scale;
 	public Color color;
-	
-	/* TEMP */
-	private float time;
 
 	public EntityActor(Shape shape) {
 		super();
 
-		textureCoordinate = new Vector3f(0, 0, 1);
+		textureCoordinate = new Vector3f(5, 0, 1);
 		scale = 1f;
 		
 		this.shape = shape;
 		
-		color = Color.white;
+		color = new Color(Color.white);
 	}
 
 	@Override
@@ -47,12 +44,9 @@ public class EntityActor extends Entity{
 		shape.getShaderProgram().setUniform("u_texCoord", textureCoordinate);
 		
 		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3f(color));
-		
-		shape.getShaderProgram().setUniform("u_time", time+=0.07f);
-		
+
 		Matrix4f newPos = MatrixUtil.vectorToMatrix(position);
 		newPos = newPos.scale(new Vector3f(scale, scale, scale));
-		
 
 		shape.getShaderProgram().setUniform("u_model", newPos);
 	}

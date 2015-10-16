@@ -25,8 +25,8 @@ public class ParticleSystem implements Displayable{
 		this.position = position;
 		this.life = life;
 
-		blood1Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood.png");
-		blood2Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood2.png");
+		blood1Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood");
+		blood2Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood2");
 
 		for(int i = 0; i < 200; i++){
 			newGhostParticle();

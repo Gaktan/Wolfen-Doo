@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector3f;
 
 import engine.game.ShaderProgram;
 
@@ -29,7 +30,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 
 		FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * 5);
 		vertices.put(new float[]{
-				// front				// Tex Pos
+				// front			// Tex Pos
 				-0.5f, -0.5f,  0.5f, 	0f, 1f,
 				0.5f, -0.5f,  0.5f,		1f, 1f,
 				0.5f,  0.5f,  0.5f,		1f, 0f,
@@ -135,15 +136,19 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 			return;
 
 		if(orientation.contains("n")){
+			shaderProgram.setUniform("u_normal", new Vector3f(1, 0, 0));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_n);
 		}
 		if(orientation.contains("s")){
+			shaderProgram.setUniform("u_normal", new Vector3f(-1, 0, 0));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_s);
 		}
 		if(orientation.contains("e")){
+			shaderProgram.setUniform("u_normal", new Vector3f(0, 0, 1));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_e);
 		}
 		if(orientation.contains("w")){
+			shaderProgram.setUniform("u_normal", new Vector3f(0, 0, -1));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_w);
 		}		
 	}

@@ -1,6 +1,8 @@
 package engine.util;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 
 import engine.game.Game;
@@ -13,11 +15,10 @@ public class FileUtil{
 	 */
 	public static String readFromFile(String name){
 		StringBuilder source = new StringBuilder();
-
+		
 		try{
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(ShaderProgram.class.getClassLoader().getResourceAsStream(name)));
-
+			BufferedReader reader = new BufferedReader(new FileReader(new File(name)));
+			
 			String line;
 			while ((line = reader.readLine()) != null){
 				source.append(line).append("\n");

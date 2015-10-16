@@ -2,10 +2,13 @@ name{coucou}
 width{20}
 height{20}
 
-actor{O, texture, cube_texture, wall.png, 1, 1, 0}
-actor{X, billboard_texture, quad_texture, pillar.png, 0, 0, 0}
-actor{A, texture, cube_texture, wall.png, 1, 0, 0}
-actor{W, billboard_animated, quad_texture, mul_test.png, 0, 0, 1}
+sky{237 157 95, 255 233 229}
+
+wall{O, wall, 1}
+wall{U, wall_portrait, 1}
+actor{X, pillar, 0}
+wall{A, wall_hole, 0}
+animation{W, mul_test, 0}
 
 map{
 OOOOOOOOOOOOOOOOOOOO
@@ -18,14 +21,14 @@ OOO OOOO OOOO OOO OO
 O X X           X XO
 O                  O
 O    A             O
-O    O    OXO  O   O
+U    O    OXO  O   O
 O         O    O   O
 O         OOOAAO   O
-O     X            O
+U     X            O
 O                  O
 O          X X  O  O
 O   W       X OOOO O
-O           X   O  O
+U           X   O  O
 O                  O
-OOOOOOOOOOOOOOOOOOOO
+OOOOOUOOOOOOOOOOOOOO
 }

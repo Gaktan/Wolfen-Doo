@@ -7,7 +7,11 @@ uniform mat4 u_view;
 uniform mat4 u_projection;
 
 uniform mat4 u_model;
+
 uniform vec3 u_scale;
+
+uniform vec3 u_upColor;
+uniform vec3 u_downColor;
 
 out vec4 Color;
 
@@ -22,9 +26,9 @@ void main()
     vec3 color;
     
     if(newPos.y < 0)
-    	color = vec3(0.75, 0.75, 0.75);
+    	color = u_downColor;
     else
-    	color = vec3(0.35, 0.75, 0.9);
+    	color = u_upColor;
     
 	Color = vec4(color, 1.0);
 }

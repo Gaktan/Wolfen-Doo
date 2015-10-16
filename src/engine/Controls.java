@@ -13,10 +13,12 @@ import engine.game.GameWolfen;
 public class Controls {
 
 	private static float camSpeed = 0.4f;
-	private static float upDownSpeed = 0.2f;
+	private static float upDownSpeed = 0.01f;
 	private static float sensitivity = 0.2f;
 	private static int lastX;
 	private static int lastY;
+	
+	private static boolean lockMouse = true;
 
 	public static void update(Camera camera, float dt){
 		
@@ -65,7 +67,11 @@ public class Controls {
 		
 		camera.viewAngle.normalize();
 		
-		Mouse.setCursorPosition(400, 300);
+		if(Mouse.isButtonDown(1))
+			lockMouse = !lockMouse;
+		
+		if(lockMouse)
+			Mouse.setCursorPosition(400, 300);
 
 		lastX = Mouse.getX();
 		lastY = Mouse.getY(); 

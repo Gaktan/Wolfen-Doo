@@ -1,10 +1,10 @@
 package engine.generator;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import engine.entities.EntityActor;
 import engine.game.GameWolfen;
 import engine.game.Map;
 import engine.game.ShaderProgram;
@@ -20,7 +20,10 @@ public class MapReader {
 	public static final String COMMAND_WIDTH = "width";
 	public static final String COMMAND_HEIGHT = "height";
 	public static final String COMMAND_ACTOR = "actor";
+	public static final String COMMAND_WALL = "wall";
+	public static final String COMMAND_ANIMATION = "animation";
 	public static final String COMMAND_MAP = "map";
+	public static final String COMMAND_SKY = "sky";
 
 	public static final String PROGRAM_TEXTURE = "texture";
 	public static final String PROGRAM_BILLBOARD_ANIMATED = "billboard_animated";
@@ -64,14 +67,14 @@ public class MapReader {
 		readMap(mapData);
 
 		map.setOrientation();
-
+	
 		System.out.println(map.list);
 
 		return map;
 	}
 
 	public void readFile(String path){
-		String data = FileUtil.readFromFile(path);
+		String data = FileUtil.readFromFile("res/maps/" + path + ".map");
 
 		int start = 0;
 		int end = 0;
@@ -109,11 +112,17 @@ public class MapReader {
 		else if(command.equals(COMMAND_NAME))
 			name = value;
 
-		else if(command.equals(COMMAND_ACTOR))
-			createShape(value);
+		else if(command.equals(COMMAND_ACTOR) || command.equals(COMMAND_WALL)
+				|| command.equals(COMMAND_ANIMATION))
+
+			createShape(value, command);
+
 
 		else if(command.equals(COMMAND_MAP))
 			mapData = value.replace("\n", "");
+
+		else if(command.equals(COMMAND_SKY))
+			setSky(value);
 
 	}
 
@@ -138,7 +147,7 @@ public class MapReader {
 					else if(wall){
 						map.newWall(i, j, (ShapeCubeTexture) shape, solid);
 					}
-					
+
 					else{
 						map.newActor(i, j, shape, solid);
 					}
@@ -147,23 +156,49 @@ public class MapReader {
 		}
 	}
 
-	public void createShape(String value){
+	public void createShape(String value, String command){
 		String[] values = value.split(", ");
 
-		char ch = values[0].charAt(0);
-		String s_program = values[1];
-		String s_shape = values[2];
-		String s_image = values[3];
-		String s_wall = values[4];
-		String s_solid = values[5];
-		String s_animated = values[6];
+		ShaderProgram program = null;
+		Shape shape = null;
 
-		ShaderProgram program = getProgram(s_program);
-		Shape shape = createShape(s_shape, program, s_image);
+		char ch = values[0].charAt(0);
+
+		String s_image = values[1];
+
+		int wall = 0;
+		int solid = 0;
+		int animated = 0;
+
+		if(command.equals(COMMAND_ANIMATION)){
+			program = getProgram(PROGRAM_BILLBOARD_ANIMATED);
+			shape = createShape(SHAPE_QUAD_TEXTURE, program, s_image);
+			animated = 1;
+		}
+
+		if(command.equals(COMMAND_ACTOR)){
+			program = getProgram(PROGRAM_BILLBOARD_TEXTURE);
+			shape = createShape(SHAPE_QUAD_TEXTURE, program, s_image);
+		}
+
+		if(command.equals(COMMAND_WALL)){
+			program = getProgram(PROGRAM_TEXTURE);
+			shape = createShape(SHAPE_CUBE_TEXTURE, program, s_image);
+			wall = 1;
+		}
+
+		String s_solid = values[2];
+
+		try{
+			solid = Integer.parseInt(s_solid);
+		}
+		catch(NumberFormatException e){
+			e.printStackTrace();
+		}
 
 		shapeMap.put(ch, shape);
 
-		infoMap.put(ch, new Vector3f(Integer.parseInt(s_wall), Integer.parseInt(s_solid), Integer.parseInt(s_animated)));
+		infoMap.put(ch, new Vector3f(wall, solid, animated));
 	}
 
 	public Shape createShape(String shape, ShaderProgram program, String texture){
@@ -194,6 +229,38 @@ public class MapReader {
 			return game.shaderProgramTexBill;
 
 		return null;
+	}
+
+	private void setSky(String value) {
+
+		String[] values = value.split(", ");
+		Vector3f downColor = readColor(values[0]);
+		Vector3f upColor = readColor(values[1]);
+
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
+
+		skyShape.downColor = downColor;
+		skyShape.upColor = upColor;
+
+		map.sky = new EntityActor(skyShape);
+	}
+
+	public Vector3f readColor(String value){
+		String[] v = value.split(" ");
+
+		try{
+			float x = (float) Integer.parseInt(v[0]) / 256;
+			float y = (float) Integer.parseInt(v[1]) / 256;
+			float z = (float) Integer.parseInt(v[2]) / 256;
+			
+			return new Vector3f(x, y, z);
+		}
+		catch(Exception e){
+			System.err.println("Exception in color : " + value);
+			e.printStackTrace();
+		}
+		
+		return new Vector3f();
 	}
 
 	public void setWidth(String value){

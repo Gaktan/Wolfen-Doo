@@ -96,7 +96,7 @@ public class MazeGenerator extends Generator{
 			}
 		}
 
-		Map mapR = new Map(game, sizeX, sizeY);
+		Map mapR = new Map(game, sizeX, sizeY, null);
 
 		mapR.buildMapFromString(map.toString());
 		return mapR;

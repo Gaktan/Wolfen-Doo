@@ -13,7 +13,7 @@ import engine.shapes.*;
 
 public class Map implements Displayable{
 
-	private EntityActor sky;
+	public EntityActor sky;
 	public DisplayableArray2D list;
 	public int x, y;
 	private boolean delete;
@@ -21,15 +21,22 @@ public class Map implements Displayable{
 	public GameWolfen game;
 
 	public Map(GameWolfen game) {
-		this(game, 20, 20);
+		this(game, 20, 20, null);
 	}
 
-	public Map(GameWolfen game, int x, int y){
+	public Map(GameWolfen game, int x, int y, EntityActor sky){
 		list = new DisplayableArray2D(x, y);
 
 		this.game = game;
 
-		sky = new EntityActor(new ShapeInsideOutCubeColor(game.shaderProgramSky));
+		if(sky == null){
+			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
+			
+			skyShape.downColor = new Vector3f(0.75f, 0.75f, 0.75f);
+			skyShape.upColor = new Vector3f(0.35f, 0.75f, 0.9f);
+			
+			sky = new EntityActor(skyShape);
+		}
 
 		this.x = x;
 		this.y = y;
@@ -45,10 +52,6 @@ public class Map implements Displayable{
 
 	@Override
 	public boolean update(float dt) {
-		boolean b = list.update(dt);
-		
-		if(!b)
-			return false;
 
 		int x = (int) (game.camera.position.x + 0.5f);
 		int z = (int) (game.camera.position.z + 0.5f);
@@ -72,11 +75,17 @@ public class Map implements Displayable{
 			}
 		}
 		
+		boolean b = list.update(dt);
+		
+		if(!b)
+			return false;
+		
 		return !delete;
 	}
 
 	@Override
 	public void render(Camera camera) {
+		
 		sky.render(camera);
 		list.render(camera);
 	}

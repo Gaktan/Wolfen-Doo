@@ -15,6 +15,9 @@ import engine.game.ShaderProgram;
 public class ShapeInsideOutCubeColor extends Shape {
 	
 	public Vector3f scale;
+	public Vector3f upColor;
+	public Vector3f downColor;
+	boolean once;
 
 	public ShapeInsideOutCubeColor(ShaderProgram shaderProgram) {
 		super(shaderProgram);
@@ -107,6 +110,8 @@ public class ShapeInsideOutCubeColor extends Shape {
 	public void render() {
 
 		shaderProgram.setUniform("u_scale", scale);
+		shaderProgram.setUniform("u_upColor", upColor);
+		shaderProgram.setUniform("u_downColor", downColor);
 
 		GL11.glDrawElements(GL11.GL_TRIANGLES, 36, GL11.GL_UNSIGNED_INT, 0);
 	}
@@ -119,5 +124,4 @@ public class ShapeInsideOutCubeColor extends Shape {
 
 		ShaderProgram.unbind();
 	}
-
 }

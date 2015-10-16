@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 import engine.BitMapFont;
 import engine.Controls;
 import engine.DisplayableList;
+import engine.DisplayableText;
 import engine.entities.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.ParticleSystem;
@@ -28,9 +29,12 @@ public class GameWolfen extends Game{
 	public Map map;
 
 	/* TEMP STUFF */
+	
+	public BitMapFont bmf;
+	public DisplayableText textPos;
+	public DisplayableText textFps;
 
 	public AnimatedActor animatedActorTest;
-	public BitMapFont bmf;
 	public long elapsedTime;
 	public Fps fps;
 	public long l_fps;
@@ -58,20 +62,20 @@ public class GameWolfen extends Game{
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glFrontFace(GL11.GL_CW);
 
-		shaderProgramTex = new ShaderProgram("shaders/texture");
-		shaderProgramSky = new ShaderProgram("shaders/sky_color");
-		shaderProgramTexBill = new ShaderProgram("shaders/texture_billboard");
-		shaderProgramTexCamera = new ShaderProgram("shaders/texture_camera");
+		shaderProgramTex = new ShaderProgram("texture");
+		shaderProgramSky = new ShaderProgram("sky_color");
+		shaderProgramTexBill = new ShaderProgram("texture_billboard");
+		shaderProgramTexCamera = new ShaderProgram("texture_camera");
 
 		camera = new Camera(45, (float) getWidth() / (float) getHeight(), 0.1f, 100f);
 		camera.setPosition(new Vector3f(2, 0, 2));
 
-		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test.png");
+		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
 
 
-		MapReader mr = new MapReader(this, "maps/01.map");
+		MapReader mr = new MapReader(this, "01");
 		map = mr.createMap();
-		//map = new MazeGenerator(this, 51, 31).generate();
+		//map = new MazeGenerator(this, 100, 100).generate();
 
 		ac = new DisplayableList();
 
@@ -82,9 +86,17 @@ public class GameWolfen extends Game{
 		ac.add(animatedActorTest);
 
 
-		bmf = new BitMapFont(this, "char.png", 256, 16);
+		bmf = new BitMapFont(this, "char", 256, 16);
 		//DisplayableList dl = bmf.createString(new Vector3f(0, 1, 0), new Vector3f(0, 0, 1),  "Je mange des Chips!");
 		//ac.add(dl);
+		
+		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "pos: " + Math.round(camera.position.x) + ", "
+				+ Math.round(camera.position.z));
+		
+		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "fps : " + l_fps);
+		
+		ac.add(textPos);
+		ac.add(textFps);
 
 		fps = new Fps();
 
@@ -120,10 +132,9 @@ public class GameWolfen extends Game{
 
 		camera.apply();
 		ac.render(camera);
-		bmf.drawString(new Vector3f(-.95f, .95f, 0), "pos: " + Math.round(camera.position.x) + ", "
-				+ Math.round(camera.position.z), camera);
-
-		bmf.drawString(new Vector3f(-.95f, .85f, 0), "fps : " + l_fps, camera);
+		
+		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
+		textFps.setText("fps : " + l_fps);
 	}
 
 	@Override

@@ -33,8 +33,8 @@ public class ShaderProgram{
 	public ShaderProgram(String name){
 		this();
 		
-		attachVertexShader(name + ".vert");
-		attachFragmentShader(name + ".frag");
+		attachVertexShader("res/shaders/" + name + ".vert");
+		attachFragmentShader("res/shaders/" + name + ".frag");
 		
 		link();
 	}

@@ -28,46 +28,35 @@ public class BitMapFont {
 		imageFactor = (float) charSize / imageSize;
 	}
 
-	public DisplayableList createString(Vector3f position, String str){
-
-		DisplayableList dl = new DisplayableList();
-		Vector3f newPosition = new Vector3f();
-		Vector3f halfDir = new Vector3f(1, 0, 0);
-		halfDir = (Vector3f) halfDir.scale(0.08f);
-		
-		for(char c : str.toCharArray()){
-			int i_c = (int) c;
-
-			if(i_c > amountOfChars){
-				i_c = 0;
-			}
-
-			EntityActor actorChar = new EntityActor(shape);
-
-			Vector3f.add(position, newPosition, actorChar.position);
-			
-			int charsPerLine = imageSize / charSize;
-			
-			float y = i_c / charsPerLine;
-			float x = i_c % charsPerLine;
-
-			Vector3f vec = new Vector3f(x, y, imageFactor);
-			actorChar.textureCoordinate = vec;
-			
-			dl.add(actorChar);
-
-			Vector3f.add(newPosition, halfDir, newPosition);
-		}
-		
-		return dl;
+	public DisplayableText createString(Vector3f position, String str){
+		return new DisplayableText(position, str, this);
 	}
 	
 	public void drawString(Vector3f position, String str, Camera camera){
-		DisplayableList dl = createString(position, str);
+		DisplayableText dl = createString(position, str);
 		
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		dl.render(camera);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
-	
+
+	public int getAmountOfChars() {
+		return amountOfChars;
+	}
+
+	public ShapeQuadTexture getShape() {
+		return shape;
+	}
+
+	public int getImageSize() {
+		return imageSize;
+	}
+
+	public int getCharSize() {
+		return charSize;
+	}
+
+	public float getImageFactor() {
+		return imageFactor;
+	}
 }
