@@ -51,6 +51,8 @@ public class ParticleSystem implements Displayable{
 
 				boolean b = p.update(dt);
 				
+				
+				
 				if(!b){
 					destroyList.add(p);
 				}

@@ -1,9 +1,7 @@
 package engine.entities;
 
-import java.util.Random;
-
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.Color;
 
 import engine.Displayable;
 import engine.game.GameWolfen;
@@ -19,8 +17,6 @@ public class Particle implements Displayable{
 	private static final Vector3f GRAVITY = new Vector3f(0, -0.04f, 0);
 	
 	public Particle(GameWolfen game, Shape shape, int life, Vector3f position){
-		
-		
 		actor = new EntityActor(shape);
 		actor.position = new Vector3f(position);
 		
@@ -67,12 +63,29 @@ public class Particle implements Displayable{
 	@Override
 	public void render(Camera camera) {
 		if(actor != null)
+		{
 			actor.render(camera);
+		}
 	}
 
 	@Override
 	public void delete() {
 		life = 0;
 	}
-	
+
+	public int getLife() {
+		return life;
+	}
+
+	public void setLife(int life) {
+		this.life = life;
+	}
+
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
 }

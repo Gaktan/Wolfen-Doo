@@ -8,6 +8,7 @@ import engine.game.GameWolfen;
 import engine.game.Map;
 import engine.shapes.Shape;
 import engine.shapes.ShapeQuad;
+import engine.util.MathUtil;
 
 public class EntityProjctile extends EntityLine {
 
@@ -19,7 +20,7 @@ public class EntityProjctile extends EntityLine {
 		this.map = map;
 
 		this.velocity = (Vector3f) direction.normalise();
-		this.velocity.scale(0.1f);
+		this.velocity.scale(0.8f);
 	}
 
 	@Override
@@ -33,12 +34,12 @@ public class EntityProjctile extends EntityLine {
 			b = true;
 		}
 
-		if(position.y + direction.y < -0.5f)
+		if(position.y + velocity.y < -0.5f)
 		{
 			b = true;
 			normal.y = 1f;
 		}
-		if(position.y + direction.y > 0.5f)
+		if(position.y + velocity.y > 0.5f)
 		{
 			b = true;
 			normal.y = -1f;
@@ -47,16 +48,16 @@ public class EntityProjctile extends EntityLine {
 
 		if(!b)
 		{
-			int x = (int) (position.x + direction.x + 0.5f);
-			int z = (int) (position.z + direction.z + 0.5f);
+			int x = (int) (position.x + velocity.x + 0.5f);
+			int z = (int) (position.z + velocity.z + 0.5f);
 			Displayable d = map.list.get(x, z);
 			if (d instanceof Entity) {
 				Entity e = (Entity) d;
 
 				if(e.isSolid()) {
 					b = true;
-					normal.x = x - (position.x + direction.x);
-					normal.z = z - (position.z + direction.z);
+					normal.x = x - (position.x + velocity.x);
+					normal.z = z - (position.z + velocity.z);
 
 					if(Math.abs(normal.x) > Math.abs(normal.z))
 					{
@@ -73,32 +74,44 @@ public class EntityProjctile extends EntityLine {
 		}
 
 		if(b) {
-			normal.normalise();
-			EntityActor e = new EntityActor(map.game.shapeImpact);
-			//Vector3f.add(position, direction, e.position);
 
-			e.position.x = position.x + (direction.x * 0.99f);
-			e.position.y = position.y + (direction.y * 0.99f);
-			e.position.z = position.z + (direction.z * 0.99f);
+			if(normal.length() != 0)
+				normal.normalise();
+			
+			normal.scale(MathUtil.random(0.99f, 1.01f));
+			
+			Particle e = new Particle(map.game, map.game.shapeImpact, 400, new Vector3f());
+			//Vector3f.add(position, direction, e.position);
+			
+			Vector3f newPos = new Vector3f();
+			Vector3f newRot = new Vector3f();
+			Vector3f.add(position, velocity, newPos);
 			
 			float pi2 = (float) (Math.PI / 2);
 
-
 			if(normal.x != 0) 
 			{
-				e.rotation.y = pi2 * normal.x;
+				newRot.y = pi2 * normal.x;
+				newPos.x = (int) (position.x + velocity.x + 0.5f) + 0.5f * normal.x * 1.01f;
 			}
 
 			else if(normal.z != 0) 
 			{
-				e.rotation.y = pi2 - pi2 * normal.z;
+				newRot.y = pi2 - pi2 * normal.z;
+				newPos.z = (int) (position.z + velocity.z + 0.5f) + 0.5f * normal.z * 1.01f;
 			}
 
 			else if(normal.y != 0)
 			{
-				e.rotation.x = pi2 * -normal.y;
+				newRot.x = pi2 * -normal.y;
+				newPos.y = (int) (position.y + velocity.z + 0.5f) + 0.5f * -normal.y * 0.99f;
 			}
-			e.scale = 0.1f;
+			
+			e.actor.position = newPos;
+			e.actor.rotation = newRot;
+			e.actor.scale = 0.1f;
+			
+			e.setPaused(true);
 
 			map.game.ac.add(e);
 			return false;

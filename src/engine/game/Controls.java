@@ -1,4 +1,4 @@
-package engine;
+package engine.game;
 
 import static org.lwjgl.input.Keyboard.*;
 
@@ -7,11 +7,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.entities.Camera;
-import engine.entities.EntityLine;
 import engine.entities.EntityProjctile;
-import engine.game.Game;
-import engine.game.GameWolfen;
 import engine.util.EAngle;
+import engine.util.MathUtil;
 import engine.util.MatrixUtil;
 
 public class Controls {
@@ -76,8 +74,14 @@ public class Controls {
 
 		if(Mouse.isButtonDown(0))
 		{
-			Vector3f linePosition = camera.getPosition();
+			Vector3f linePosition = new Vector3f(camera.getPosition());
 			Vector3f lineVector = new Vector3f();
+
+			float diff = 0.1f;
+
+			linePosition.x += MathUtil.random(-diff, diff);
+			linePosition.y += MathUtil.random(-diff, diff);
+			linePosition.z += MathUtil.random(-diff, diff);
 
 			EAngle angle = new EAngle(camera.viewAngle);
 			angle.yaw -= 45;
@@ -91,6 +95,8 @@ public class Controls {
 			Vector3f.cross(MatrixUtil.Y_AXIS, forward, right);
 
 			Vector3f.add(forward, right, lineVector);
+
+			lineVector.normalise();
 
 			((GameWolfen) GameWolfen.getInstance()).ac.add(new EntityProjctile(linePosition, lineVector, 
 					((GameWolfen) GameWolfen.getInstance()).map));

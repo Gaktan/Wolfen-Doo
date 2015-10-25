@@ -1,10 +1,9 @@
 package engine.game;
 
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.BitMapFont;
-import engine.Controls;
 import engine.DisplayableList;
 import engine.DisplayableText;
 import engine.entities.AnimatedActor;
@@ -68,7 +67,7 @@ public class GameWolfen extends Game{
 		shaderProgramTexBill = new ShaderProgram("texture_billboard");
 		shaderProgramTexCamera = new ShaderProgram("texture_camera");
 
-		camera = new Camera(45, (float) getWidth() / (float) getHeight(), 0.1f, 100f);
+		camera = new Camera(45, (float) getWidth() / (float) getHeight(), 0.2f, 100f);
 		camera.setPosition(new Vector3f(2, 0, 2));
 
 		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
