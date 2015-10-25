@@ -14,6 +14,8 @@ public class Camera extends Entity{
 	public Vector3f movementGoal;
 	public Vector3f movement;
 	
+	public Matrix4f projectionXview;
+	
 	private float slipperyLevel = 1000.0f;
 	
 	// Camera rotation
@@ -33,6 +35,7 @@ public class Camera extends Entity{
 		setProjection();
 
 		view = MatrixUtil.createIdentityMatrix();
+		projectionXview = new Matrix4f();
 
 		position.z = -5;
 
@@ -72,6 +75,8 @@ public class Camera extends Entity{
 		right.scale(movement.z);
 		
 		Vector3f.add(forward, right, velocity);
+		
+		Matrix4f.mul(projection, view, projectionXview);
 		
 		return super.update(elapsedTime);
 	}
@@ -131,5 +136,10 @@ public class Camera extends Entity{
 	public void setzFar(float zFar) {
 		this.zFar = zFar;
 		setProjection();
+	}
+	
+	public Matrix4f getProjectionXview()
+	{
+		return projectionXview;
 	}
 }

@@ -24,6 +24,7 @@ public class GameWolfen extends Game{
 	public Camera camera;
 
 	public ShapeQuadTexture shapeAnimatedSmurf;
+	public ShapeQuadTexture shapeImpact;
 
 	public DisplayableList ac;
 	public Map map;
@@ -71,11 +72,12 @@ public class GameWolfen extends Game{
 		camera.setPosition(new Vector3f(2, 0, 2));
 
 		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
-
+		
+		shapeImpact = new ShapeQuadTexture(shaderProgramTex, "bullet_impact");
 
 		MapReader mr = new MapReader(this, "01");
 		map = mr.createMap();
-		//map = new MazeGenerator(this, 100, 100).generate();
+		//map = new MazeGenerator(this, 20, 50).generate();
 
 		ac = new DisplayableList();
 
@@ -87,13 +89,10 @@ public class GameWolfen extends Game{
 
 
 		bmf = new BitMapFont(this, "char", 256, 16);
-		//DisplayableList dl = bmf.createString(new Vector3f(0, 1, 0), new Vector3f(0, 0, 1),  "Je mange des Chips!");
-		//ac.add(dl);
 		
-		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "pos: " + Math.round(camera.position.x) + ", "
-				+ Math.round(camera.position.z));
+		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "");
 		
-		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "fps : " + l_fps);
+		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "");
 		
 		ac.add(textPos);
 		ac.add(textFps);
@@ -118,8 +117,9 @@ public class GameWolfen extends Game{
 			total = 0;
 		}
 		 */
-		ac.update(elapsedTime);
 		camera.update(elapsedTime);
+		ac.update(elapsedTime);
+		
 
 		l_fps = fps.calcFPS();
 	}

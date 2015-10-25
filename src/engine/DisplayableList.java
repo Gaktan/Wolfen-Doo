@@ -8,34 +8,44 @@ import engine.entities.Camera;
 public class DisplayableList implements Displayable{
 	
 	public List<Displayable> list;
+	private List<Displayable> toBeAdded;
+	private List<Displayable> toBeDeleted;
 	private boolean delete = false;
 	
 	public DisplayableList() {
 		list = new ArrayList<Displayable>();
+		toBeAdded = new ArrayList<Displayable>();
+		toBeDeleted = new ArrayList<Displayable>();
 	}
 	
 	public void add(Displayable d){
-		list.add(d);
+		toBeAdded.add(d);
 	}
 	
 	public void remove(Displayable d){
-		list.remove(d);
+		toBeDeleted.remove(d);
 	}
 
 	@Override
 	public boolean update(float dt) {
 		
-		List<Displayable> deleteList = new ArrayList<Displayable>();
+		for(Displayable d : toBeAdded){
+			list.add(d);
+		}
+		
+		toBeAdded.clear();
 		
 		for(Displayable d : list){
 			boolean b = d.update(dt);
 			if(!b)
-				deleteList.add(d);
+				toBeDeleted.add(d);
 		}
 		
-		for(Displayable d : deleteList){
+		for(Displayable d : toBeDeleted){
 			list.remove(d);
 		}
+		
+		toBeDeleted.clear();
 		
 		return !delete;
 	}

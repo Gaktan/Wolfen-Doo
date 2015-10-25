@@ -24,13 +24,13 @@ public class ShapeQuadTexture extends Shape {
 	}
 
 	public void init(){
-		FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 2);
+		FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 4);
 		vertices.put(new float[]{
-				// pos
-				-0.5f, -0.5f,
-				-0.5f, +0.5f,
-				+0.5f, +0.5f,
-				+0.5f, -0.5f
+				// pos			tex coord
+				-0.5f, -0.5f,	0.f, 0.f,
+				-0.5f, +0.5f,	0.f, 1.f,
+				+0.5f, +0.5f,	1.f, 1.f,
+				+0.5f, -0.5f,	1.f, 0.f,
 		});
 		vertices.flip();
 
@@ -63,7 +63,8 @@ public class ShapeQuadTexture extends Shape {
 		//												 v - Normalized ? (between 0 - 1)
 		//														 v - Offset between things (size of a line)
 		//																	   v - Where to start ?
-		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 2 * (Float.SIZE/8) , 0);
+		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE/8) , 0);
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE/8) , 2 * (Float.SIZE/8));
 
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
 
@@ -78,6 +79,7 @@ public class ShapeQuadTexture extends Shape {
 		GL30.glBindVertexArray(VAO);
 
 		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
 
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
@@ -94,6 +96,7 @@ public class ShapeQuadTexture extends Shape {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		GL20.glDisableVertexAttribArray(0);
+		GL20.glDisableVertexAttribArray(1);
 
 		GL30.glBindVertexArray(0);
 

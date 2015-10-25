@@ -14,12 +14,15 @@ public class EntityActor extends Entity{
 	public Vector3f textureCoordinate;
 	public float scale;
 	public Color color;
+	public Vector3f rotation;
 
 	public EntityActor(Shape shape) {
 		super();
 
 		textureCoordinate = new Vector3f(5, 0, 1);
 		scale = 1f;
+		
+		rotation = new Vector3f();
 		
 		this.shape = shape;
 		
@@ -45,9 +48,17 @@ public class EntityActor extends Entity{
 		
 		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3f(color));
 
-		Matrix4f newPos = MatrixUtil.vectorToMatrix(position);
-		newPos = newPos.scale(new Vector3f(scale, scale, scale));
+		Matrix4f model = MatrixUtil.createIdentityMatrix();
+		model.rotate(rotation.x, MatrixUtil.X_AXIS);
+		model.rotate(rotation.y, MatrixUtil.Y_AXIS);
+		model.rotate(rotation.z, MatrixUtil.Z_AXIS);
+		
+		model.m30 = position.x;
+		model.m31 = position.y;
+		model.m32 = position.z;
+		
+		model = model.scale(new Vector3f(scale, scale, scale));
 
-		shape.getShaderProgram().setUniform("u_model", newPos);
+		shape.getShaderProgram().setUniform("u_model", model);
 	}
 }

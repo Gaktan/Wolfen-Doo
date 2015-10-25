@@ -136,19 +136,19 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 			return;
 
 		if(orientation.contains("n")){
-			shaderProgram.setUniform("u_normal", new Vector3f(1, 0, 0));
+			//shaderProgram.setUniform("u_normal", new Vector3f(1, 0, 0));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_n);
 		}
 		if(orientation.contains("s")){
-			shaderProgram.setUniform("u_normal", new Vector3f(-1, 0, 0));
+			//shaderProgram.setUniform("u_normal", new Vector3f(-1, 0, 0));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_s);
 		}
 		if(orientation.contains("e")){
-			shaderProgram.setUniform("u_normal", new Vector3f(0, 0, 1));
+			//shaderProgram.setUniform("u_normal", new Vector3f(0, 0, 1));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_e);
 		}
 		if(orientation.contains("w")){
-			shaderProgram.setUniform("u_normal", new Vector3f(0, 0, -1));
+			//shaderProgram.setUniform("u_normal", new Vector3f(0, 0, -1));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_w);
 		}		
 	}

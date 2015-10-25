@@ -1,0 +1,34 @@
+name{coucou}
+width{20}
+height{20}
+
+sky{237 157 95, 255 233 229}
+
+wall{O, wall, 1}
+wall{U, wall_portrait, 1}
+actor{X, pillar, 0}
+wall{A, wall_hole, 0}
+animation{W, mul_test, 0}
+
+map{
+OOOOOOOOOOOOOOOOOOOO
+OX                 O
+O     OO  OO  OO   O
+O     OO  OO  OO   O
+O     O        O   O
+O X X O   XX   OX XO
+OOO OOOO OOOO OOO OO
+O X X           X XO
+O                  O
+O    A             O
+U    O    OXO  O   O
+O         O    O   O
+O         OOOAAO   O
+U     X            O
+O                  O
+O          X X  O  O
+O   W       X OOOO O
+U           X   O  O
+O                  O
+OOOOOUOOOOOOOOOOOOOO
+}

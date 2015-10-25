@@ -5,9 +5,12 @@ import java.util.Collections;
 import java.util.Stack;
 
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
+import engine.entities.EntityActor;
 import engine.game.GameWolfen;
 import engine.game.Map;
+import engine.shapes.ShapeInsideOutCubeColor;
 
 public class MazeGenerator extends Generator{
 	
@@ -97,7 +100,17 @@ public class MazeGenerator extends Generator{
 		}
 
 		Map mapR = new Map(game, sizeX, sizeY, null);
+		
+		Vector3f downColor = new Vector3f(0, 0, 0);
+		Vector3f upColor = new Vector3f(1, 1, 1);
 
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
+
+		skyShape.downColor = downColor;
+		skyShape.upColor = upColor;
+
+		mapR.sky = new EntityActor(skyShape);
+		
 		mapR.buildMapFromString(map.toString());
 		return mapR;
 	}

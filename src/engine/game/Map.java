@@ -96,8 +96,8 @@ public class Map implements Displayable{
 
 		setSky();
 
-		ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall.png");
-		//ShapeQuadTexture shapeCube = new ShapeQuadTexture(game.shaderProgramTexBill, "wall.png");
+		ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall");
+		//ShapeQuadTexture shapeCube = new ShapeQuadTexture(game.shaderProgramTexBill, "wall");
 
 		for(int i = 0; i < x; i++){
 			for(int j = 0; j < y; j++){

@@ -16,6 +16,10 @@ public class EAngle {
 		this.roll = roll;
 	}
 	
+	public EAngle(EAngle viewAngle) {
+		this(viewAngle.pitch, viewAngle.yaw, viewAngle.roll);
+	}
+
 	public Vector3f toVector(){
 		Vector3f result = new Vector3f();
 		

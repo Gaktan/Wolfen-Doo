@@ -7,8 +7,12 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.entities.Camera;
+import engine.entities.EntityLine;
+import engine.entities.EntityProjctile;
 import engine.game.Game;
 import engine.game.GameWolfen;
+import engine.util.EAngle;
+import engine.util.MatrixUtil;
 
 public class Controls {
 
@@ -17,11 +21,11 @@ public class Controls {
 	private static float sensitivity = 0.2f;
 	private static int lastX;
 	private static int lastY;
-	
+
 	private static boolean lockMouse = true;
 
 	public static void update(Camera camera, float dt){
-		
+
 		while(Keyboard.next()){
 			int key = Keyboard.getEventKey();
 			if(Keyboard.getEventKeyState()){
@@ -34,23 +38,23 @@ public class Controls {
 
 		if(isKeyDown(KEY_SPACE)){
 			Vector3f pos = camera.getPosition();
-			pos.y += upDownSpeed;
+			pos.y += upDownSpeed * dt;
 			camera.setPosition(pos);
 		}
 
 		if(isKeyDown(KEY_LCONTROL)){
 			Vector3f pos = camera.getPosition();
-			pos.y += -upDownSpeed;
+			pos.y += -upDownSpeed * dt;
 			camera.setPosition(pos);
 		}
-		
+
 		if(isKeyDown(KEY_ADD)){
 			camera.setFov(camera.getFov() + 1);
 		}
 		if(isKeyDown(KEY_SUBTRACT)){
 			camera.setFov(camera.getFov() - 1);
 		}
-		
+
 		if(isKeyDown(KEY_ESCAPE))
 			Game.end();
 
@@ -61,15 +65,37 @@ public class Controls {
 	private static void handleMouse(Camera camera) {
 		int mouseMovedX = Mouse.getX() - lastX;
 		int mouseMovedY = Mouse.getY() - lastY;
-		
+
 		camera.viewAngle.pitch -= mouseMovedY * sensitivity;
 		camera.viewAngle.yaw += mouseMovedX * sensitivity;
-		
+
 		camera.viewAngle.normalize();
-		
+
 		if(Mouse.isButtonDown(1))
 			lockMouse = !lockMouse;
-		
+
+		if(Mouse.isButtonDown(0))
+		{
+			Vector3f linePosition = camera.getPosition();
+			Vector3f lineVector = new Vector3f();
+
+			EAngle angle = new EAngle(camera.viewAngle);
+			angle.yaw -= 45;
+			angle.pitch = -angle.pitch;
+
+			Vector3f forward = angle.toVector();
+
+			forward.normalise();
+
+			Vector3f right = new Vector3f();
+			Vector3f.cross(MatrixUtil.Y_AXIS, forward, right);
+
+			Vector3f.add(forward, right, lineVector);
+
+			((GameWolfen) GameWolfen.getInstance()).ac.add(new EntityProjctile(linePosition, lineVector, 
+					((GameWolfen) GameWolfen.getInstance()).map));
+		}
+
 		if(lockMouse)
 			Mouse.setCursorPosition(400, 300);
 
@@ -105,23 +131,23 @@ public class Controls {
 
 		if (key == KEY_D)
 			camera.movementGoal.x = camSpeed;
-		
+
 		//TODO: Dégueulasse
-		
+
 		if(key == KEY_UP)
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
 			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_back);
-		
+
 		if(key == KEY_DOWN){
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
 			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_front);
 		}
-		
+
 		if(key == KEY_LEFT){
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
 			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_left);
 		}
-		
+
 		if(key == KEY_RIGHT){
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
 			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_right);
