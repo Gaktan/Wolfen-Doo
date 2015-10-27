@@ -10,7 +10,6 @@ public abstract class Generator {
 	protected GameWolfen game;
 	public static final int MIN_SIZE = 3;
 	
-	
 	public Generator(GameWolfen game, int sizeX, int sizeY) {
 		super();
 		this.game = game;
