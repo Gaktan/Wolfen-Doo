@@ -11,8 +11,8 @@ public class EntityLine extends Entity {
 	Vector3f direction;
 	
 	public EntityLine(Vector3f position, Vector3f direction) {
-		this.position = new Vector3f(position);
-		this.direction = new Vector3f(direction);
+		this.position = position;
+		this.direction = direction;
 	}
 	
 	@Override

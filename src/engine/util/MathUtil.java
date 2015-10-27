@@ -1,5 +1,6 @@
 package engine.util;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -47,4 +48,14 @@ public class MathUtil {
 		return new Random().nextFloat() * max + (min/2);
 	}
 
+	   /**
+     * Round to certain number of decimals
+     * 
+     * @param d
+     * @param decimalPlace the numbers of decimals
+     * @return
+     */
+    public static float round(float d, int decimalPlace) {
+         return BigDecimal.valueOf(d).setScale(decimalPlace, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
 }
