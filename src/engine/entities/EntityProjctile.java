@@ -19,7 +19,7 @@ public class EntityProjctile extends EntityLine {
 		this.velocity = (Vector3f) direction.normalise();
 		this.velocity.scale(2.2f);
 
-		this.bounces = -1;
+		this.bounces = 3;
 	}
 
 	@Override
