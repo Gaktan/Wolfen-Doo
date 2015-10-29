@@ -37,7 +37,6 @@ public class MapReader {
 	private String path;
 	private String mapData;
 
-	@SuppressWarnings("unused")
 	private String name;
 	private int width;
 	private int height;

@@ -109,4 +109,9 @@ public abstract class Entity implements Displayable{
 	public void setSolid(boolean solid) {
 		this.solid = solid;
 	}
+	
+	public int size()
+	{
+		return 1;
+	}
 }

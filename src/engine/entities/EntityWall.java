@@ -4,17 +4,17 @@ import engine.shapes.ShapeCubeTexture;
 
 public class EntityWall extends EntityActor {
 
-	public String orientation;
+	public int orientation;
 
 	public EntityWall(ShapeCubeTexture shape) {
 		super(shape);
 	}
 
-	public String getOrientation() {
+	public int getOrientation() {
 		return orientation;
 	}
 
-	public void setOrientation(String orientation) {
+	public void setOrientation(int orientation) {
 		this.orientation = orientation;
 	}
 

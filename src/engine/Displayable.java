@@ -14,4 +14,6 @@ public interface Displayable{
 	public void render(Camera camera);
 	
 	public void delete();
+	
+	public int size();
 }

@@ -17,6 +17,9 @@ public class ParticleSystem implements Displayable{
 	private ShapeQuadTexture blood1Shape;
 	private ShapeQuadTexture blood2Shape;
 	private int life;
+	
+	private int newParticlesPerFrame;
+	private int maxParticles;
 
 	public ParticleSystem(GameWolfen game, Vector3f position, int life) {
 		list = new ArrayList<Particle>();
@@ -27,31 +30,38 @@ public class ParticleSystem implements Displayable{
 
 		blood1Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood");
 		blood2Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood2");
-
-		for(int i = 0; i < 200; i++){
-			newGhostParticle();
-		}
+		
+		newParticlesPerFrame = 10;
+		maxParticles = 100;
 	}
 
 	@Override
 	public boolean update(float dt) {
 
 		if(life > 0)
+		{
 			life--;
+			
+			if(list.size() < maxParticles)
+			{
+				int amountToAdd = Math.min(maxParticles - list.size(), newParticlesPerFrame);
+				
+				for(int i = 0; i < amountToAdd; i++)
+				{
+					newParticle(400);
+				}
+			}
+		}
 		
 		if(life == -1 || !list.isEmpty()){
 
 			ArrayList<Particle> destroyList = new ArrayList<Particle>();
 
 			for(Particle p : list){
-/*
-				if(p.life < 200)
-					p.actor.shape = blood2Shape;
-*/
+				// 	if(p.life < 200)
+				//		p.actor.shape = blood2Shape;
 
 				boolean b = p.update(dt);
-				
-				
 				
 				if(!b){
 					destroyList.add(p);
@@ -60,8 +70,6 @@ public class ParticleSystem implements Displayable{
 
 			for(Particle p : destroyList){
 				list.remove(p);
-				if(life > 0)
-					newParticle(400);
 			}
 		}
 		else{
@@ -76,17 +84,13 @@ public class ParticleSystem implements Displayable{
 
 		switch(r){
 		case 0:
-			list.add(new Particle(game, blood1Shape, (int) MathUtil.random(100, 100), position));
+			list.add(new Particle(game, blood1Shape, (int) MathUtil.random(50, maxLife / 2), position));
 			break;
 		case 1:
 			list.add(new Particle(game, blood2Shape, (int) MathUtil.random(100, maxLife), position));
 			break;
 		}
 
-	}
-
-	private void newGhostParticle(){
-		list.add(new Particle((int) MathUtil.random(0, 50)));
 	}
 
 	@Override
@@ -99,6 +103,11 @@ public class ParticleSystem implements Displayable{
 	@Override
 	public void delete() {
 		life = 0;
+	}
+	
+	public int size()
+	{
+		return list.size();
 	}
 
 }

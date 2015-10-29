@@ -70,7 +70,7 @@ public class DisplayableArray2D implements Displayable{
 		for(int i = 0; i < sizeX; i++){
 			for(int j = 0; j < sizeY; j++){
 				if(list[i][j] != null){
-					sb.append("1,");
+					sb.append("O,");
 				}
 				else
 					sb.append(" ,");
@@ -78,5 +78,19 @@ public class DisplayableArray2D implements Displayable{
 			sb.append('\n');
 		}
 		return sb.toString();
+	}
+	
+	public int size()
+	{
+		int size = 0;
+		for(Displayable[] d2 : list)
+		{
+			for (Displayable d : d2)
+			{
+				if(d != null)
+					size += d.size();
+			}
+		}
+		return size;
 	}
 }

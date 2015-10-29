@@ -61,5 +61,16 @@ public class DisplayableList implements Displayable{
 	public void delete() {
 		delete = true;
 	}
+	
+	public int size()
+	{
+		int size = 0;
+		for (Displayable d : list)
+		{
+			size += d.size();
+		}
+		
+		return size;
+	}
 
 }

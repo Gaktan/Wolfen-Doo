@@ -2,13 +2,13 @@ name{coucou}
 width{20}
 height{20}
 
-sky{237 157 95, 255 233 229}
+sky{237 157 95, 252 231 227}
 
 wall{O, wall, 1}
 wall{U, wall_portrait, 1}
 actor{X, pillar, 0}
 wall{A, wall_hole, 0}
-animation{W, mul_test, 0}
+animation{W, mul_test, 1}
 
 map{
 OOOOOOOOOOOOOOOOOOOO

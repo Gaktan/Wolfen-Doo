@@ -19,7 +19,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 	private static IntBuffer i_e;
 	private static IntBuffer i_w;
 
-	private String orientation;
+	private int orientation;
 
 	public ShapeCubeTexture(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram, texture);
@@ -132,22 +132,22 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 	public void render() {
 		// GL11.glDrawElements(GL11.GL_TRIANGLES, 24, GL11.GL_UNSIGNED_INT, 0);
 
-		if(orientation == null || orientation.isEmpty())
+		if(orientation == 0)
 			return;
 
-		if(orientation.contains("n")){
+		if((orientation & Orientation.NORTH) == Orientation.NORTH){
 			//shaderProgram.setUniform("u_normal", new Vector3f(1, 0, 0));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_n);
 		}
-		if(orientation.contains("s")){
+		if((orientation & Orientation.SOUTH) == Orientation.SOUTH){
 			//shaderProgram.setUniform("u_normal", new Vector3f(-1, 0, 0));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_s);
 		}
-		if(orientation.contains("e")){
+		if((orientation & Orientation.EAST) == Orientation.EAST){
 			//shaderProgram.setUniform("u_normal", new Vector3f(0, 0, 1));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_e);
 		}
-		if(orientation.contains("w")){
+		if((orientation & Orientation.WEST) == Orientation.WEST){
 			//shaderProgram.setUniform("u_normal", new Vector3f(0, 0, -1));
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_w);
 		}		
@@ -168,7 +168,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 	}
 
 
-	public void render(String orientation){
+	public void render(int orientation){
 		this.orientation = orientation;
 
 		render();

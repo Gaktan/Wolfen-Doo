@@ -152,54 +152,59 @@ public class Map implements Displayable{
 				if (!(actor instanceof EntityWall))
 					continue;
 
-				StringBuilder stb = new StringBuilder();
-
-
+				int orientation = 0;
+				
 				if(i > 0)
-					processOrientation(stb, actor, i-1, j, 'w');
+					orientation += processOrientation(actor, i-1, 	j, 		Orientation.WEST);
 
 				if(j > 0)
-					processOrientation(stb, actor, i, j-1, 's');
+					orientation += processOrientation(actor, i, 	j-1,	Orientation.SOUTH);
 
 				if(i < x - 1)
-					processOrientation(stb, actor, i+1, j, 'e');
+					orientation += processOrientation(actor, i+1, 	j,		Orientation.EAST);
 
 				if(j < y - 1)
-					processOrientation(stb, actor, i, j+1, 'n');
+					orientation += processOrientation(actor, i, 	j+1,	Orientation.NORTH);
 
 				if (actor instanceof EntityWall) {
 					EntityWall new_name = (EntityWall) actor;
-					new_name.setOrientation(stb.toString());
+					new_name.setOrientation(orientation);
 				}
 			}
 		}
 	}
 
-	private void processOrientation(StringBuilder stb, EntityActor actor, int i, int j, char c){
+	private int processOrientation(EntityActor actor, int i, int j, int o){
 		Displayable d = list.get(i, j);
 
 		if(!(d instanceof EntityWall)){
-			stb.append(c);
-			return;
+			return o;
 		}
 
 		EntityWall ew = (EntityWall) d;
 
 		if(!actor.isSolid() && !ew.isSolid())
-			return;
+			return 0;
 
 		if(!ew.isSolid())
-			stb.append(c);
+			return o;
+		
+		return 0;
 
 	}
 
 	public void setSky(){
-		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x, 1, y);
-		sky.position = new Vector3f(x / 2, 0, y / 2);
+		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x-0.5f, 1, y-0.5f);
+		sky.position = new Vector3f((x-1f) / 2, 0, (y-1f) / 2);
 	}
 
 	@Override
 	public void delete() {
 		delete = true;
+	}
+	
+	public int size()
+	{
+		return list.size() + 1;
 	}
 }

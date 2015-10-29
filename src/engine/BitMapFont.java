@@ -28,16 +28,8 @@ public class BitMapFont {
 		imageFactor = (float) charSize / imageSize;
 	}
 
-	public DisplayableText createString(Vector3f position, String str){
-		return new DisplayableText(position, str, this);
-	}
-	
-	public void drawString(Vector3f position, String str, Camera camera){
-		DisplayableText dl = createString(position, str);
-		
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		dl.render(camera);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	public DisplayableText createString(Vector3f position, String str, boolean hasDepth){
+		return new DisplayableText(position, str, this, hasDepth);
 	}
 
 	public int getAmountOfChars() {

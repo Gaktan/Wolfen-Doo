@@ -33,6 +33,7 @@ public class GameWolfen extends Game{
 	public BitMapFont bmf;
 	public DisplayableText textPos;
 	public DisplayableText textFps;
+	public DisplayableText textEntities;
 
 	public AnimatedActor animatedActorTest;
 	public long elapsedTime;
@@ -89,12 +90,13 @@ public class GameWolfen extends Game{
 
 		bmf = new BitMapFont(this, "char", 256, 16);
 		
-		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "");
-		
-		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "");
+		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "", false);
+		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "", false);
+		textEntities = bmf.createString(new Vector3f(-.95f, .75f, 0), "", false);
 		
 		ac.add(textPos);
 		ac.add(textFps);
+		ac.add(textEntities);
 
 		fps = new Fps();
 
@@ -134,6 +136,7 @@ public class GameWolfen extends Game{
 		
 		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
 		textFps.setText("fps : " + l_fps);
+		textEntities.setText("Entities : " + ac.size());
 	}
 
 	@Override

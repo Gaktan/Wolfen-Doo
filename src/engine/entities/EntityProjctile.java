@@ -30,6 +30,9 @@ public class EntityProjctile extends EntityLine {
 		if(position.x < 0 || position.z < 0 || position.x > map.x || position.z > map.y) {
 			return false;
 		}
+		
+		if(position.y > 0.5f || position.y < -0.5f)
+			return false;
 
 		Vector3f normal = new Vector3f();
 		Vector3f impactPosition = new Vector3f();
@@ -49,32 +52,34 @@ public class EntityProjctile extends EntityLine {
 			{
 				Entity e = (Entity) d;
 
-				if(e.isSolid())
+				if(!e.isSolid())
+					continue;
+				if (!(e instanceof EntityWall))
+					continue;
+
+				b = true;
+
+				impactPosition.z = position.z + (velocity.z * i);
+				impactPosition.y = position.y + (velocity.y * i);
+				impactPosition.x = position.x + (velocity.x * i);
+
+				normal.x = x - impactPosition.x;
+				normal.z = z - impactPosition.z;
+
+				if(Math.abs(normal.x) > Math.abs(normal.z))
 				{
-					b = true;
-
-					impactPosition.z = position.z + (velocity.z * i);
-					impactPosition.y = position.y + (velocity.y * i);
-					impactPosition.x = position.x + (velocity.x * i);
-
-					normal.x = x - impactPosition.x;
-					normal.z = z - impactPosition.z;
-
-					if(Math.abs(normal.x) > Math.abs(normal.z))
-					{
-						normal.z = 0;
-						normal.x = -normal.x;
-						impactPosition.x = (int) impactPosition.x + 0.5f;
-					}
-					else
-					{
-						normal.x = 0;
-						normal.z = -normal.z;
-						impactPosition.z = (int) impactPosition.z + 0.5f;
-					}
-
-					break;
+					normal.z = 0;
+					normal.x = -normal.x;
+					impactPosition.x = (int) impactPosition.x + 0.5f;
 				}
+				else
+				{
+					normal.x = 0;
+					normal.z = -normal.z;
+					impactPosition.z = (int) impactPosition.z + 0.5f;
+				}
+
+				break;
 			}
 		}
 
@@ -113,20 +118,21 @@ public class EntityProjctile extends EntityLine {
 				if(normal.x != 0) 
 				{
 					velocity.x = -velocity.x;
-					position.x = impactPosition.x;
 				}
 
 				else if(normal.z != 0) 
 				{
 					velocity.z = -velocity.z;
-					position.z = impactPosition.z;
 				}
 
 				else if(normal.y != 0)
 				{
 					velocity.y = -velocity.y;
-					position.y = impactPosition.y;
 				}
+
+				position.x = impactPosition.x;
+				position.y = impactPosition.y;
+				position.z = impactPosition.z;
 
 				bounces--;
 			}
@@ -160,9 +166,9 @@ public class EntityProjctile extends EntityLine {
 					newPos.y = (int) (position.y + 0.5f) + 0.5f * -normal.y * 0.99f;
 				}
 
-				e.actor.position = newPos;
-				e.actor.rotation = newRot;
-				e.actor.scale = 0.1f;
+				e.position = newPos;
+				e.rotation = newRot;
+				e.scale = 0.1f;
 
 				e.setPaused(true);
 
