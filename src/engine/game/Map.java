@@ -4,7 +4,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.DisplayableArray2D;
-import engine.entities.AnimatedActor;
+import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
@@ -123,7 +123,7 @@ public class Map implements Displayable{
 
 	public void newAnimatedActor(float x, float y, Shape shape, boolean solid){
 		x = this.x - x - 1;
-		AnimatedActor e = new AnimatedActor(shape, 512, 128);
+		AnimatedActor e = new AnimatedActor(shape, "test", "a_running_front");
 		e.position = new Vector3f(x, 0, y);
 		e.setSolid(solid);
 

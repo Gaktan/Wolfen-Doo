@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 import engine.BitMapFont;
 import engine.DisplayableList;
 import engine.DisplayableText;
-import engine.entities.AnimatedActor;
+import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.ParticleSystem;
 import engine.generator.MapReader;
@@ -83,8 +83,8 @@ public class GameWolfen extends Game{
 
 		ac.add(map);
 
-		animatedActorTest = new AnimatedActor(shapeAnimatedSmurf, 512, 128);
-		animatedActorTest.position = new Vector3f(5, 0, 10);
+		animatedActorTest = new AnimatedActor(shapeAnimatedSmurf, "test", "a_running_front");
+		animatedActorTest.position = new Vector3f(3, 0, 5);
 		ac.add(animatedActorTest);
 
 

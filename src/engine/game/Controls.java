@@ -103,7 +103,7 @@ public class Controls {
 		}
 
 		if(lockMouse)
-			Mouse.setCursorPosition(400, 300);
+			Mouse.setCursorPosition(Game.getInstance().getWidth() / 2, Game.getInstance().getHeight() / 2);
 
 		lastX = Mouse.getX();
 		lastY = Mouse.getY(); 
@@ -141,22 +141,18 @@ public class Controls {
 		//TODO: Dégueulasse
 
 		if(key == KEY_UP)
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
-			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_back);
+			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_back");
 
 		if(key == KEY_DOWN){
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
-			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_front);
+			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_front");
 		}
 
 		if(key == KEY_LEFT){
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
-			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_left);
+			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_left");
 		}
 
 		if(key == KEY_RIGHT){
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest
-			.setAnimation(((GameWolfen)GameWolfen.getInstance()).animatedActorTest.a_running_right);
+			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_right");
 		}
 	}
 }

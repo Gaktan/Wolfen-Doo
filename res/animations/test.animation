@@ -1,0 +1,26 @@
+imageSize{512}
+frameSize{128}
+
+animation{
+  name[a_running_front]
+  frames[0, 1, 2, 3]
+  delays[150]
+}
+
+animation{
+  name[a_running_left]
+  frames[4, 5, 6, 7]
+  delays[150]
+}
+
+animation{
+  name[a_running_right]
+  frames[8, 9, 10, 11]
+  delays[150]
+}
+
+animation{
+  name[a_running_back]
+  frames[12, 13, 14, 15]
+  delays[150]
+}

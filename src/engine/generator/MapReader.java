@@ -114,7 +114,7 @@ public class MapReader {
 		else if(command.equals(COMMAND_ACTOR) || command.equals(COMMAND_WALL)
 				|| command.equals(COMMAND_ANIMATION))
 
-			createShape(value, command);
+			createShape(command, value);
 
 
 		else if(command.equals(COMMAND_MAP))
@@ -155,7 +155,7 @@ public class MapReader {
 		}
 	}
 
-	public void createShape(String value, String command){
+	public void createShape(String command, String value){
 		String[] values = value.split(", ");
 
 		ShaderProgram program = null;

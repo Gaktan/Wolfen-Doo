@@ -1,4 +1,4 @@
-package engine.entities;
+package engine.animations;
 
 import java.util.Arrays;
 
@@ -9,45 +9,47 @@ public class Animation {
 	private float imageFactor;
 	private int imagesPerLine;
 
-	private int startFrame;
-	private int endFrame;
+	private int[] frames;
 
-	private float[] delay;
+	private float[] delays;
 
-	private int currentFrame;
+	private int currentIndex;
 	private float currentDelay;
 
 	private boolean pause;
+	
+	public Animation() {}
 
-	public Animation(int start, int end, int image_size, int frame_size) {
-		int totalFrames = end - start + 1;
-
-		startFrame = start;
-		endFrame = end;
-
+	public Animation(int image_size, int frame_size) {
 		imagesPerLine = image_size / frame_size;
 		imageFactor = (float) frame_size / image_size;
 
-		delay = new float[totalFrames];
-		setDelay();
-
 		currentDelay = 0;
-		currentFrame = 0;
+		currentIndex = 0;
 	}
 
-	public void setDelay(int index, float delay){
-		if(index < 0 || index > this.delay.length + 1)
-			return;
-
-		this.delay[index] = delay;
+	public Animation(Animation animation) {
+		imagesPerLine = animation.imagesPerLine;
+		imageFactor = animation.imageFactor;
+		
+		frames = animation.frames;
+		delays = animation.delays;
+		
+		currentDelay = 0;
+		currentIndex = 0;
 	}
 
 	public void setDelay(float delay){
-		Arrays.fill(this.delay, delay);
+		if(delays == null)
+		{
+			delays = new float[frames.length];
+		}
+		Arrays.fill(this.delays, delay);
 	}
-
-	public void setDelay(){
-		setDelay(1000.0f);
+	
+	public void setDelays(float[] delays)
+	{
+		this.delays = delays;
 	}
 
 	public void updateFrame(float dt){
@@ -56,22 +58,22 @@ public class Animation {
 
 		currentDelay += dt;
 		
-		if(currentDelay >= delay[currentFrame]){
+		if(currentDelay >= delays[currentIndex]){
 			nextFrame();
 		}
 	}
 
 	public void nextFrame(){
-		currentFrame++;
+		currentIndex++;
 		currentDelay = 0;
 
-		if(currentFrame > endFrame - startFrame){
-			currentFrame = 0;
+		if(currentIndex >= frames.length){
+			currentIndex = 0;
 		}
 	}
 
 	public Vector3f getCurrentUV(){
-		int actualFrame = startFrame + currentFrame;
+		int actualFrame = frames[currentIndex];
 
 		float y = actualFrame / imagesPerLine;
 		float x = actualFrame % imagesPerLine;
@@ -91,6 +93,10 @@ public class Animation {
 	public void stop(){
 		pause();
 		currentDelay = 0;
-		currentFrame = 0;
+		currentIndex = 0;
+	}
+
+	public void setFrames(int[] frames) {
+		this.frames = frames;
 	}
 }

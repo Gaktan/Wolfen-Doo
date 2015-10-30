@@ -8,12 +8,11 @@ But ultimately I wanted to make a real game out of this, in the spirit of (and y
  * Fully working 3D game engine
  * Character movements and simple AABB collisions with the world
  * Map generator (from custom file or Maze generation)
- * Sort of working sprite animations (to be redone)
+ * Fully working sprite animations with configurable file
  * Shooting ugly fake laser beams that bounce off walls and
  * Particle system
 
 # What's left :
- * Better sprite animations with config file instead of hard-coded
  * Doors
  * Level transitions
  * Dungeon generator
@@ -23,5 +22,5 @@ But ultimately I wanted to make a real game out of this, in the spirit of (and y
  * ...
 
 # How to play ?
-Download the 'packed' and double click 'start.bat' (Java is required by the way) (Windows only ATM) 
+Download the whole repo and double click 'start.bat' (Java is required by the way) (Windows only ATM) 
 Controls are ZQSD to move around (sorry qwerty folks), left click shoots and right click frees the cursor
