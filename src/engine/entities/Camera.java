@@ -13,11 +13,13 @@ public class Camera extends Entity{
 	private Matrix4f view;
 	public Vector3f movementGoal;
 	public Vector3f movement;
-	
+
+	public Entity colliding;
+
 	public Matrix4f projectionXview;
-	
+
 	private float slipperyLevel = 1000.0f;
-	
+
 	// Camera rotation
 	public EAngle viewAngle;
 
@@ -45,15 +47,10 @@ public class Camera extends Entity{
 		viewAngle = new EAngle();
 	}
 
-	public void setProjection(){
-		projection = MatrixUtil.createPerspectiveProjection(fov, aspect, zNear, zFar);
-	}
-
 	/**
 	 * Apply the camera's transformations.
 	 */
-	public void apply(){
-		
+	public void apply() {
 		view = MatrixUtil.setView(position, viewAngle);
 	}
 
@@ -62,31 +59,37 @@ public class Camera extends Entity{
 		float dt = (float) elapsedTime / slipperyLevel;
 
 		movement = MathUtil.approach(movementGoal, movement, dt);
-		
+
 		Vector3f forward = viewAngle.toVector();
-		
+
 		forward.y = 0;
 		forward.normalise();
-		
+
 		Vector3f right = new Vector3f();
 		Vector3f.cross(MatrixUtil.Y_AXIS, forward, right);
 
 		forward.scale(movement.x);
 		right.scale(movement.z);
-		
+
 		Vector3f.add(forward, right, velocity);
-		
+
 		Matrix4f.mul(projection, view, projectionXview);
-		
+
 		return super.update(elapsedTime);
+	}
+
+	@Override
+	public void render(Camera camera) {}
+
+	// GETTERS 
+
+	public void setProjection(){
+		projection = MatrixUtil.createPerspectiveProjection(fov, aspect, zNear, zFar);
 	}
 
 	public Matrix4f getMatrixView(){
 		return view;
 	}
-
-	@Override
-	public void render(Camera camera) {}
 
 	public Vector3f getPosition(){
 		return position;
@@ -137,7 +140,7 @@ public class Camera extends Entity{
 		this.zFar = zFar;
 		setProjection();
 	}
-	
+
 	public Matrix4f getProjectionXview()
 	{
 		return projectionXview;

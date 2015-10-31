@@ -8,6 +8,7 @@ import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
+import engine.entities.EntityDoor;
 import engine.entities.EntityWall;
 import engine.shapes.*;
 
@@ -24,17 +25,17 @@ public class Map implements Displayable{
 		this(game, 20, 20, null);
 	}
 
-	public Map(GameWolfen game, int x, int y, EntityActor sky){
+	public Map(GameWolfen game, int x, int y, EntityActor sky) {
 		list = new DisplayableArray2D(x, y);
 
 		this.game = game;
 
-		if(sky == null){
+		if(sky == null) {
 			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
-			
+
 			skyShape.downColor = new Vector3f(0.75f, 0.75f, 0.75f);
 			skyShape.upColor = new Vector3f(0.35f, 0.75f, 0.9f);
-			
+
 			sky = new EntityActor(skyShape);
 		}
 
@@ -52,7 +53,6 @@ public class Map implements Displayable{
 
 	@Override
 	public boolean update(float dt) {
-
 		int x = (int) (game.camera.position.x + 0.5f);
 		int z = (int) (game.camera.position.z + 0.5f);
 
@@ -74,18 +74,17 @@ public class Map implements Displayable{
 				}
 			}
 		}
-		
+
 		boolean b = list.update(dt);
-		
+
 		if(!b)
 			return false;
-		
+
 		return !delete;
 	}
 
 	@Override
 	public void render(Camera camera) {
-		
 		sky.render(camera);
 		list.render(camera);
 	}
@@ -99,8 +98,8 @@ public class Map implements Displayable{
 		ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall");
 		//ShapeQuadTexture shapeCube = new ShapeQuadTexture(game.shaderProgramTexBill, "wall");
 
-		for(int i = 0; i < x; i++){
-			for(int j = 0; j < y; j++){
+		for(int i = 0; i < x; i++) {
+			for(int j = 0; j < y; j++) {
 				char c = st.charAt((i * y) + j);
 				if(c == 'O'){
 					newWall(x - i - 1, j, shapeCube, true);
@@ -112,7 +111,7 @@ public class Map implements Displayable{
 		setOrientation();
 	}
 
-	public void newActor(float x, float y, Shape shape, boolean solid){
+	public void newActor(float x, float y, Shape shape, boolean solid) {
 		x = this.x - x - 1;
 		EntityActor e = new EntityActor(shape);
 		e.position = new Vector3f(x, 0, y);
@@ -121,7 +120,7 @@ public class Map implements Displayable{
 		list.add(e, (int)x, (int)y);
 	}
 
-	public void newAnimatedActor(float x, float y, Shape shape, boolean solid){
+	public void newAnimatedActor(float x, float y, Shape shape, boolean solid) {
 		x = this.x - x - 1;
 		AnimatedActor e = new AnimatedActor(shape, "test", "a_running_front");
 		e.position = new Vector3f(x, 0, y);
@@ -130,12 +129,38 @@ public class Map implements Displayable{
 		list.add(e, (int)x, (int)y);
 	}
 
-	public void newWall(float x, float y, ShapeCubeTexture shape, boolean solid){
+	public void newWall(float x, float y, ShapeCubeTexture shape, boolean solid) {
 		x = this.x - x - 1;
 		EntityWall e = new EntityWall(shape);
 		e.position = new Vector3f(x, 0, y);
 		e.setSolid(solid);
-		
+
+		list.add(e, (int)x, (int)y);
+	}
+
+	/**
+	 * @param openingPosition relative position when opened
+	 * @param orientation see Orientation Class
+	 * @param speed opening speed
+	 */
+	public void newDoor(float x, float y, ShapeCubeTexture shape, Vector3f openingPosition, int orientation, float speed) {
+		x = this.x - x - 1;
+		EntityDoor e = new EntityDoor(shape);
+		e.position = new Vector3f(x, 0, y);
+		if(((orientation & Orientation.NORTH) == Orientation.NORTH) || ((orientation & Orientation.SOUTH) == Orientation.SOUTH ))
+		{
+			e.scale.x = 0.1f;
+		}
+		else 
+		{
+			e.scale.z = 0.1f;
+		}
+
+		e.setOriginialPosition(new Vector3f(x, 0, y));
+		Vector3f.add(e.position, openingPosition, openingPosition);
+		e.setOpeningPosition(openingPosition);
+		e.setOpeningSpeed(speed);
+
 		list.add(e, (int)x, (int)y);
 	}
 
@@ -153,7 +178,7 @@ public class Map implements Displayable{
 					continue;
 
 				int orientation = 0;
-				
+
 				if(i > 0)
 					orientation += processOrientation(actor, i-1, 	j, 		Orientation.WEST);
 
@@ -174,26 +199,32 @@ public class Map implements Displayable{
 		}
 	}
 
-	private int processOrientation(EntityActor actor, int i, int j, int o){
+	private int processOrientation(EntityActor actor, int i, int j, int o)
+	{
+		if (actor instanceof EntityDoor)
+			return o;
+		
 		Displayable d = list.get(i, j);
 
-		if(!(d instanceof EntityWall)){
+		if (!(d instanceof EntityWall)) 
 			return o;
-		}
 
 		EntityWall ew = (EntityWall) d;
 
-		if(!actor.isSolid() && !ew.isSolid())
+		if (!actor.isSolid() && !ew.isSolid())
 			return 0;
 
-		if(!ew.isSolid())
+		if (ew instanceof EntityDoor) {
 			return o;
-		
-		return 0;
+		}
 
+		if (!ew.isSolid())
+			return o;
+
+		return 0;
 	}
 
-	public void setSky(){
+	public void setSky() {
 		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x-0.5f, 1, y-0.5f);
 		sky.position = new Vector3f((x-1f) / 2, 0, (y-1f) / 2);
 	}
@@ -202,9 +233,40 @@ public class Map implements Displayable{
 	public void delete() {
 		delete = true;
 	}
-	
-	public int size()
-	{
+
+	public int size() {
 		return list.size() + 1;
+	}
+
+	public Entity rayCast(Vector3f position, Vector3f ray, float distance) {
+
+		if(ray.length() == 0)
+			return null;
+
+		ray.normalise();
+
+		for(float i = 0f; i < distance; i += 0.04f)
+		{
+			if(position.y + (ray.y * i) > 0.5f)
+				break;
+			if(position.y + (ray.y * i) < -0.5f)
+				break;
+
+			int x = (int) (position.x + (ray.x * i) + 0.5f);
+			int z = (int) (position.z + (ray.z * i) + 0.5f);
+
+			Displayable d = list.get(x, z);
+			if (d instanceof Entity)
+			{
+				Entity e = (Entity) d;
+
+				if (!(e instanceof EntityWall))
+					continue;
+
+				return e;
+			}
+		}
+
+		return null;
 	}
 }

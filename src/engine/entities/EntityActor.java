@@ -12,16 +12,16 @@ public class EntityActor extends Entity{
 
 	public Shape shape;
 	public Vector3f textureCoordinate;
-	public float scale;
 	public Color color;
 	public Vector3f rotation;
+	public Vector3f scale;
 
 	public EntityActor(Shape shape) {
 		super();
 
 		textureCoordinate = new Vector3f(5, 0, 1);
-		scale = 1f;
 		
+		scale = new Vector3f(1f, 1f, 1f);
 		rotation = new Vector3f();
 		
 		this.shape = shape;
@@ -57,7 +57,7 @@ public class EntityActor extends Entity{
 		model.m31 = position.y;
 		model.m32 = position.z;
 		
-		model = model.scale(new Vector3f(scale, scale, scale));
+		model = model.scale(scale);
 
 		shape.getShaderProgram().setUniform("u_model", model);
 	}

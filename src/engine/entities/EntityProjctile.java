@@ -26,6 +26,7 @@ public class EntityProjctile extends EntityLine {
 	public boolean update(float dt) {
 
 		boolean b = false;
+		boolean drawImpact = true;
 
 		if(position.x < 0 || position.z < 0 || position.x > map.x || position.z > map.y) {
 			return false;
@@ -39,13 +40,13 @@ public class EntityProjctile extends EntityLine {
 
 		for(float i = 0f; i < 1f; i += 0.01f)
 		{
-			int x = (int) (position.x + (velocity.x * i) + 0.5f);
-			int z = (int) (position.z + (velocity.z * i) + 0.5f);
-
 			if(position.y + (velocity.y * i) > 0.5f)
 				break;
 			if(position.y + (velocity.y * i) < -0.5f)
 				break;
+			
+			int x = (int) (position.x + (velocity.x * i) + 0.5f);
+			int z = (int) (position.z + (velocity.z * i) + 0.5f);
 
 			Displayable d = map.list.get(x, z);
 			if (d instanceof Entity)
@@ -56,7 +57,9 @@ public class EntityProjctile extends EntityLine {
 					continue;
 				if (!(e instanceof EntityWall))
 					continue;
-
+				if (e instanceof EntityDoor)
+					drawImpact = false;
+				
 				b = true;
 
 				impactPosition.z = position.z + (velocity.z * i);
@@ -137,7 +140,7 @@ public class EntityProjctile extends EntityLine {
 				bounces--;
 			}
 
-			else
+			else if (drawImpact)
 			{
 				normal.scale(MathUtil.random(0.99f, 1.01f));
 
@@ -168,7 +171,6 @@ public class EntityProjctile extends EntityLine {
 
 				e.position = newPos;
 				e.rotation = newRot;
-				e.scale = 0.1f;
 
 				e.setPaused(true);
 

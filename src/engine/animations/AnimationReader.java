@@ -3,6 +3,7 @@ package engine.animations;
 import java.util.HashMap;
 
 import engine.util.FileUtil;
+import engine.util.MathUtil;
 
 public class AnimationReader {
 	
@@ -65,11 +66,11 @@ public class AnimationReader {
 	{
 		if (command.equals(COMMAND_IMAGE_SIZE))
 		{
-			imageSize = readInt(value);
+			imageSize = MathUtil.parseInt(value);
 		}
 		else if (command.equals(COMMAND_FRAME_SIZE))
 		{
-			frameSize = readInt(value);
+			frameSize = MathUtil.parseInt(value);
 		}
 		else if (command.equals(COMMAND_ANIMATION))
 		{			
@@ -119,7 +120,7 @@ public class AnimationReader {
 			
 			for(int i = 0; i < split.length; i++)
 			{
-				frames[i] = readInt(split[i].trim());
+				frames[i] = MathUtil.parseInt(split[i].trim());
 			}
 			
 			currentAnimation.setFrames(frames);
@@ -138,7 +139,7 @@ public class AnimationReader {
 			
 			if(split.length == 1)
 			{
-				currentAnimation.setDelay(readFloat(split[0].trim()));
+				currentAnimation.setDelay(MathUtil.parseFloat(split[0].trim()));
 				return;
 			}
 			
@@ -146,34 +147,10 @@ public class AnimationReader {
 			
 			for(int i = 0; i < split.length; i++)
 			{
-				delays[i] = readFloat(split[i].trim());
+				delays[i] = MathUtil.parseFloat(split[i].trim());
 			}
 			
 			currentAnimation.setDelays(delays);
 		}
-	}
-	
-	private int readInt(String value){
-		try{
-			int i_value = Integer.parseInt(value);
-			return i_value;
-		} catch(NumberFormatException e){
-			System.err.println("Number Format Exception in : " + value);
-			e.printStackTrace();
-		}
-		
-		return 0;
-	}
-	
-	private float readFloat(String value){
-		try{
-			float f_value = Float.parseFloat(value);
-			return f_value;
-		} catch(NumberFormatException e){
-			System.err.println("Number Format Exception in : " + value);
-			e.printStackTrace();
-		}
-		
-		return 0f;
 	}
 }

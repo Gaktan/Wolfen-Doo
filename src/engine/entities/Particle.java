@@ -19,7 +19,7 @@ public class Particle extends EntityActor {
 		this.position = new Vector3f(position);
 
 		velocity = new Vector3f(MathUtil.randomNegPos(-factor, factor), 0.5f, MathUtil.randomNegPos(-factor, factor));
-		scale = MathUtil.random(0.05f, 0.1f);
+		scale.scale(MathUtil.random(0.05f, 0.1f));
 
 		//Random r = new Random();
 		//actor.color = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());

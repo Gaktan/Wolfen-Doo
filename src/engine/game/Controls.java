@@ -7,7 +7,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.entities.Camera;
+import engine.entities.Entity;
+import engine.entities.EntityDoor;
 import engine.entities.EntityProjctile;
+import engine.entities.EntityWall;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.MatrixUtil;
@@ -21,42 +24,44 @@ public class Controls {
 	private static int lastY;
 
 	private static boolean lockMouse = true;
+	private static boolean shootingPress = false;
+	private static boolean actionPress = false;
 
 	public static void update(Camera camera, float dt){
 
-		while(Keyboard.next()){
+		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
-			if(Keyboard.getEventKeyState()){
+			if (Keyboard.getEventKeyState()) {
 				handlePress(key, camera, dt);
 			}
-			else{
+			else {
 				handleRelease(key, camera, dt);
 			}
 		}
 
-		if(isKeyDown(KEY_SPACE)){
+		if (isKeyDown(KEY_SPACE)) {
 			Vector3f pos = camera.getPosition();
 			pos.y += upDownSpeed * dt;
 			camera.setPosition(pos);
 		}
 
-		if(isKeyDown(KEY_LCONTROL)){
+		if(isKeyDown(KEY_LCONTROL)) {
 			Vector3f pos = camera.getPosition();
 			pos.y += -upDownSpeed * dt;
 			camera.setPosition(pos);
 		}
 
-		if(isKeyDown(KEY_ADD)){
+		if (isKeyDown(KEY_ADD)) {
 			camera.setFov(camera.getFov() + 1);
 		}
-		if(isKeyDown(KEY_SUBTRACT)){
+		
+		if (isKeyDown(KEY_SUBTRACT)) {
 			camera.setFov(camera.getFov() - 1);
 		}
 
-		if(isKeyDown(KEY_ESCAPE))
+		if (isKeyDown(KEY_ESCAPE))
 			Game.end();
-
-
+		
 		handleMouse(camera);  	
 	}
 
@@ -69,10 +74,36 @@ public class Controls {
 
 		camera.viewAngle.normalize();
 
-		if(Mouse.isButtonDown(1))
+		if (Mouse.isButtonDown(2))
 			lockMouse = !lockMouse;
+		
+		if (actionPress) {
+			actionPress = false;
+			Vector3f lineVector = new Vector3f();
 
-		if(Mouse.isButtonDown(0))
+			EAngle angle = new EAngle(camera.viewAngle);
+			angle.yaw -= 45;
+			angle.pitch = -angle.pitch;
+
+			Vector3f forward = angle.toVector();
+
+			forward.normalise();
+
+			Vector3f right = new Vector3f();
+			Vector3f.cross(MatrixUtil.Y_AXIS, forward, right);
+
+			Vector3f.add(forward, right, lineVector);
+
+			lineVector.normalise();
+			
+			Entity e = ((GameWolfen) GameWolfen.getInstance()).map.rayCast(new Vector3f(camera.position), lineVector, 1.5f);
+			
+			if (e instanceof EntityDoor) {
+				((EntityDoor) e).toggle();
+			}
+		}
+
+		if (Mouse.isButtonDown(0))
 		{
 			Vector3f linePosition = new Vector3f(camera.getPosition());
 			Vector3f lineVector = new Vector3f();
@@ -102,7 +133,7 @@ public class Controls {
 					((GameWolfen) GameWolfen.getInstance()).map));
 		}
 
-		if(lockMouse)
+		if (lockMouse)
 			Mouse.setCursorPosition(Game.getInstance().getWidth() / 2, Game.getInstance().getHeight() / 2);
 
 		lastX = Mouse.getX();
@@ -122,6 +153,9 @@ public class Controls {
 
 		if (key == KEY_D)
 			camera.movementGoal.x = 0;
+		
+		if(key == KEY_E)
+			actionPress = false;
 	}
 
 	private static void handlePress(int key, Camera camera, float dt) {
@@ -137,6 +171,9 @@ public class Controls {
 
 		if (key == KEY_D)
 			camera.movementGoal.x = camSpeed;
+		
+		if(key == KEY_E)
+			actionPress = true;
 
 		//TODO: Dégueulasse
 

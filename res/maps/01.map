@@ -6,9 +6,12 @@ sky{237 157 95, 252 231 227}
 
 wall{O, wall, 1}
 wall{U, wall_portrait, 1}
-actor{X, pillar, 0}
+billboard{X, pillar, 0}
 wall{A, wall_hole, 0}
 animation{W, mul_test, 1}
+door{-, wall_portrait, 0 0 -0.9, 1, 0.5}
+door{|, wall_portrait, 0.9 0 0, 0, 3.7}
+door{_, pillar, 0 -0.9 0, 1, 1.0}
 
 map{
 OOOOOOOOOOOOOOOOOOOO
@@ -16,9 +19,9 @@ OX                 O
 O     OO  OO  OO   O
 O     OO  OO  OO   O
 O     O        O   O
-O X X O   XX   OX XO
-OOO OOOO OOOO OOO OO
-O X X           X XO
+O X   |   XX   OX XO
+OOO-O-OO OOOO OOO_OO
+O               X XO
 O                  O
 O    A             O
 U    O    OXO  O   O
