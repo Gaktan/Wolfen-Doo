@@ -16,58 +16,73 @@ import engine.shapes.ShapeQuadTexture;
 import engine.util.FileUtil;
 import engine.util.MathUtil;
 
+/**
+ * MapReader class is used to read a map from a .map file
+ * 
+ * For an example, see res/maps/map.example
+ * 
+ * @author Gaktan
+ */
 public class MapReader {
 
-	public static final String COMMAND_NAME = "name";
-	public static final String COMMAND_WIDTH = "width";
-	public static final String COMMAND_HEIGHT = "height";
-	public static final String COMMAND_BILLBOARD = "billboard";
-	public static final String COMMAND_WALL = "wall";
-	public static final String COMMAND_ANIMATION = "animation";
-	public static final String COMMAND_DOOR = "door";
+	// Commands
+	protected static final String COMMAND_NAME = "name";
+	protected static final String COMMAND_WIDTH = "width";
+	protected static final String COMMAND_HEIGHT = "height";
+	protected static final String COMMAND_BILLBOARD = "billboard";
+	protected static final String COMMAND_WALL = "wall";
+	protected static final String COMMAND_ANIMATION = "animation";
+	protected static final String COMMAND_DOOR = "door";
+	protected static final String COMMAND_MAP = "map";
+	protected static final String COMMAND_SKY = "sky";
 
-	public static final String COMMAND_MAP = "map";
-	public static final String COMMAND_SKY = "sky";
+	// Shader Programs
+	protected static final String PROGRAM_TEXTURE = "texture";
+	protected static final String PROGRAM_BILLBOARD_ANIMATED = "billboard_animated";
+	protected static final String PROGRAM_SKY = "sky";
+	protected static final String PROGRAM_BILLBOARD_TEXTURE = "billboard_texture";
 
-	public static final String PROGRAM_TEXTURE = "texture";
-	public static final String PROGRAM_BILLBOARD_ANIMATED = "billboard_animated";
-	public static final String PROGRAM_SKY = "sky";
-	public static final String PROGRAM_BILLBOARD_TEXTURE = "billboard_texture";
+	// Shapes
+	protected static final String SHAPE_CUBE_TEXTURE = "cube_texture";
+	protected static final String SHAPE_INSIDE_OUT_CUBE_COLOR = "inside_out_cube_color";
+	protected static final String SHAPE_QUAD_TEXTURE = "quad_texture";
 
-	public static final String SHAPE_CUBE_TEXTURE = "cube_texture";
-	public static final String SHAPE_INSIDE_OUT_CUBE_COLOR = "inside_out_cube_color";
-	public static final String SHAPE_QUAD_TEXTURE = "quad_texture";
+	protected String path;
+	protected String mapData;
 
-	private String path;
-	private String mapData;
+	protected String name;
+	protected int width;
+	protected int height;
+	protected Map map;
 
-	private String name;
-	private int width;
-	private int height;
-	private Map map;
+	protected HashMap<Character, MapInfo> infoMap;
 
-	private HashMap<Character, MapInfo> infoMap;
+	protected GameWolfen game;
 
-	private GameWolfen game;
-
-	private enum MapInfoType
-	{
+	/**
+	 * Used by MapInfo to get the type of the entity
+	 */
+	protected enum MapInfoType {
 		WALL,
 		BILLBOARD,
 		ANIMATED_BILLBOARD,
 		DOOR
 	}
 
-	private class MapInfo
-	{
+	/**
+	 * Used to store informations about entity creation commands
+	 */
+	protected class MapInfo {
 		protected Shape shape;
 		protected boolean solid;
 
 		protected MapInfoType type;
 	}
 
-	private class MapInfoDoor extends MapInfo
-	{
+	/**
+	 * MapInfo specifically made for doors (as they hold much more information)
+	 */
+	protected class MapInfoDoor extends MapInfo {
 		protected Vector3f openingPosition;
 		protected int orientation;
 		protected float speed;
@@ -77,7 +92,6 @@ public class MapReader {
 		}
 	}
 
-
 	public MapReader(GameWolfen game, String path) {
 		this.game = game;
 		this.path = path;
@@ -85,7 +99,11 @@ public class MapReader {
 		infoMap = new HashMap<Character, MapInfo>();
 	}
 
-	public Map createMap(){
+	/**
+	 * Starts the process of reading the map
+	 * @return Map created from designated file
+	 */
+	public Map createMap() {
 		map = new Map(game);
 
 		readFile(path);
@@ -101,7 +119,7 @@ public class MapReader {
 		return map;
 	}
 
-	public void readFile(String path){
+	protected void readFile(String path) {
 		String data = FileUtil.readFromFile("res/maps/" + path + ".map");
 
 		int start = 0;
@@ -109,14 +127,15 @@ public class MapReader {
 
 		String command = null;
 
-		for(char ch : data.toCharArray()){
-			if(ch == '{'){
+		for (char ch : data.toCharArray()) 
+		{
+			if (ch == '{') {
 				command = data.substring(start, end).trim().toLowerCase();
 
 				start = end+1;
 			}
 
-			else if(ch == '}'){
+			else if (ch == '}') {
 				String value = data.substring(start, end).trim().toLowerCase();
 
 				start = end+1;
@@ -129,41 +148,39 @@ public class MapReader {
 		}
 	}
 
-	public void performCommand(String command, String value){
+	protected void performCommand(String command, String value) {
 
-		if(command.equals(COMMAND_WIDTH))
+		if (command.equals(COMMAND_WIDTH))
 			width = MathUtil.parseInt(value);
 
-		else if(command.equals(COMMAND_HEIGHT))
+		else if (command.equals(COMMAND_HEIGHT))
 			height = MathUtil.parseInt(value);
 
-		else if(command.equals(COMMAND_NAME))
+		else if (command.equals(COMMAND_NAME))
 			name = value;
 
-		else if(command.equals(COMMAND_BILLBOARD) || command.equals(COMMAND_WALL)
+		else if (command.equals(COMMAND_BILLBOARD) || command.equals(COMMAND_WALL)
 				|| command.equals(COMMAND_ANIMATION) || command.equals(COMMAND_DOOR))
 			createShape(command, value);
 
-		else if(command.equals(COMMAND_MAP))
+		else if (command.equals(COMMAND_MAP))
 			mapData = value.replace("\n", "");
 
-		else if(command.equals(COMMAND_SKY))
+		else if (command.equals(COMMAND_SKY))
 			setSky(value);
 
 	}
 
-	private void readMap(String value)
-	{
-		for(int i = 0; i < width; i++)
+	protected void readMap(String value) {
+		for (int i = 0; i < width; i++)
 		{
-			for(int j = 0; j < height; j++)
+			for (int j = 0; j < height; j++)
 			{
 				char c = value.charAt((i * width) + j);
 
 				MapInfo mapInfo = infoMap.get(c);
 
-				if(mapInfo != null)
-				{
+				if (mapInfo != null) {
 					Shape shape = mapInfo.shape;
 
 					boolean solid = mapInfo.solid;
@@ -186,12 +203,11 @@ public class MapReader {
 								mapInfoDoor.orientation, mapInfoDoor.speed);
 					}
 				}
-			}
-		}
+			} // for j
+		} // for i
 	}
 
-	public void createShape(String command, String value)
-	{
+	protected void createShape(String command, String value) {
 		String[] values = value.split(", ");
 
 		ShaderProgram program = null;
@@ -202,29 +218,25 @@ public class MapReader {
 
 		MapInfo mapInfo = new MapInfo();
 
-		if (command.equals(COMMAND_ANIMATION))
-		{
+		if (command.equals(COMMAND_ANIMATION)) {
 			program = getProgram(PROGRAM_BILLBOARD_ANIMATED);
 			shape = createShape(SHAPE_QUAD_TEXTURE, program, s_image);
 			mapInfo.type = MapInfoType.ANIMATED_BILLBOARD;
 		}
 
-		else if (command.equals(COMMAND_BILLBOARD))
-		{
+		else if (command.equals(COMMAND_BILLBOARD)) {
 			program = getProgram(PROGRAM_BILLBOARD_TEXTURE);
 			shape = createShape(SHAPE_QUAD_TEXTURE, program, s_image);
 			mapInfo.type = MapInfoType.BILLBOARD;
 		}
 
-		else if (command.equals(COMMAND_WALL))
-		{
+		else if (command.equals(COMMAND_WALL)) {
 			program = getProgram(PROGRAM_TEXTURE);
 			shape = createShape(SHAPE_CUBE_TEXTURE, program, s_image);
 			mapInfo.type = MapInfoType.WALL;
 		}
 
-		else if (command.equals(COMMAND_DOOR))
-		{
+		else if (command.equals(COMMAND_DOOR)) {
 			program = getProgram(PROGRAM_TEXTURE);
 			shape = createShape(SHAPE_CUBE_TEXTURE, program, s_image);
 			MapInfoDoor mapInfoDoor = new MapInfoDoor();
@@ -243,10 +255,10 @@ public class MapReader {
 		int solid = 0;
 		String s_solid = values[2];
 
-		try{
+		try {
 			solid = Integer.parseInt(s_solid);
 		}
-		catch(NumberFormatException e){
+		catch (NumberFormatException e){
 			e.printStackTrace();
 		}
 
@@ -256,37 +268,37 @@ public class MapReader {
 		infoMap.put(ch, mapInfo);
 	}
 
-	public Shape createShape(String shape, ShaderProgram program, String texture){
+	protected Shape createShape(String shape, ShaderProgram program, String texture) {
 
-		if(shape.equals(SHAPE_CUBE_TEXTURE))
+		if (shape.equals(SHAPE_CUBE_TEXTURE))
 			return new ShapeCubeTexture(program, texture);
 
-		if(shape.equals(SHAPE_INSIDE_OUT_CUBE_COLOR))
+		if (shape.equals(SHAPE_INSIDE_OUT_CUBE_COLOR))
 			return new ShapeInsideOutCubeColor(program);
 
-		if(shape.equals(SHAPE_QUAD_TEXTURE))
+		if (shape.equals(SHAPE_QUAD_TEXTURE))
 			return new ShapeQuadTexture(program, texture);
 
 		return null;
 	}
 
-	public ShaderProgram getProgram(String shaderProgram){
-		if(shaderProgram.equals(PROGRAM_TEXTURE))
+	private ShaderProgram getProgram(String shaderProgram) {
+		if (shaderProgram.equals(PROGRAM_TEXTURE))
 			return game.shaderProgramTex;
 
-		if(shaderProgram.equals(PROGRAM_SKY))
+		if (shaderProgram.equals(PROGRAM_SKY))
 			return game.shaderProgramSky;
 
-		if(shaderProgram.equals(PROGRAM_BILLBOARD_TEXTURE))
+		if (shaderProgram.equals(PROGRAM_BILLBOARD_TEXTURE))
 			return game.shaderProgramTexBill;
 
-		if(shaderProgram.equals(PROGRAM_BILLBOARD_ANIMATED))
+		if (shaderProgram.equals(PROGRAM_BILLBOARD_ANIMATED))
 			return game.shaderProgramTexBill;
 
 		return null;
 	}
 
-	private void setSky(String value) {
+	protected void setSky(String value) {
 
 		String[] values = value.split(", ");
 		Vector3f downColor = readVector3f(values[0]);
@@ -303,7 +315,7 @@ public class MapReader {
 		map.sky = new EntityActor(skyShape);
 	}
 
-	public Vector3f readVector3f(String value){
+	protected Vector3f readVector3f(String value) {
 		String[] v = value.split(" ");
 
 		float x = MathUtil.parseFloat(v[0]);

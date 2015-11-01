@@ -13,19 +13,22 @@ import org.lwjgl.opengl.GL30;
 import engine.game.ShaderProgram;
 import engine.util.TextureUtil;
 
+/**
+ * 2D Shape of a simple quad
+ */
 public class ShapeQuadTexture extends Shape {
 
 	private int textureID;
 
-	public ShapeQuadTexture(ShaderProgram shaderProgram, String texture){
+	public ShapeQuadTexture(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram);
 
 		textureID = TextureUtil.loadTexture(texture);
 	}
 
-	public void init(){
+	protected void init() {
 		FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 4);
-		vertices.put(new float[]{
+		vertices.put(new float[]{ 
 				// pos			tex coord
 				-0.5f, -0.5f,	0.f, 0.f,
 				-0.5f, +0.5f,	0.f, 1.f,
@@ -35,7 +38,7 @@ public class ShapeQuadTexture extends Shape {
 		vertices.flip();
 
 		IntBuffer indices = BufferUtils.createIntBuffer(2 * 3);
-		indices.put(new int[]{
+		indices.put(new int[] {
 				0, 1, 2,
 				0, 2, 3
 		});
@@ -86,7 +89,7 @@ public class ShapeQuadTexture extends Shape {
 	}
 
 	@Override
-	public void render(){
+	public void render() {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
 	}
 

@@ -154,7 +154,7 @@ public class ShaderProgram{
 	/**
 	 * @return The ID of this program.
 	 */
-	public int getID(){
+	public int getID() {
 		return programID;
 	}
 
@@ -163,15 +163,25 @@ public class ShaderProgram{
 	 * @param name The name of the uniform.
 	 * @param value The value of the matrix.
 	 */
-	public void setUniform(String name, Matrix4f value){
+	public void setUniform(String name, Matrix4f value) {
 		glUniformMatrix4(glGetUniformLocation(programID, name), false, MatrixUtil.toFloatBuffer(value));
 	}
 
-	public void setUniform(String name, Vector3f v){
+	/**
+	 * Sets a uniform vector variable
+	 * @param name The name of the uniform
+	 * @param v The value of the vector
+	 */
+	public void setUniform(String name, Vector3f v) {
 		glUniform3f(glGetUniformLocation(programID, name), v.x, v.y, v.z);
 	}
 	
-	public void setUniform(String name, float f){
+	/**
+	 * Sets a uniform float variable
+	 * @param name The name of the uniform
+	 * @param f The float value
+	 */
+	public void setUniform(String name, float f) {
 		glUniform1f(glGetUniformLocation(programID, name), f);
 	}
 

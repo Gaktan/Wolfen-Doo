@@ -2,18 +2,24 @@ package engine.game;
 
 import java.util.LinkedList;
 
+/**
+ * Class used to compute FPS
+ * 
+ * @author Gaktan
+ */
 public class Fps {
 
 	private static long ONE_SECOND = 1000000L * 1000L;
 
-	LinkedList<Long> frames;
+	private LinkedList<Long> frames;
 
-	public long calcFPS(){
+	public long update() {
 		long time = System.nanoTime();
 		frames.add(time);
-		while(true){
+		
+		while (true){
 			long f = frames.getFirst();
-			if(time - f > ONE_SECOND){
+			if (time - f > ONE_SECOND) {
 				frames.remove();
 			} 
 			else 

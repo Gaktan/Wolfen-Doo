@@ -3,15 +3,13 @@ package engine.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStreamReader;
-
-import engine.game.Game;
-import engine.game.ShaderProgram;
 
 public class FileUtil{
 
 	/**
-	 * @return The entire source of a file as a single string
+	 * Puts a whole file into a String
+	 * 
+	 * @return The entire source of a file as a single string. Null if something went wrong
 	 */
 	public static String readFromFile(String name){
 		StringBuilder source = new StringBuilder();
@@ -29,7 +27,7 @@ public class FileUtil{
 		catch (Exception e){
 			System.err.println("Error loading file: " + name);
 			e.printStackTrace();
-			Game.end();
+			return null;
 		}
 
 		return source.toString();

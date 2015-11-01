@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.game.ShaderProgram;
 
@@ -26,10 +25,9 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 	}
 
 	@Override
-	public void init() {
-
+	protected void init() {
 		FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * 5);
-		vertices.put(new float[]{
+		vertices.put(new float[] {
 				// front			// Tex Pos
 				-0.5f, -0.5f,  0.5f, 	0f, 1f,
 				0.5f, -0.5f,  0.5f,		1f, 1f,
@@ -63,7 +61,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		 */
 
 		i_n = BufferUtils.createIntBuffer(2 * 3);
-		i_n.put(new int[]{
+		i_n.put(new int[] {
 				// front
 				1, 0, 2,
 				3, 2, 0,
@@ -71,7 +69,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		i_n.flip();
 
 		i_s = BufferUtils.createIntBuffer(2 * 3);
-		i_s.put(new int[]{
+		i_s.put(new int[] {
 				// back
 				6, 7, 5,
 				4, 5, 7,
@@ -79,7 +77,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		i_s.flip();
 
 		i_e = BufferUtils.createIntBuffer(2 * 3);
-		i_e.put(new int[]{
+		i_e.put(new int[] {
 				// right
 				5, 1, 6,
 				2, 6, 1,
@@ -87,7 +85,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		i_e.flip();
 
 		i_w = BufferUtils.createIntBuffer(2 * 3);
-		i_w.put(new int[]{
+		i_w.put(new int[] {
 				// left
 				0, 4, 3,
 				7, 3, 4,
@@ -135,20 +133,16 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		if(orientation == 0)
 			return;
 
-		if((orientation & Orientation.NORTH) == Orientation.NORTH){
-			//shaderProgram.setUniform("u_normal", new Vector3f(1, 0, 0));
+		if ((orientation & Orientation.NORTH) == Orientation.NORTH) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_n);
 		}
-		if((orientation & Orientation.SOUTH) == Orientation.SOUTH){
-			//shaderProgram.setUniform("u_normal", new Vector3f(-1, 0, 0));
+		if ((orientation & Orientation.SOUTH) == Orientation.SOUTH) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_s);
 		}
-		if((orientation & Orientation.EAST) == Orientation.EAST){
-			//shaderProgram.setUniform("u_normal", new Vector3f(0, 0, 1));
+		if ((orientation & Orientation.EAST) == Orientation.EAST) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_e);
 		}
-		if((orientation & Orientation.WEST) == Orientation.WEST){
-			//shaderProgram.setUniform("u_normal", new Vector3f(0, 0, -1));
+		if ((orientation & Orientation.WEST) == Orientation.WEST) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_w);
 		}		
 	}
@@ -167,8 +161,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		GL20.glDisableVertexAttribArray(1);
 	}
 
-
-	public void render(int orientation){
+	public void render(int orientation) {
 		this.orientation = orientation;
 
 		render();

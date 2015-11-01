@@ -26,10 +26,9 @@ public class ShapeInsideOutCubeColor extends Shape {
 	}
 
 	@Override
-	public void init() {
-
+	protected void init() {
 		FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * 3);
-		vertices.put(new float[]{
+		vertices.put(new float[] {
 				// front
 				-0.5f, -0.5f,  0.5f,
 				0.5f, -0.5f,  0.5f,
@@ -44,7 +43,7 @@ public class ShapeInsideOutCubeColor extends Shape {
 		vertices.flip();
 
 		IntBuffer indices = BufferUtils.createIntBuffer(12 * 3);
-		indices.put(new int[]{
+		indices.put(new int[] {
 				// front
 				0, 1, 2,
 				2, 3, 0,
@@ -108,7 +107,6 @@ public class ShapeInsideOutCubeColor extends Shape {
 
 	@Override
 	public void render() {
-
 		shaderProgram.setUniform("u_scale", scale);
 		shaderProgram.setUniform("u_upColor", upColor);
 		shaderProgram.setUniform("u_downColor", downColor);

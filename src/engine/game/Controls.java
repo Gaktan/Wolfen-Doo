@@ -10,11 +10,15 @@ import engine.entities.Camera;
 import engine.entities.Entity;
 import engine.entities.EntityDoor;
 import engine.entities.EntityProjctile;
-import engine.entities.EntityWall;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.MatrixUtil;
 
+/**
+ * Dirty class used to handle controls <br>
+ * To be redone at some point
+ * @author Gaktan
+ */
 public class Controls {
 
 	private static float camSpeed = 0.4f;
@@ -24,19 +28,18 @@ public class Controls {
 	private static int lastY;
 
 	private static boolean lockMouse = true;
-	private static boolean shootingPress = false;
 	private static boolean actionPress = false;
 
 	public static void update(Camera camera, float dt){
 
 		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
-			if (Keyboard.getEventKeyState()) {
+			
+			if (Keyboard.getEventKeyState())
 				handlePress(key, camera, dt);
-			}
-			else {
+			
+			else
 				handleRelease(key, camera, dt);
-			}
 		}
 
 		if (isKeyDown(KEY_SPACE)) {
@@ -45,19 +48,17 @@ public class Controls {
 			camera.setPosition(pos);
 		}
 
-		if(isKeyDown(KEY_LCONTROL)) {
+		if (isKeyDown(KEY_LCONTROL)) {
 			Vector3f pos = camera.getPosition();
 			pos.y += -upDownSpeed * dt;
 			camera.setPosition(pos);
 		}
 
-		if (isKeyDown(KEY_ADD)) {
+		if (isKeyDown(KEY_ADD))
 			camera.setFov(camera.getFov() + 1);
-		}
 		
-		if (isKeyDown(KEY_SUBTRACT)) {
+		if (isKeyDown(KEY_SUBTRACT))
 			camera.setFov(camera.getFov() - 1);
-		}
 
 		if (isKeyDown(KEY_ESCAPE))
 			Game.end();
@@ -103,8 +104,7 @@ public class Controls {
 			}
 		}
 
-		if (Mouse.isButtonDown(0))
-		{
+		if (Mouse.isButtonDown(0)) {
 			Vector3f linePosition = new Vector3f(camera.getPosition());
 			Vector3f lineVector = new Vector3f();
 
@@ -141,7 +141,6 @@ public class Controls {
 	}
 
 	private static void handleRelease(int key, Camera camera, float dt) {
-
 		if (key == KEY_Z)
 			camera.movementGoal.z = 0;
 
@@ -159,7 +158,6 @@ public class Controls {
 	}
 
 	private static void handlePress(int key, Camera camera, float dt) {
-
 		if (key == KEY_Z)
 			camera.movementGoal.z = camSpeed;
 
@@ -175,20 +173,18 @@ public class Controls {
 		if(key == KEY_E)
 			actionPress = true;
 
-		//TODO: Dégueulasse
-
-		if(key == KEY_UP)
+		if (key == KEY_UP)
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_back");
 
-		if(key == KEY_DOWN){
+		if (key == KEY_DOWN){
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_front");
 		}
 
-		if(key == KEY_LEFT){
+		if (key == KEY_LEFT){
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_left");
 		}
 
-		if(key == KEY_RIGHT){
+		if (key == KEY_RIGHT){
 			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_right");
 		}
 	}

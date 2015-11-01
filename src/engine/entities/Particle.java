@@ -8,17 +8,17 @@ import engine.util.MathUtil;
 
 public class Particle extends EntityActor {
 
-	public int life;
+	private float life;
 	private static final float factor = 1f;
 	private boolean paused;
 	private static final Vector3f GRAVITY = new Vector3f(0, -0.04f, 0);
 
-	public Particle(GameWolfen game, Shape shape, int life, Vector3f position){
+	public Particle(GameWolfen game, Shape shape, float life, Vector3f position){
 		super(shape);
 
 		this.position = new Vector3f(position);
 
-		velocity = new Vector3f(MathUtil.randomNegPos(-factor, factor), 0.5f, MathUtil.randomNegPos(-factor, factor));
+		velocity = new Vector3f(MathUtil.randomNegative(-factor, factor), 0.5f, MathUtil.randomNegative(-factor, factor));
 		scale.scale(MathUtil.random(0.05f, 0.1f));
 
 		//Random r = new Random();
@@ -28,9 +28,9 @@ public class Particle extends EntityActor {
 	}
 
 	@Override
-	public boolean update(float dt) {
-
-		life--;
+	public boolean update(float dt)
+	{
+		life -= dt;
 
 		if(life <= 0)
 			return false;
@@ -63,7 +63,7 @@ public class Particle extends EntityActor {
 		life = 0;
 	}
 
-	public int getLife() {
+	public float getLife() {
 		return life;
 	}
 

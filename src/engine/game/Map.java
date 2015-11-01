@@ -12,6 +12,9 @@ import engine.entities.EntityDoor;
 import engine.entities.EntityWall;
 import engine.shapes.*;
 
+/**
+ * Used to render a 2D grid map
+ */
 public class Map implements Displayable{
 
 	public EntityActor sky;
@@ -30,7 +33,7 @@ public class Map implements Displayable{
 
 		this.game = game;
 
-		if(sky == null) {
+		if (sky == null) {
 			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
 
 			skyShape.downColor = new Vector3f(0.75f, 0.75f, 0.75f);
@@ -41,10 +44,14 @@ public class Map implements Displayable{
 
 		this.x = x;
 		this.y = y;
-
 	}
 
-	public void setSize(int x, int y){
+	/**
+	 * Sets map size
+	 * @param x Width
+	 * @param y Height
+	 */
+	public void setSize(int x, int y) {
 		this.x = x;
 		this.y = y;
 
@@ -56,8 +63,8 @@ public class Map implements Displayable{
 		int x = (int) (game.camera.position.x + 0.5f);
 		int z = (int) (game.camera.position.z + 0.5f);
 
-		for(int i = x - 1; i < x + 2; i++){
-			for(int j = z - 1; j < z + 2; j++){
+		for (int i = x - 1; i < x + 2; i++) {
+			for (int j = z - 1; j < z + 2; j++) {
 
 				Displayable d = list.get(i, j);
 
@@ -66,10 +73,10 @@ public class Map implements Displayable{
 
 				Entity e = (Entity) d;
 
-				if(!e.isSolid())
+				if (!e.isSolid())
 					continue;
 
-				if(game.camera.collide(e)){
+				if (game.camera.collide(e)){
 					game.camera.collisionHandler(e);
 				}
 			}
@@ -77,7 +84,7 @@ public class Map implements Displayable{
 
 		boolean b = list.update(dt);
 
-		if(!b)
+		if (!b)
 			return false;
 
 		return !delete;
@@ -89,26 +96,27 @@ public class Map implements Displayable{
 		list.render(camera);
 	}
 
-	public void buildMapFromString(String st){
+	/**
+	 * Builds a map on a given string (might get removed)
+	 * @param st
+	 */
+	public void buildMapFromString(String st) {
 
 		list = new DisplayableArray2D(x, y);
 
-		setSky();
-
 		ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall");
-		//ShapeQuadTexture shapeCube = new ShapeQuadTexture(game.shaderProgramTexBill, "wall");
 
-		for(int i = 0; i < x; i++) {
-			for(int j = 0; j < y; j++) {
+		for (int i = 0; i < x; i++) {
+			for (int j = 0; j < y; j++) {
 				char c = st.charAt((i * y) + j);
-				if(c == 'O'){
+				if (c == 'O') {
 					newWall(x - i - 1, j, shapeCube, true);
-					//newActor(x - i - 1, j, shapeCube, false);
 				}
-			}
-		}
+			} // for j
+		} // for i
 
 		setOrientation();
+		setSky();
 	}
 
 	public void newActor(float x, float y, Shape shape, boolean solid) {
@@ -147,12 +155,11 @@ public class Map implements Displayable{
 		x = this.x - x - 1;
 		EntityDoor e = new EntityDoor(shape);
 		e.position = new Vector3f(x, 0, y);
-		if(((orientation & Orientation.NORTH) == Orientation.NORTH) || ((orientation & Orientation.SOUTH) == Orientation.SOUTH ))
-		{
+		if (((orientation & Orientation.NORTH) == Orientation.NORTH) 
+				|| ((orientation & Orientation.SOUTH) == Orientation.SOUTH )) {
 			e.scale.x = 0.1f;
 		}
-		else 
-		{
+		else {
 			e.scale.z = 0.1f;
 		}
 
@@ -164,13 +171,16 @@ public class Map implements Displayable{
 		list.add(e, (int)x, (int)y);
 	}
 
+	/**
+	 * Sets all walls orientation so only visible faces are rendered
+	 */
 	public void setOrientation() {
-		for(int i = 0; i < x; i++){
-			for(int j = 0; j < y; j++){
+		for (int i = 0; i < x; i++) {
+			for (int j = 0; j < y; j++) {
 
 				EntityActor actor = (EntityActor) list.get(i, j);
 
-				if(actor == null){
+				if (actor == null){
 					continue;
 				}
 
@@ -179,28 +189,27 @@ public class Map implements Displayable{
 
 				int orientation = 0;
 
-				if(i > 0)
+				if (i > 0)
 					orientation += processOrientation(actor, i-1, 	j, 		Orientation.WEST);
 
-				if(j > 0)
+				if (j > 0)
 					orientation += processOrientation(actor, i, 	j-1,	Orientation.SOUTH);
 
-				if(i < x - 1)
+				if (i < x - 1)
 					orientation += processOrientation(actor, i+1, 	j,		Orientation.EAST);
 
-				if(j < y - 1)
+				if (j < y - 1)
 					orientation += processOrientation(actor, i, 	j+1,	Orientation.NORTH);
 
 				if (actor instanceof EntityWall) {
 					EntityWall new_name = (EntityWall) actor;
 					new_name.setOrientation(orientation);
 				}
-			}
-		}
+			} // for j
+		} // for i
 	}
 
-	private int processOrientation(EntityActor actor, int i, int j, int o)
-	{
+	private int processOrientation(EntityActor actor, int i, int j, int o) {
 		if (actor instanceof EntityDoor)
 			return o;
 		
@@ -224,6 +233,9 @@ public class Map implements Displayable{
 		return 0;
 	}
 
+	/**
+	 * Resets the sky after map's size had been changed
+	 */
 	public void setSky() {
 		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x-0.5f, 1, y-0.5f);
 		sky.position = new Vector3f((x-1f) / 2, 0, (y-1f) / 2);
@@ -238,34 +250,35 @@ public class Map implements Displayable{
 		return list.size() + 1;
 	}
 
+	/**
+	 * Casts a ray to find the nearest entity in its direction
+	 * @param position Position to cast the ray from
+	 * @param ray Direction of the ray
+	 * @param distance Maximum distance
+	 * @return First Entity found. Null if nothing was found
+	 */
 	public Entity rayCast(Vector3f position, Vector3f ray, float distance) {
-
-		if(ray.length() == 0)
+		if (ray.length() == 0)
 			return null;
 
 		ray.normalise();
 
-		for(float i = 0f; i < distance; i += 0.04f)
-		{
-			if(position.y + (ray.y * i) > 0.5f)
+		for (float i = 0f; i < distance; i += 0.04f) {
+			if (position.y + (ray.y * i) > 0.5f)
 				break;
-			if(position.y + (ray.y * i) < -0.5f)
+			if (position.y + (ray.y * i) < -0.5f)
 				break;
 
 			int x = (int) (position.x + (ray.x * i) + 0.5f);
 			int z = (int) (position.z + (ray.z * i) + 0.5f);
 
 			Displayable d = list.get(x, z);
-			if (d instanceof Entity)
-			{
+			if (d instanceof Entity) {
 				Entity e = (Entity) d;
-
-				if (!(e instanceof EntityWall))
-					continue;
 
 				return e;
 			}
-		}
+		} // for i
 
 		return null;
 	}

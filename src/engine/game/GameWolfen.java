@@ -8,14 +8,12 @@ import engine.DisplayableList;
 import engine.DisplayableText;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
-import engine.entities.EntityDoor;
 import engine.entities.ParticleSystem;
-import engine.entities.EntityDoor.DoorState;
 import engine.generator.MapReader;
 import engine.generator.MazeGenerator;
 import engine.shapes.*;
 
-public class GameWolfen extends Game{
+public class GameWolfen extends Game {
 
 	public ShaderProgram shaderProgramTex;
 	public ShaderProgram shaderProgramSky;
@@ -31,7 +29,7 @@ public class GameWolfen extends Game{
 	public Map map;
 
 	/* TEMP STUFF */
-	
+
 	public BitMapFont bmf;
 	public DisplayableText textPos;
 	public DisplayableText textFps;
@@ -74,7 +72,7 @@ public class GameWolfen extends Game{
 		camera.setPosition(new Vector3f(2, 0, 2));
 
 		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
-		
+
 		shapeImpact = new ShapeQuadTexture(shaderProgramTex, "bullet_impact");
 
 		MapReader mr = new MapReader(this, "01");
@@ -91,40 +89,51 @@ public class GameWolfen extends Game{
 
 
 		bmf = new BitMapFont(this, "char", 256, 16);
-		
+
 		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "", false);
 		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "", false);
 		textEntities = bmf.createString(new Vector3f(-.95f, .75f, 0), "", false);
-		
+
 		ac.add(textPos);
 		ac.add(textFps);
 		ac.add(textEntities);
 
 		fps = new Fps();
 
-		ParticleSystem ps = new ParticleSystem(this, new Vector3f(4, 0, 4), 800);
+		ParticleSystem ps = new ParticleSystem(this, new Vector3f(4, 0, 4), 16000);
 		ac.add(ps);
 	}
+
+	// TEMP
+	boolean addNext = false;
 
 	@Override
 	public void update(float elapsedTime) {
 		Controls.update(camera, elapsedTime);
 
-		total += elapsedTime;
 		/*
-		if(total > elapsedTime * 100){
-			ac.remove(map);
+		total += elapsedTime;
+
+		if(addNext)
+		{
 			map = new MazeGenerator(this, 51, 31).generate();
 			ac.add(map);
+			addNext = false;
+		}
+
+		if(total > elapsedTime * 100){
+			map.delete();
+
+			addNext = true;
 
 			total = 0;
 		}
 		 */
 		camera.update(elapsedTime);
 		ac.update(elapsedTime);
-		
 
-		l_fps = fps.calcFPS();
+
+		l_fps = fps.update();
 	}
 
 	@Override
@@ -135,7 +144,7 @@ public class GameWolfen extends Game{
 
 		camera.apply();
 		ac.render(camera);
-		
+
 		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
 		textFps.setText("fps : " + l_fps);
 		textEntities.setText("Entities : " + ac.size());

@@ -9,20 +9,20 @@ import org.lwjgl.util.vector.Vector3f;
 /**
  * Matrices operations and so on
  *  
- * @author Gaëtan
+ * @author Gaktan
  */
-public class MatrixUtil{
-	
+public final class MatrixUtil {
+
 	// Vectors for axes
-		public static final Vector3f 
-		X_AXIS = new Vector3f(1, 0, 0),
-		Y_AXIS = new Vector3f(0, 1, 0),
-		Z_AXIS = new Vector3f(0, 0, 1);
+	public static final Vector3f 
+	X_AXIS = new Vector3f(1, 0, 0),
+	Y_AXIS = new Vector3f(0, 1, 0),
+	Z_AXIS = new Vector3f(0, 0, 1);
 
 	/**
 	 * Converts a Matrix into a FloatBuffer
 	 */
-	public static FloatBuffer toFloatBuffer(Matrix4f mat){
+	public static FloatBuffer toFloatBuffer(Matrix4f mat) {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
 		mat.store(buffer);
 		buffer.flip();
@@ -35,9 +35,9 @@ public class MatrixUtil{
 	 * @param aspect The aspect ratio
 	 * @param zNear The near plane
 	 * @param zFar The far plane
-	 * @return
 	 */
-	public static Matrix4f createPerspectiveProjection(float fov, float aspect, float zNear,  float zFar){
+	public static Matrix4f createPerspectiveProjection(float fov, float aspect, float zNear,  float zFar)
+	{
 		Matrix4f mat = createIdentityMatrix();
 
 		float yScale = 1f / (aspect * (float) Math.tan(Math.toRadians(fov / 2f)));
@@ -58,23 +58,23 @@ public class MatrixUtil{
 	/**
 	 * @return A new identity matrix.
 	 */
-	public static Matrix4f createIdentityMatrix(){
+	public static Matrix4f createIdentityMatrix() {
 		Matrix4f mat = new Matrix4f();
 		mat.setIdentity();
 		return mat;
 	}
 
-	public static Matrix4f vectorToMatrix(Vector3f vec){
-		//    	1 0 0 x
-		//    	0 1 0 y
-		//    	0 0 1 z
-		//    	0 0 0 1
+	/**
+	 * Creates a Matrix4f from a Vector3f
+	 */
+	public static Matrix4f vectorToMatrix(Vector3f vec) {
+		// 1 0 0 x
+		// 0 1 0 y
+		// 0 0 1 z
+		// 0 0 0 1
 
 		Matrix4f mat = new Matrix4f();
-
-		mat.m00 = 1;
-		mat.m11 = 1;
-		mat.m22 = 1;
+		mat.setIdentity();
 
 		mat.m30 = vec.x;
 		mat.m31 = vec.y;
@@ -84,6 +84,13 @@ public class MatrixUtil{
 		return mat;
 	}
 
+	/**
+	 * Creates a view matrix looking at a specific coordinate
+	 * 
+	 * @param eye Coordinates of the eye (camera)
+	 * @param center Coordinates to look at
+	 * @param up Up Vector
+	 */
 	public static Matrix4f lookAt(Vector3f eye,  Vector3f center,  Vector3f up) {
 
 		Vector3f f = new Vector3f();
@@ -115,6 +122,12 @@ public class MatrixUtil{
 		return result;
 	}
 
+	/**
+	 * Creates a view matrix from Euler angles
+	 * 
+	 * @param position Position of the eye (camera)
+	 * @param viewAngle Angle of the eye(camera)
+	 */
 	public static Matrix4f setView(Vector3f position, EAngle viewAngle) {
 		// Make the view matrix an identity.
 		Matrix4f view = createIdentityMatrix();
@@ -127,9 +140,7 @@ public class MatrixUtil{
 		// Move the camera
 		Vector3f newPos = new Vector3f(position.negate(null));
 		Matrix4f.translate(newPos, view, view);
-		
+
 		return view;
 	}
-
-
 }

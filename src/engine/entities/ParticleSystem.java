@@ -11,12 +11,12 @@ import engine.util.MathUtil;
 
 public class ParticleSystem implements Displayable{
 
-	public ArrayList<Particle> list;
+	private ArrayList<Particle> list;
 	private GameWolfen game;
 	private Vector3f position;
 	private ShapeQuadTexture blood1Shape;
 	private ShapeQuadTexture blood2Shape;
-	private int life;
+	private float life;
 	
 	private int newParticlesPerFrame;
 	private int maxParticles;
@@ -40,7 +40,7 @@ public class ParticleSystem implements Displayable{
 
 		if(life > 0)
 		{
-			life--;
+			life -= dt;
 			
 			if(list.size() < maxParticles)
 			{
@@ -48,7 +48,7 @@ public class ParticleSystem implements Displayable{
 				
 				for(int i = 0; i < amountToAdd; i++)
 				{
-					newParticle(400);
+					newParticle(4000.0f);
 				}
 			}
 		}
@@ -79,15 +79,15 @@ public class ParticleSystem implements Displayable{
 		return true;
 	}
 
-	private void newParticle(int maxLife){
+	private void newParticle(float maxLife){
 		int r = (int) MathUtil.random(0, 2);
 
 		switch(r){
 		case 0:
-			list.add(new Particle(game, blood1Shape, (int) MathUtil.random(50, maxLife / 2), position));
+			list.add(new Particle(game, blood1Shape, MathUtil.random(500, maxLife / 2), position));
 			break;
 		case 1:
-			list.add(new Particle(game, blood2Shape, (int) MathUtil.random(100, maxLife), position));
+			list.add(new Particle(game, blood2Shape, MathUtil.random(1000, maxLife), position));
 			break;
 		}
 

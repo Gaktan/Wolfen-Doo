@@ -12,7 +12,11 @@ import engine.game.GameWolfen;
 import engine.game.Map;
 import engine.shapes.ShapeInsideOutCubeColor;
 
-public class MazeGenerator extends Generator{
+/**
+ * Generator used to create 1 unit wide corridor mazes using simple labyrinth algorythm
+ * @author Gaktan
+ */
+public class MazeGenerator extends Generator {
 	
 	public MazeGenerator(GameWolfen game, int sizeX, int sizeY) {
 		super(game, sizeX, sizeY);
@@ -109,7 +113,7 @@ public class MazeGenerator extends Generator{
 		skyShape.downColor = downColor;
 		skyShape.upColor = upColor;
 
-		mapR.sky = new EntityActor(skyShape);
+		mapR.sky = new EntityActor(skyShape);;
 		
 		mapR.buildMapFromString(map.toString());
 		return mapR;

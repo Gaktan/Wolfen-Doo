@@ -10,13 +10,24 @@ import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
-public class TextureUtil {
+/**
+ * 
+ * TextureUtil is a class used to hold static methods used to manipulate textures
+ * 
+ * @author Gaktan
+ *
+ */
+public final class TextureUtil {
 	
 	public static final int NO_TEXTURE = loadTexture("noTexture");
 	
-	public static int loadTexture(String path){
+	/**
+	 * Loads a texture from a file
+	 * @param path name of the texture. No need to specify extension, but must be a png
+	 * @return OpenGL texture ID
+	 */
+	public static int loadTexture(String path) {
 		// Load a texture
 		int textureID = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
@@ -37,10 +48,10 @@ public class TextureUtil {
 			
 			int method = 0;
 			
-			if(t.hasAlpha()){
+			if (t.hasAlpha()) {
 				method = GL11.GL_RGBA;
 			}
-			else{
+			else {
 				method = GL11.GL_RGB;
 			}
 
@@ -60,11 +71,17 @@ public class TextureUtil {
 		return textureID;
 	}
 
-	public static Vector3f colorToVector3f(Color color){
+	/**
+	 * Turns a Color into a Vector3f
+	 */
+	public static Vector3f colorToVector3f(Color color) {
 		return new Vector3f(color.r, color.g, color.b);
 	}
 	
-	public static Vector4f colorToVector4f(Color color){
+	/**
+	 * Turns a Color into a Vector4f
+	 */
+	public static Vector4f colorToVector4f(Color color) {
 		return new Vector4f(color.r, color.g, color.b, color.a);
 	}
 
