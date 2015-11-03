@@ -2,6 +2,10 @@ package engine.entities;
 
 import engine.shapes.ShapeCubeTexture;
 
+/**
+ * Entity specifically used to work with ShapeCube and orientation
+ * @author Gaktan
+ */
 public class EntityWall extends EntityActor {
 
 	public int orientation;

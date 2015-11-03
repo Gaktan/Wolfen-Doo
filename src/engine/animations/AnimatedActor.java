@@ -3,13 +3,21 @@ package engine.animations;
 import engine.entities.EntityActor;
 import engine.shapes.Shape;
 
-public class AnimatedActor extends EntityActor{
+/**
+ * Actor used for animation
+ * @author Gaktan
+ */
+public class AnimatedActor extends EntityActor {
 
-	public String a_file;
-	
-	public Animation a_current;
-	private float time;
+	protected String a_file;
+	protected Animation a_current;
+	// TEMP
+	protected float time;
 
+	/**
+	 * @param file Name of the animation file (no extension)
+	 * @param currentAnimation Name of the current Animation (by default)
+	 */
 	public AnimatedActor(Shape shape, String file, String currentAnimation) {
 		super(shape);
 
@@ -30,13 +38,16 @@ public class AnimatedActor extends EntityActor{
 
 		a_current.updateFrame(dt);
 
-		textureCoordinate = a_current.getCurrentUV();
-
 		return super.update(dt);
 	}
 
-	public void setAnimation(String str)
-	{
+	/**
+	 * Changes current animation the a new one
+	 * @param str Name of the new animation
+	 */
+	public void setAnimation(String str) {
 		a_current = new Animation(AnimationManager.getInstance().getAnimation(a_file, str));
+		
+		textureCoordinate = a_current.getCurrentUV();
 	}
 }

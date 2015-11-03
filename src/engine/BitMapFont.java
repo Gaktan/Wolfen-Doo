@@ -1,13 +1,14 @@
 package engine;
 
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
-import engine.entities.Camera;
-import engine.entities.EntityActor;
 import engine.game.GameWolfen;
 import engine.shapes.ShapeQuadTexture;
 
+/**
+ * Class used to store a single font and write text with it
+ * @author Gaktan
+ */
 public class BitMapFont {
 
 	private int imageSize;
@@ -28,7 +29,13 @@ public class BitMapFont {
 		imageFactor = (float) charSize / imageSize;
 	}
 
-	public DisplayableText createString(Vector3f position, String str, boolean hasDepth){
+	/**
+	 * Creates a DisplayableText using this font.
+	 * @param position Position of the text (Only on screen at the moment)
+	 * @param str The text
+	 * @param hasDepth False if you want the text to be rendered on top of everything
+	 */
+	public DisplayableText createString(Vector3f position, String str, boolean hasDepth) {
 		return new DisplayableText(position, str, this, hasDepth);
 	}
 

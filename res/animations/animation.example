@@ -1,0 +1,53 @@
+* Just like maps, animations have their own configuration system.
+* It now allows you to have inner commands
+* It is not mandatory (but might be in the future), but recommanded that each animation file should 
+* match a specific sprites image
+
+* Width and height of the image {int}
+-> imageSize{512}
+
+* Width and height of a single sprite (they must all be the same size) {int}
+-> frameSize{128}
+
+* For every animation, you must create a new animation command. 
+* sub commands work exactly like commands except they are written with [] instead of {}
+* An animation is identified by it's name so make sure you don't use the same twice
+
+* It is extremely important that you follow this order
+* name
+* frames
+* delays
+
+* Otherwise it might crash
+
+* Frames are the sprites number you want to play in order
+* Top left sprite is 0, then 1, etc...
+
+* Delays are in ms. You can specify the delay between each frame or
+* Just put one value and it will be the delay for every single frames
+
+* Here are some examples :
+
+animation{
+  name[a_running_front]
+  frames[0, 1, 2, 3]
+  delays[150, 150, 150, 150]
+}
+
+animation{
+  name[a_running_left]
+  frames[4, 5, 6, 7]
+  delays[150]
+}
+
+animation{
+  name[a_running_right]
+  frames[8, 9, 10, 11]
+  delays[150]
+}
+
+animation{
+  name[a_running_back]
+  frames[12, 13, 14, 15]
+  delays[150]
+}

@@ -8,7 +8,11 @@ import engine.shapes.Shape;
 import engine.util.MatrixUtil;
 import engine.util.TextureUtil;
 
-public class EntityActor extends Entity{
+/**
+ * Entity that has a textured shape, a color, rotation and scale
+ * @author Gaktan
+ */
+public class EntityActor extends Entity {
 
 	public Shape shape;
 	public Vector3f textureCoordinate;
@@ -39,7 +43,10 @@ public class EntityActor extends Entity{
 		shape.postRender();
 	}
 
-	public void setUniforms(Camera camera){
+	/**
+	 * Sets the uniforms to be used in the shader. Do not call this
+	 */
+	public void setUniforms(Camera camera) {
 		shape.getShaderProgram().setUniform("u_projection", camera.projection);
 
 		shape.getShaderProgram().setUniform("u_view", camera.getMatrixView());

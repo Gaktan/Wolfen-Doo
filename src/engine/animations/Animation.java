@@ -4,6 +4,10 @@ import java.util.Arrays;
 
 import org.lwjgl.util.vector.Vector3f;
 
+/**
+ * Single animation
+ * @author Gaktan
+ */
 public class Animation {
 
 	private float imageFactor;
@@ -40,39 +44,40 @@ public class Animation {
 	}
 
 	public void setDelay(float delay){
-		if(delays == null)
-		{
+		if (delays == null) {
 			delays = new float[frames.length];
 		}
 		Arrays.fill(this.delays, delay);
 	}
 	
-	public void setDelays(float[] delays)
-	{
+	public void setDelays(float[] delays){
 		this.delays = delays;
 	}
 
 	public void updateFrame(float dt){
-		if(pause)
+		if (pause)
 			return;
 
 		currentDelay += dt;
 		
-		if(currentDelay >= delays[currentIndex]){
+		if (currentDelay >= delays[currentIndex]) {
 			nextFrame();
 		}
 	}
 
-	public void nextFrame(){
+	/**
+	 * Advance to the next frame
+	 */
+	public void nextFrame() {
 		currentIndex++;
 		currentDelay = 0;
 
-		if(currentIndex >= frames.length){
+		if (currentIndex >= frames.length) {
 			currentIndex = 0;
 		}
 	}
 
-	public Vector3f getCurrentUV(){
+	public Vector3f getCurrentUV() {
 		int actualFrame = frames[currentIndex];
 
 		float y = actualFrame / imagesPerLine;
@@ -82,15 +87,15 @@ public class Animation {
 		return vec;
 	}
 
-	public void pause(){
+	public void pause() {
 		pause = true;
 	}
 
-	public void resume(){
+	public void resume() {
 		pause = false;
 	}
 
-	public void stop(){
+	public void stop() {
 		pause();
 		currentDelay = 0;
 		currentIndex = 0;

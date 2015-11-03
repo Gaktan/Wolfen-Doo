@@ -6,6 +6,10 @@ import org.lwjgl.util.vector.Vector3f;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
 
+/**
+ * Used to render text
+ * @author Gaktan
+ */
 public class DisplayableText extends DisplayableList {
 	
 	private String text;
@@ -21,6 +25,9 @@ public class DisplayableText extends DisplayableList {
 		this.hasDepth = hasDepth;
 	}
 	
+	/**
+	 * You should probably want to use setText instead
+	 */
 	public void changeText(String newText) {
 		
 		this.text = newText;
@@ -31,10 +38,10 @@ public class DisplayableText extends DisplayableList {
 		Vector3f halfDir = new Vector3f(1, 0, 0);
 		halfDir = (Vector3f) halfDir.scale(0.08f);
 		
-		for(char c : newText.toCharArray()){
+		for (char c : newText.toCharArray()) {
 			int i_c = (int) c;
 
-			if(i_c > font.getAmountOfChars()){
+			if (i_c > font.getAmountOfChars()) {
 				i_c = 0;
 			}
 
@@ -58,12 +65,12 @@ public class DisplayableText extends DisplayableList {
 
 	@Override
 	public void render(Camera camera) {
-		if(!hasDepth)
+		if (!hasDepth)
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		super.render(camera);
 		
-		if(!hasDepth)
+		if (!hasDepth)
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 	
@@ -71,6 +78,10 @@ public class DisplayableText extends DisplayableList {
 		return text;
 	}
 
+	/**
+	 * Changes current text with new one. If the texts are the same, nothing will be changed
+	 * @param text New text
+	 */
 	public void setText(String text) {
 		if(text.equals(this.text))
 			return;

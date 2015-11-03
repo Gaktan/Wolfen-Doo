@@ -6,6 +6,10 @@ import engine.game.GameWolfen;
 import engine.shapes.Shape;
 import engine.util.MathUtil;
 
+/**
+ * Short living Actor
+ * @author Gaktan
+ */
 public class Particle extends EntityActor {
 
 	private float life;
@@ -28,30 +32,28 @@ public class Particle extends EntityActor {
 	}
 
 	@Override
-	public boolean update(float dt)
-	{
+	public boolean update(float dt) {
 		life -= dt;
 
-		if(life <= 0)
+		if (life <= 0)
 			return false;
 
-		if(paused)
+		if (paused)
 			return true;
 
 		Vector3f.add(velocity, GRAVITY, velocity);
 
 		//position of the floor - size of Particle
-		if(position.y <= -0.45f){
+		if (position.y <= -0.45f) {
 			position.y = -0.45f;
 			paused = true;
 		}
-
 		else
 			super.update(dt);
 
 		return true;
 	}
-	
+
 	@Override
 	public void render(Camera camera) {
 		if(shape != null)
@@ -75,6 +77,9 @@ public class Particle extends EntityActor {
 		return paused;
 	}
 
+	/**
+	 * Makes the particle moving or not
+	 */
 	public void setPaused(boolean paused) {
 		this.paused = paused;
 	}

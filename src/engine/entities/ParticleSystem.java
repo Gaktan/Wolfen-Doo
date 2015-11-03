@@ -9,6 +9,10 @@ import engine.game.GameWolfen;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 
+/**
+ * Object used to generate particles
+ * @author Gaktan
+ */
 public class ParticleSystem implements Displayable{
 
 	private ArrayList<Particle> list;
@@ -17,7 +21,7 @@ public class ParticleSystem implements Displayable{
 	private ShapeQuadTexture blood1Shape;
 	private ShapeQuadTexture blood2Shape;
 	private float life;
-	
+
 	private int newParticlesPerFrame;
 	private int maxParticles;
 
@@ -30,7 +34,7 @@ public class ParticleSystem implements Displayable{
 
 		blood1Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood");
 		blood2Shape = new ShapeQuadTexture(game.shaderProgramTexBill, "blood2");
-		
+
 		newParticlesPerFrame = 10;
 		maxParticles = 100;
 	}
@@ -38,51 +42,48 @@ public class ParticleSystem implements Displayable{
 	@Override
 	public boolean update(float dt) {
 
-		if(life > 0)
-		{
+		if (life > 0) {
 			life -= dt;
-			
-			if(list.size() < maxParticles)
-			{
+
+			if (list.size() < maxParticles) {
 				int amountToAdd = Math.min(maxParticles - list.size(), newParticlesPerFrame);
-				
-				for(int i = 0; i < amountToAdd; i++)
-				{
+
+				for (int i = 0; i < amountToAdd; i++) {
 					newParticle(4000.0f);
 				}
 			}
 		}
-		
-		if(life == -1 || !list.isEmpty()){
+
+		if (life == -1 || !list.isEmpty()) {
 
 			ArrayList<Particle> destroyList = new ArrayList<Particle>();
 
-			for(Particle p : list){
+			for (Particle p : list) {
 				// 	if(p.life < 200)
 				//		p.actor.shape = blood2Shape;
 
 				boolean b = p.update(dt);
-				
-				if(!b){
+
+				if (!b) {
 					destroyList.add(p);
 				}
 			}
 
-			for(Particle p : destroyList){
+			for (Particle p : destroyList) {
 				list.remove(p);
 			}
 		}
-		else{
+		else {
 			return false;
 		}
-		
+
 		return true;
 	}
 
-	private void newParticle(float maxLife){
+	private void newParticle(float maxLife) {
 		int r = (int) MathUtil.random(0, 2);
 
-		switch(r){
+		switch (r) {
 		case 0:
 			list.add(new Particle(game, blood1Shape, MathUtil.random(500, maxLife / 2), position));
 			break;
@@ -90,12 +91,11 @@ public class ParticleSystem implements Displayable{
 			list.add(new Particle(game, blood2Shape, MathUtil.random(1000, maxLife), position));
 			break;
 		}
-
 	}
 
 	@Override
 	public void render(Camera camera) {
-		for(Particle p : list){
+		for (Particle p : list) {
 			p.render(camera);
 		}
 	}
@@ -104,10 +104,8 @@ public class ParticleSystem implements Displayable{
 	public void delete() {
 		life = 0;
 	}
-	
-	public int size()
-	{
+
+	public int size() {
 		return list.size();
 	}
-
 }

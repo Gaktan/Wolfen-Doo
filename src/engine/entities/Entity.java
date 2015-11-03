@@ -4,6 +4,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 
+/**
+ * Object used to store a position and a velocity. (a moving object)
+ * @author Gaktan
+ */
 public abstract class Entity implements Displayable {
 
 	public Vector3f position;
@@ -11,19 +15,18 @@ public abstract class Entity implements Displayable {
 	private boolean solid;
 	private boolean delete;
 
-	public Entity(){
+	public Entity() {
 		position = new Vector3f();
 		velocity = new Vector3f();
 	}
 
 	@Override
-	public void delete(){
+	public void delete() {
 		delete = true;
 	}
 
 	@Override
-	public boolean update(float dt)
-	{
+	public boolean update(float dt) {
 		this.position.x += (velocity.getX() * dt / 100.0f);
 		this.position.y += (velocity.getY() * dt / 100.0f);
 		this.position.z += (velocity.getZ() * dt / 100.0f);
@@ -34,8 +37,11 @@ public abstract class Entity implements Displayable {
 	@Override
 	public abstract void render(Camera camera);
 
-	public boolean collide(Entity e)
-	{
+	/**
+	 * Finds this entity is colliding with an other one
+	 * @return true if they are colliding
+	 */
+	public boolean collide(Entity e) {
 		float size = .5f;
 
 		return (Math.abs(position.x - e.position.x) < size*2.f) &&
@@ -57,8 +63,10 @@ public abstract class Entity implements Displayable {
 		 */
 	}
 
-	public void collisionHandler(Entity e)
-	{
+	/**
+	 * Attempts to resolve the collision with an other entity
+	 */
+	public void collisionHandler(Entity e) {
 		float size = .5f;
 
 		float leftOverlap = 	(position.x + size) 	- (e.position.x - size);
@@ -70,29 +78,25 @@ public abstract class Entity implements Displayable {
 		float shiftX = 0;
 		float shiftY = 0;
 
-		if(leftOverlap < smallestOverlap)
-		{
+		if (leftOverlap < smallestOverlap) {
 			smallestOverlap = leftOverlap;
 			shiftX = -leftOverlap;
 			shiftY = 0;
 		}
 
-		if(rightOverlap < smallestOverlap)
-		{
+		if (rightOverlap < smallestOverlap) {
 			smallestOverlap = rightOverlap;
 			shiftX = rightOverlap;
 			shiftY = 0;
 		}
 
-		if(topOverlap < smallestOverlap)
-		{
+		if (topOverlap < smallestOverlap) {
 			smallestOverlap = topOverlap;
 			shiftX = 0;
 			shiftY = -topOverlap;
 		}
 
-		if(botOverlap < smallestOverlap)
-		{
+		if (botOverlap < smallestOverlap) {
 			smallestOverlap = botOverlap;
 			shiftX = 0;
 			shiftY = botOverlap;

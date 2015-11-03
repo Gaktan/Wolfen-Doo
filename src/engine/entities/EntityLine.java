@@ -1,14 +1,17 @@
 package engine.entities;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.util.MatrixUtil;
 
+/**
+ * Draws a line
+ * @author Gaktan
+ */
 public class EntityLine extends Entity {
 
-	Vector3f direction;
+	protected Vector3f direction;
 	
 	public EntityLine(Vector3f position, Vector3f direction) {
 		this.position = position;
@@ -17,8 +20,6 @@ public class EntityLine extends Entity {
 	
 	@Override
 	public void render(Camera camera) {
-		// TODO Auto-generated method stub
-
 		GL11.glPushMatrix();
 		
 		GL11.glLoadMatrix(MatrixUtil.toFloatBuffer(camera.getProjectionXview()));
@@ -35,5 +36,4 @@ public class EntityLine extends Entity {
 		
 		GL11.glPopMatrix();
 	}
-
 }

@@ -6,6 +6,10 @@ import engine.Displayable;
 import engine.game.Map;
 import engine.util.MathUtil;
 
+/**
+ * Line that flows through the map and bounces (optionnal)
+ * @author Gaktan
+ */
 public class EntityProjctile extends EntityLine {
 
 	private Map map;
@@ -28,38 +32,36 @@ public class EntityProjctile extends EntityLine {
 		boolean b = false;
 		boolean drawImpact = true;
 
-		if(position.x < 0 || position.z < 0 || position.x > map.x || position.z > map.y) {
+		if (position.x < 0 || position.z < 0 || position.x > map.x || position.z > map.y) {
 			return false;
 		}
-		
-		if(position.y > 0.5f || position.y < -0.5f)
+
+		if (position.y > 0.5f || position.y < -0.5f)
 			return false;
 
 		Vector3f normal = new Vector3f();
 		Vector3f impactPosition = new Vector3f();
 
-		for(float i = 0f; i < 1f; i += 0.01f)
-		{
-			if(position.y + (velocity.y * i) > 0.5f)
+		for(float i = 0f; i < 1f; i += 0.025f) {
+			if (position.y + (velocity.y * i) > 0.5f)
 				break;
-			if(position.y + (velocity.y * i) < -0.5f)
+			if (position.y + (velocity.y * i) < -0.5f)
 				break;
-			
+
 			int x = (int) (position.x + (velocity.x * i) + 0.5f);
 			int z = (int) (position.z + (velocity.z * i) + 0.5f);
 
 			Displayable d = map.list.get(x, z);
-			if (d instanceof Entity)
-			{
+			if (d instanceof Entity) {
 				Entity e = (Entity) d;
 
-				if(!e.isSolid())
+				if (!e.isSolid())
 					continue;
 				if (!(e instanceof EntityWall))
 					continue;
 				if (e instanceof EntityDoor)
 					drawImpact = false;
-				
+
 				b = true;
 
 				impactPosition.z = position.z + (velocity.z * i);
@@ -69,14 +71,12 @@ public class EntityProjctile extends EntityLine {
 				normal.x = x - impactPosition.x;
 				normal.z = z - impactPosition.z;
 
-				if(Math.abs(normal.x) > Math.abs(normal.z))
-				{
+				if(Math.abs(normal.x) > Math.abs(normal.z)) {
 					normal.z = 0;
 					normal.x = -normal.x;
 					impactPosition.x = (int) impactPosition.x + 0.5f;
 				}
-				else
-				{
+				else {
 					normal.x = 0;
 					normal.z = -normal.z;
 					impactPosition.z = (int) impactPosition.z + 0.5f;
@@ -86,12 +86,9 @@ public class EntityProjctile extends EntityLine {
 			}
 		}
 
-		if(!b)
-		{
-			for(float i = 0f; i < 1f; i += 0.01f)
-			{
-				if(position.y + (velocity.y * i) < -0.5f)
-				{
+		if (!b) {
+			for (float i = 0f; i < 1f; i += 0.025f) {
+				if (position.y + (velocity.y * i) < -0.5f) {
 					b = true;
 					normal.y = 1f;
 					impactPosition.y = -0.5f;
@@ -99,8 +96,7 @@ public class EntityProjctile extends EntityLine {
 					impactPosition.z = position.z + (velocity.z * i);
 					break;
 				}
-				if(position.y + (velocity.y * i) > 0.5f)
-				{
+				if (position.y + (velocity.y * i) > 0.5f) {
 					b = true;
 					normal.y = -1f;
 					impactPosition.y = 0.5f;
@@ -111,25 +107,21 @@ public class EntityProjctile extends EntityLine {
 			}
 		}
 
-		if(b) {
+		if (b) {
 
-			if(normal.length() != 0)
+			if (normal.length() != 0)
 				normal.normalise();
 
-			if(bounces != 0)
-			{
-				if(normal.x != 0) 
-				{
+			if (bounces != 0) {
+				if (normal.x != 0)  {
 					velocity.x = -velocity.x;
 				}
 
-				else if(normal.z != 0) 
-				{
+				else if (normal.z != 0)  {
 					velocity.z = -velocity.z;
 				}
 
-				else if(normal.y != 0)
-				{
+				else if (normal.y != 0) {
 					velocity.y = -velocity.y;
 				}
 
@@ -140,31 +132,27 @@ public class EntityProjctile extends EntityLine {
 				bounces--;
 			}
 
-			else if (drawImpact)
-			{
+			else if (drawImpact) {
 				normal.scale(MathUtil.random(0.99f, 1.01f));
 
-				Particle e = new Particle(map.game, map.game.shapeImpact, 400, new Vector3f());
+				Particle e = new Particle(map.game, map.game.shapeImpact, 4000, new Vector3f());
 
 				Vector3f newPos = new Vector3f(impactPosition);
 				Vector3f newRot = new Vector3f();
 
 				float pi2 = (float) (Math.PI / 2);
 
-				if(normal.x != 0) 
-				{
+				if (normal.x != 0)  {
 					newRot.y = pi2 * normal.x;
 					newPos.x = impactPosition.x + normal.x * 0.01f;
 				}
 
-				else if(normal.z != 0) 
-				{
+				else if (normal.z != 0)  {
 					newRot.y = pi2 - pi2 * normal.z;
 					newPos.z = impactPosition.z + normal.z * 0.01f;
 				}
 
-				else if(normal.y != 0)
-				{
+				else if (normal.y != 0) {
 					newRot.x = pi2 * -normal.y;
 					newPos.y = (int) (position.y + 0.5f) + 0.5f * -normal.y * 0.99f;
 				}
@@ -182,5 +170,4 @@ public class EntityProjctile extends EntityLine {
 
 		return super.update(dt);
 	}
-
 }

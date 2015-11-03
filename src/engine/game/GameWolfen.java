@@ -13,6 +13,7 @@ import engine.generator.MapReader;
 import engine.generator.MazeGenerator;
 import engine.shapes.*;
 
+@SuppressWarnings("unused")
 public class GameWolfen extends Game {
 
 	public ShaderProgram shaderProgramTex;

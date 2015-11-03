@@ -7,16 +7,18 @@ import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.MatrixUtil;
 
-public class Camera extends Entity{
+/**
+ * Camera class
+ * @author Gaktan
+ */
+public class Camera extends Entity {
 
 	public Matrix4f projection;
 	private Matrix4f view;
 	public Vector3f movementGoal;
-	public Vector3f movement;
+	private Vector3f movement;
 
-	public Entity colliding;
-
-	public Matrix4f projectionXview;
+	private Matrix4f projectionXview;
 
 	private float slipperyLevel = 1000.0f;
 
@@ -81,21 +83,25 @@ public class Camera extends Entity{
 	@Override
 	public void render(Camera camera) {}
 
-	// GETTERS 
 
-	public void setProjection(){
+	/**
+	 * Resets the projection Matrix
+	 */
+	public void setProjection() {
 		projection = MatrixUtil.createPerspectiveProjection(fov, aspect, zNear, zFar);
 	}
 
-	public Matrix4f getMatrixView(){
+	// GETTERS & SETTERS
+
+	public Matrix4f getMatrixView() {
 		return view;
 	}
 
-	public Vector3f getPosition(){
+	public Vector3f getPosition() {
 		return position;
 	}
 
-	public void setPosition(Vector3f pos){
+	public void setPosition(Vector3f pos) {
 		this.position = pos;
 		setProjection();
 	}
@@ -141,8 +147,11 @@ public class Camera extends Entity{
 		setProjection();
 	}
 
-	public Matrix4f getProjectionXview()
-	{
+	/**
+	 * Used for non-shader rendering
+	 * @return The projection matrix * view Matrix
+	 */
+	public Matrix4f getProjectionXview() {
 		return projectionXview;
 	}
 }

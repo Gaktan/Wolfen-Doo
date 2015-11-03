@@ -6,10 +6,16 @@ import engine.shapes.Orientation;
 import engine.shapes.ShapeCubeTexture;
 import engine.util.MathUtil;
 
-public class EntityDoor extends EntityWall 
-{
-	public enum DoorState
-	{
+/**
+ * Works like a wall, but can be opened
+ * @author Gaktan
+ */
+public class EntityDoor extends EntityWall  {
+
+	/**
+	 * Describes all different states of the door
+	 */
+	public enum DoorState {
 		OPEN,
 		OPENING,
 		CLOSED,
@@ -26,7 +32,7 @@ public class EntityDoor extends EntityWall
 
 	public EntityDoor(ShapeCubeTexture shape) {
 		super(shape);
-		
+
 		orientation = Orientation.ALL;
 
 		originialPosition = new Vector3f();
@@ -35,7 +41,7 @@ public class EntityDoor extends EntityWall
 		state = DoorState.CLOSED;
 		stateChanged = false;
 		openingSpeed = 0.5f;
-		
+
 		setSolid(true);
 	}
 
@@ -48,22 +54,18 @@ public class EntityDoor extends EntityWall
 			return result;
 		}
 
-		if(state == DoorState.OPEN && stateChanged) 
-		{
+		if (state == DoorState.OPEN && stateChanged) {
 			stateChanged = false;
 			setSolid(false);
 			return result;
 		}
 
-		if (state == DoorState.OPENING)
-		{
-			if (stateChanged)
-			{
+		if (state == DoorState.OPENING) {
+			if (stateChanged) {
 				stateChanged = false;
 				Vector3f.sub(openingPosition, originialPosition, velocity);
 
-				if (velocity.length() == 0)
-				{
+				if (velocity.length() == 0) {
 					state = DoorState.CLOSED;
 					return result;
 				}
@@ -76,8 +78,7 @@ public class EntityDoor extends EntityWall
 			float distance = MathUtil.distance(position, originialPosition);
 			float distance2 = MathUtil.distance(originialPosition, openingPosition);
 
-			if(distance > distance2)
-			{
+			if (distance > distance2) {
 				stateChanged = true;
 				state = DoorState.OPEN;
 
@@ -91,17 +92,14 @@ public class EntityDoor extends EntityWall
 			}
 		}
 
-		else if (state == DoorState.CLOSING)
-		{
-			if (stateChanged)
-			{
+		else if (state == DoorState.CLOSING) {
+			if (stateChanged) {
 				setSolid(true);
 
 				stateChanged = false;
 				Vector3f.sub(originialPosition, openingPosition, velocity);
 
-				if(velocity.length() == 0)
-				{
+				if(velocity.length() == 0) {
 					state = DoorState.OPEN;
 					return result;
 				}
@@ -114,8 +112,7 @@ public class EntityDoor extends EntityWall
 			float distance = MathUtil.distance(position, openingPosition);
 			float distance2 = MathUtil.distance(originialPosition, openingPosition);
 
-			if(distance > distance2)
-			{
+			if (distance > distance2) {
 				state = DoorState.CLOSED;
 				stateChanged = true;
 
@@ -136,8 +133,10 @@ public class EntityDoor extends EntityWall
 		return state;
 	}
 
-	public void toggle()
-	{
+	/**
+	 * Toggle the door's state
+	 */
+	public void toggle() {
 		if (state == DoorState.CLOSED) {
 			state = DoorState.OPENING;
 			stateChanged = true;
@@ -159,15 +158,19 @@ public class EntityDoor extends EntityWall
 		}
 	}
 
-	public void open()
-	{
-		if(state == DoorState.CLOSING || state == DoorState.CLOSED)
+	/**
+	 * Force open
+	 */
+	public void open() {
+		if (state == DoorState.CLOSING || state == DoorState.CLOSED)
 			toggle();
 	}
 
-	public void close()
-	{
-		if(state == DoorState.OPENING || state == DoorState.OPEN)
+	/**
+	 * Force close
+	 */
+	public void close() {
+		if (state == DoorState.OPENING || state == DoorState.OPEN)
 			toggle();
 	}
 
