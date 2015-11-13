@@ -56,7 +56,6 @@ public class EntityDoor extends EntityWall  {
 
 		if (state == DoorState.OPEN && stateChanged) {
 			stateChanged = false;
-			setSolid(false);
 			return result;
 		}
 
@@ -94,7 +93,6 @@ public class EntityDoor extends EntityWall  {
 
 		else if (state == DoorState.CLOSING) {
 			if (stateChanged) {
-				setSolid(true);
 
 				stateChanged = false;
 				Vector3f.sub(originialPosition, openingPosition, velocity);

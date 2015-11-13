@@ -30,14 +30,14 @@ void main() {
 	if (position.x < 0) {
 		texCoord.x = x * factor;
 	}
-	if (position.x > 0) {
+	else {
 		texCoord.x = (x+1) * factor;
 	}
 	
 	if (position.y > 0) {
 		texCoord.y = y * factor;
 	}
-	if (position.y < 0) {
+	else {
 		texCoord.y = (y+1) * factor;
 	}
     

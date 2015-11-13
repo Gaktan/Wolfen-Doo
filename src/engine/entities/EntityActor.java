@@ -18,14 +18,12 @@ public class EntityActor extends Entity {
 	public Vector3f textureCoordinate;
 	public Color color;
 	public Vector3f rotation;
-	public Vector3f scale;
 
 	public EntityActor(Shape shape) {
 		super();
 
 		textureCoordinate = new Vector3f(5, 0, 1);
 		
-		scale = new Vector3f(1f, 1f, 1f);
 		rotation = new Vector3f();
 		
 		this.shape = shape;

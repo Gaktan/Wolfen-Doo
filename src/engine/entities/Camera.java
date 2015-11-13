@@ -47,6 +47,8 @@ public class Camera extends Entity {
 		movement = new Vector3f();
 
 		viewAngle = new EAngle();
+		
+		scale.set(.5f, .5f, .5f);
 	}
 
 	/**
@@ -58,6 +60,8 @@ public class Camera extends Entity {
 
 	@Override
 	public boolean update(float elapsedTime) {
+		boolean result = super.update(elapsedTime);
+		
 		float dt = (float) elapsedTime / slipperyLevel;
 
 		movement = MathUtil.approach(movementGoal, movement, dt);
@@ -77,12 +81,11 @@ public class Camera extends Entity {
 
 		Matrix4f.mul(projection, view, projectionXview);
 
-		return super.update(elapsedTime);
+		return result;
 	}
-
+	
 	@Override
 	public void render(Camera camera) {}
-
 
 	/**
 	 * Resets the projection Matrix

@@ -19,7 +19,7 @@ public class GameWolfen extends Game {
 
 	private static final float MAX_DELTA = 20.f;
 	
-	private static final float Z_NEAR = 0.2f;
+	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 100.0f;
 
 	public ShaderProgram shaderProgramTex;
@@ -119,6 +119,7 @@ public class GameWolfen extends Game {
 		Controls.update(camera, elapsedTime);
 
 		camera.update(elapsedTime);
+
 		ac.update(elapsedTime);
 		
 		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
