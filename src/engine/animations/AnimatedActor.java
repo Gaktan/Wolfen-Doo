@@ -11,8 +11,6 @@ public class AnimatedActor extends EntityActor {
 
 	protected String a_file;
 	protected Animation a_current;
-	// TEMP
-	protected float time;
 
 	/**
 	 * @param file Name of the animation file (no extension)
@@ -27,16 +25,9 @@ public class AnimatedActor extends EntityActor {
 
 	@Override
 	public boolean update(float dt) {
-
-		time += 0.01f;
-
-		if(Math.sin(time) > 0.75)
-			a_current.pause();
-
-		else
-			a_current.resume();
-
+		
 		a_current.updateFrame(dt);
+		textureCoordinate = a_current.getCurrentUV();
 
 		return super.update(dt);
 	}
@@ -47,7 +38,5 @@ public class AnimatedActor extends EntityActor {
 	 */
 	public void setAnimation(String str) {
 		a_current = new Animation(AnimationManager.getInstance().getAnimation(a_file, str));
-		
-		textureCoordinate = a_current.getCurrentUV();
 	}
 }

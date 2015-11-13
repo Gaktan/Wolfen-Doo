@@ -39,12 +39,10 @@ public class MapReader {
 	// Shader Programs
 	protected static final String PROGRAM_TEXTURE = "texture";
 	protected static final String PROGRAM_BILLBOARD_ANIMATED = "billboard_animated";
-	protected static final String PROGRAM_SKY = "sky";
 	protected static final String PROGRAM_BILLBOARD_TEXTURE = "billboard_texture";
 
 	// Shapes
 	protected static final String SHAPE_CUBE_TEXTURE = "cube_texture";
-	protected static final String SHAPE_INSIDE_OUT_CUBE_COLOR = "inside_out_cube_color";
 	protected static final String SHAPE_QUAD_TEXTURE = "quad_texture";
 
 	protected String path;
@@ -273,9 +271,6 @@ public class MapReader {
 		if (shape.equals(SHAPE_CUBE_TEXTURE))
 			return new ShapeCubeTexture(program, texture);
 
-		if (shape.equals(SHAPE_INSIDE_OUT_CUBE_COLOR))
-			return new ShapeInsideOutCubeColor(program);
-
 		if (shape.equals(SHAPE_QUAD_TEXTURE))
 			return new ShapeQuadTexture(program, texture);
 
@@ -285,9 +280,6 @@ public class MapReader {
 	private ShaderProgram getProgram(String shaderProgram) {
 		if (shaderProgram.equals(PROGRAM_TEXTURE))
 			return game.shaderProgramTex;
-
-		if (shaderProgram.equals(PROGRAM_SKY))
-			return game.shaderProgramSky;
 
 		if (shaderProgram.equals(PROGRAM_BILLBOARD_TEXTURE))
 			return game.shaderProgramTexBill;
@@ -307,10 +299,7 @@ public class MapReader {
 		downColor.scale(1.0f / 256);
 		upColor.scale(1.0f / 256);
 
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
-
-		skyShape.downColor = downColor;
-		skyShape.upColor = upColor;
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramColor, upColor, downColor);
 
 		map.sky = new EntityActor(skyShape);
 	}

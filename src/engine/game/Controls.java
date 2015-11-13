@@ -63,6 +63,11 @@ public class Controls {
 		if (isKeyDown(KEY_ESCAPE))
 			Game.end();
 		
+		if (isKeyDown(KEY_1))
+			((GameWolfen) Game.getInstance()).setZfar(camera.getzFar() - 0.1f);
+		if (isKeyDown(KEY_2))
+			((GameWolfen) Game.getInstance()).setZfar(camera.getzFar() + 0.1f);
+		
 		handleMouse(camera);  	
 	}
 

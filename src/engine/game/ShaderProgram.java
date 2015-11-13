@@ -14,7 +14,7 @@ import engine.util.MatrixUtil;
  * 
  * @author Sri Harsha Chilakapati
  */
-public class ShaderProgram{
+public class ShaderProgram {
 	// ProgramID
 	int programID;
 
@@ -26,15 +26,19 @@ public class ShaderProgram{
 	/**
 	 * Create a new ShaderProgram.
 	 */
-	public ShaderProgram(){
+	public ShaderProgram() {
 		programID = glCreateProgram();
 	}
 	
-	public ShaderProgram(String name){
+	public ShaderProgram(String name) {
+		this(name, name);
+	}
+	
+	public ShaderProgram(String vertex, String fragment) {
 		this();
 		
-		attachVertexShader("res/shaders/" + name + ".vert");
-		attachFragmentShader("res/shaders/" + name + ".frag");
+		attachVertexShader("res/shaders/" + vertex + ".vert");
+		attachFragmentShader("res/shaders/" + fragment + ".frag");
 		
 		link();
 	}
@@ -45,7 +49,7 @@ public class ShaderProgram{
 	 * @param name
 	 *            The file name of the vertex shader.
 	 */
-	public void attachVertexShader(String name){
+	public void attachVertexShader(String name) {
 		// Load the source
 		String vertexShaderSource = FileUtil.readFromFile(name);
 
@@ -57,7 +61,7 @@ public class ShaderProgram{
 		glCompileShader(vertexShaderID);
 
 		// Check for errors
-		if (glGetShaderi(vertexShaderID, GL_COMPILE_STATUS) == GL_FALSE){
+		if (glGetShaderi(vertexShaderID, GL_COMPILE_STATUS) == GL_FALSE) {
 			System.err.println("Unable to create vertex shader:");
 
 			// Print log
@@ -77,7 +81,7 @@ public class ShaderProgram{
 	 * @param name
 	 *            The file name of the Fragment Shader.
 	 */
-	public void attachFragmentShader(String name){
+	public void attachFragmentShader(String name) {
 		// Read the source
 		String fragmentShaderSource = FileUtil.readFromFile(name);
 
@@ -89,7 +93,7 @@ public class ShaderProgram{
 		glCompileShader(fragmentShaderID);
 
 		// Check for errors
-		if (glGetShaderi(fragmentShaderID, GL_COMPILE_STATUS) == GL_FALSE){
+		if (glGetShaderi(fragmentShaderID, GL_COMPILE_STATUS) == GL_FALSE) {
 			System.err.println("Unable to create fragment shader:");
 
 			// Print log
@@ -106,12 +110,12 @@ public class ShaderProgram{
 	/**
 	 * Links this program in order to use.
 	 */
-	public void link(){
+	public void link() {
 		// Link this program
 		glLinkProgram(programID);
 
 		// Check for linking errors
-		if (glGetProgrami(programID, GL_LINK_STATUS) == GL_FALSE){
+		if (glGetProgrami(programID, GL_LINK_STATUS) == GL_FALSE) {
 			System.err.println("Unable to link shader program:");
 			dispose();
 			Game.end();
@@ -121,21 +125,21 @@ public class ShaderProgram{
 	/**
 	 * Bind this program to use.
 	 */
-	public void bind(){
+	public void bind() {
 		glUseProgram(programID);
 	}
 
 	/**
 	 * Unbind the shader program.
 	 */
-	public static void unbind(){
+	public static void unbind() {
 		glUseProgram(0);
 	}
 
 	/**
 	 * Dispose the program and shaders.
 	 */
-	public void dispose(){
+	public void dispose() {
 		// Unbind the program
 		unbind();
 

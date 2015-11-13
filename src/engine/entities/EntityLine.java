@@ -11,11 +11,11 @@ import engine.util.MatrixUtil;
  */
 public class EntityLine extends Entity {
 
-	protected Vector3f direction;
+	protected Vector3f positionB;
 	
-	public EntityLine(Vector3f position, Vector3f direction) {
+	public EntityLine(Vector3f position, Vector3f positionB) {
 		this.position = position;
-		this.direction = direction;
+		this.positionB = positionB;
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class EntityLine extends Entity {
 		{
 			GL11.glVertex3f(position.x, position.y, position.z);
 			GL11.glColor3f(0.0f, 1.0f, 0.0f);
-			GL11.glVertex3f(position.x + direction.x, position.y + direction.y, position.z + direction.z);
+			GL11.glVertex3f(positionB.x, positionB.y, positionB.z);
 		}
 		GL11.glEnd();
 		

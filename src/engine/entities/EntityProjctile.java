@@ -12,18 +12,20 @@ import engine.util.MathUtil;
  */
 public class EntityProjctile extends EntityLine {
 
-	private Map map;
-	private int bounces;
+	protected Map map;
+	protected int bounces;
+	
+	private static final float SPEED = 2.2f;
 
 	public EntityProjctile(Vector3f position, Vector3f direction, Map map) {
-		super(position, direction);
+		super(position, new Vector3f());
 
 		this.map = map;
 
 		this.velocity = (Vector3f) direction.normalise();
-		this.velocity.scale(2.2f);
+		this.velocity.scale(SPEED);
 
-		this.bounces = 3;
+		this.bounces = 0;
 	}
 
 	@Override
@@ -31,7 +33,11 @@ public class EntityProjctile extends EntityLine {
 
 		boolean b = false;
 		boolean drawImpact = true;
-
+		
+		boolean result = super.update(dt);
+		
+		Vector3f.add(position, velocity, positionB);
+		
 		if (position.x < 0 || position.z < 0 || position.x > map.x || position.z > map.y) {
 			return false;
 		}
@@ -41,6 +47,8 @@ public class EntityProjctile extends EntityLine {
 
 		Vector3f normal = new Vector3f();
 		Vector3f impactPosition = new Vector3f();
+		
+		int oldX = -1, oldZ = -1;
 
 		for(float i = 0f; i < 1f; i += 0.025f) {
 			if (position.y + (velocity.y * i) > 0.5f)
@@ -50,6 +58,12 @@ public class EntityProjctile extends EntityLine {
 
 			int x = (int) (position.x + (velocity.x * i) + 0.5f);
 			int z = (int) (position.z + (velocity.z * i) + 0.5f);
+			
+			if(x == oldX && z == oldZ)
+				continue;
+			
+			oldX = x;
+			oldZ = z;
 
 			Displayable d = map.list.get(x, z);
 			if (d instanceof Entity) {
@@ -168,6 +182,6 @@ public class EntityProjctile extends EntityLine {
 			}
 		}
 
-		return super.update(dt);
+		return result;
 	}
 }

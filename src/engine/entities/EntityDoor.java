@@ -48,7 +48,7 @@ public class EntityDoor extends EntityWall  {
 	@Override
 	public boolean update(float dt) {
 
-		boolean result = super.update(dt);
+		boolean result = superUpdate(dt);
 
 		if (state == DoorState.CLOSED) {
 			return result;

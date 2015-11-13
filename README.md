@@ -11,9 +11,9 @@ But ultimately I wanted to make a real game out of this, in the spirit of (and y
  * Fully working sprite animations with configurable file
  * Shooting ugly fake laser beams that bounce off walls and
  * Particle system
+ * Doors
 
 # What's left :
- * Doors
  * Level transitions
  * Dungeon generator
  * Customizable particles
@@ -24,3 +24,4 @@ But ultimately I wanted to make a real game out of this, in the spirit of (and y
 # How to play ?
 Download the whole repo and double click 'start.bat' (Java is required by the way) (Windows only ATM) 
 Controls are ZQSD to move around (sorry qwerty folks), left click shoots and right click frees the cursor
+1-2 Changes the value of Zfar, try it !

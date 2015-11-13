@@ -108,10 +108,7 @@ public class MazeGenerator extends Generator {
 		Vector3f downColor = new Vector3f(0, 0, 0);
 		Vector3f upColor = new Vector3f(1, 1, 1);
 
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
-
-		skyShape.downColor = downColor;
-		skyShape.upColor = upColor;
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramColor, upColor, downColor);
 
 		mapR.sky = new EntityActor(skyShape);;
 		

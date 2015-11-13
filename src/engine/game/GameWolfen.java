@@ -7,6 +7,7 @@ import engine.BitMapFont;
 import engine.DisplayableList;
 import engine.DisplayableText;
 import engine.animations.AnimatedActor;
+import engine.animations.CustomAnimatedActorExample;
 import engine.entities.Camera;
 import engine.entities.ParticleSystem;
 import engine.generator.MapReader;
@@ -16,8 +17,13 @@ import engine.shapes.*;
 @SuppressWarnings("unused")
 public class GameWolfen extends Game {
 
+	private static final float MAX_DELTA = 20.f;
+	
+	private static final float Z_NEAR = 0.2f;
+	private static final float Z_FAR = 100.0f;
+
 	public ShaderProgram shaderProgramTex;
-	public ShaderProgram shaderProgramSky;
+	public ShaderProgram shaderProgramColor;
 	public ShaderProgram shaderProgramTexBill;
 	public ShaderProgram shaderProgramTexCamera;
 
@@ -40,11 +46,10 @@ public class GameWolfen extends Game {
 	public long elapsedTime;
 	public Fps fps;
 	public long l_fps;
-	public float total;
 
 	@Override
 	public void init() {
-
+		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glViewport(0, 0, getWidth(), getHeight());
 
@@ -65,12 +70,14 @@ public class GameWolfen extends Game {
 		GL11.glFrontFace(GL11.GL_CW);
 
 		shaderProgramTex = new ShaderProgram("texture");
-		shaderProgramSky = new ShaderProgram("sky_color");
-		shaderProgramTexBill = new ShaderProgram("texture_billboard");
-		shaderProgramTexCamera = new ShaderProgram("texture_camera");
+		shaderProgramColor = new ShaderProgram("color");
+		shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture");
+		shaderProgramTexCamera = new ShaderProgram("texture_camera", "texture");
 
-		camera = new Camera(45, (float) getWidth() / (float) getHeight(), 0.2f, 100f);
+		camera = new Camera(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
 		camera.setPosition(new Vector3f(2, 0, 2));
+		
+		setZfar(camera.getzFar());
 
 		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
 
@@ -84,8 +91,9 @@ public class GameWolfen extends Game {
 
 		ac.add(map);
 
-		animatedActorTest = new AnimatedActor(shapeAnimatedSmurf, "test", "a_running_front");
-		animatedActorTest.position = new Vector3f(3, 0, 5);
+		animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
+		animatedActorTest.position.x = 3;
+		animatedActorTest.position.z = 5;
 		ac.add(animatedActorTest);
 
 
@@ -95,44 +103,31 @@ public class GameWolfen extends Game {
 		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "", false);
 		textEntities = bmf.createString(new Vector3f(-.95f, .75f, 0), "", false);
 
-		ac.add(textPos);
-		ac.add(textFps);
-		ac.add(textEntities);
-
 		fps = new Fps();
 
 		ParticleSystem ps = new ParticleSystem(this, new Vector3f(4, 0, 4), 16000);
 		ac.add(ps);
 	}
 
-	// TEMP
-	boolean addNext = false;
-
 	@Override
 	public void update(float elapsedTime) {
+
+		if (elapsedTime > MAX_DELTA) {
+			elapsedTime = MAX_DELTA;
+		}
+
 		Controls.update(camera, elapsedTime);
 
-		/*
-		total += elapsedTime;
-
-		if(addNext)
-		{
-			map = new MazeGenerator(this, 51, 31).generate();
-			ac.add(map);
-			addNext = false;
-		}
-
-		if(total > elapsedTime * 100){
-			map.delete();
-
-			addNext = true;
-
-			total = 0;
-		}
-		 */
 		camera.update(elapsedTime);
 		ac.update(elapsedTime);
-
+		
+		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
+		textFps.setText("fps : " + l_fps);
+		textEntities.setText("Entities : " + ac.size());
+		
+		textPos.update(elapsedTime);
+		textFps.update(elapsedTime);
+		textEntities.update(elapsedTime);
 
 		l_fps = fps.update();
 	}
@@ -141,14 +136,14 @@ public class GameWolfen extends Game {
 	public void render() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-		GL11.glClearColor(0, 0, 0, 1);
+		//GL11.glClearColor(0, 0, 0, 1);
 
 		camera.apply();
 		ac.render(camera);
-
-		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
-		textFps.setText("fps : " + l_fps);
-		textEntities.setText("Entities : " + ac.size());
+		
+		textPos.render(camera);
+		textFps.render(camera);
+		textEntities.render(camera);
 	}
 
 	@Override
@@ -165,6 +160,24 @@ public class GameWolfen extends Game {
 
 	@Override
 	public void dispose() {
-
+		shaderProgramTex.dispose();
+		shaderProgramColor.dispose();
+		shaderProgramTexBill.dispose();
+		shaderProgramTexCamera.dispose();
+	}
+	
+	protected void setZfar(float zFar) {
+		camera.setzFar(zFar);
+		
+		shaderProgramTex.bind();
+		shaderProgramTex.setUniform("u_zfar", zFar);
+		shaderProgramColor.bind();
+		shaderProgramColor.setUniform("u_zfar", zFar);
+		shaderProgramTexBill.bind();
+		shaderProgramTexBill.setUniform("u_zfar", zFar);
+		shaderProgramTexCamera.bind();
+		shaderProgramTexCamera.setUniform("u_zfar", zFar);
+		
+		ShaderProgram.unbind();
 	}
 }

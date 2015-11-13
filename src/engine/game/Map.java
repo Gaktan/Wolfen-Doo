@@ -34,10 +34,11 @@ public class Map implements Displayable{
 		this.game = game;
 
 		if (sky == null) {
-			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramSky);
-
-			skyShape.downColor = new Vector3f(0.75f, 0.75f, 0.75f);
-			skyShape.upColor = new Vector3f(0.35f, 0.75f, 0.9f);
+			
+			Vector3f downColor = new Vector3f(0.75f, 0.75f, 0.75f);
+			Vector3f upColor = new Vector3f(0.35f, 0.75f, 0.9f);
+			
+			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramColor, upColor, downColor);
 
 			sky = new EntityActor(skyShape);
 		}
@@ -131,7 +132,8 @@ public class Map implements Displayable{
 	public void newAnimatedActor(float x, float y, Shape shape, boolean solid) {
 		x = this.x - x - 1;
 		AnimatedActor e = new AnimatedActor(shape, "test", "a_running_front");
-		e.position = new Vector3f(x, 0, y);
+		e.position.x = x;
+		e.position.z = y;
 		e.setSolid(solid);
 
 		list.add(e, (int)x, (int)y);
@@ -237,8 +239,8 @@ public class Map implements Displayable{
 	 * Resets the sky after map's size had been changed
 	 */
 	public void setSky() {
-		((ShapeInsideOutCubeColor) sky.shape).scale = new Vector3f(x-0.5f, 1, y-0.5f);
-		sky.position = new Vector3f((x-1f) / 2, 0, (y-1f) / 2);
+		sky.scale = new Vector3f(x - 0.5f, 1, y - 0.5f);
+		sky.position = new Vector3f((x - 1f) / 2, 0, (y - 1f) / 2f);
 	}
 
 	@Override

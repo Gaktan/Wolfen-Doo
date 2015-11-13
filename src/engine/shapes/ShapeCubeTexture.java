@@ -133,16 +133,16 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		if(orientation == 0)
 			return;
 
-		if ((orientation & Orientation.NORTH) == Orientation.NORTH) {
+		if ((orientation & Orientation.NORTH) != 0) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_n);
 		}
-		if ((orientation & Orientation.SOUTH) == Orientation.SOUTH) {
+		if ((orientation & Orientation.SOUTH) != 0) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_s);
 		}
-		if ((orientation & Orientation.EAST) == Orientation.EAST) {
+		if ((orientation & Orientation.EAST) != 0) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_e);
 		}
-		if ((orientation & Orientation.WEST) == Orientation.WEST) {
+		if ((orientation & Orientation.WEST) != 0) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, i_w);
 		}		
 	}

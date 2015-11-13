@@ -31,4 +31,13 @@ public class EntityWall extends EntityActor {
 		((ShapeCubeTexture)shape).render(orientation);
 		shape.postRender();
 	}
+	
+	@Override
+	public boolean update(float dt) {
+		return true;
+	}
+	
+	public boolean superUpdate(float dt) {
+		return super.update(dt);
+	}
 }

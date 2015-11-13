@@ -14,31 +14,31 @@ import engine.game.ShaderProgram;
 
 public class ShapeInsideOutCubeColor extends Shape {
 	
-	public Vector3f scale;
-	public Vector3f upColor;
-	public Vector3f downColor;
-	boolean once;
+	protected Vector3f upColor;
+	protected Vector3f downColor;
 
-	public ShapeInsideOutCubeColor(ShaderProgram shaderProgram) {
-		super(shaderProgram);
+	public ShapeInsideOutCubeColor(ShaderProgram shaderProgram, Vector3f upColor, Vector3f downColor) {
+		this.shaderProgram = shaderProgram;
+		this.upColor = upColor;
+		this.downColor = downColor;
 		
-		scale = new Vector3f(1, 1, 1);
+		init();
 	}
 
 	@Override
 	protected void init() {
-		FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * 3);
+		FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * 6);
 		vertices.put(new float[] {
-				// front
-				-0.5f, -0.5f,  0.5f,
-				0.5f, -0.5f,  0.5f,
-				0.5f,  0.5f,  0.5f,
-				-0.5f,  0.5f,  0.5f,
-				// back
-				-0.5f, -0.5f, -0.5f,
-				0.5f, -0.5f, -0.5f,
-				0.5f,  0.5f, -0.5f,
-				-0.5f,  0.5f, -0.5f,
+				// up
+				-0.5f, 0.5f,  -0.5f, upColor.x, upColor.y, upColor.z,
+				-0.5f, 0.5f,   0.5f, upColor.x, upColor.y, upColor.z,
+				0.5f,  0.5f,   0.5f, upColor.x, upColor.y, upColor.z,
+				0.5f,  0.5f,  -0.5f, upColor.x, upColor.y, upColor.z,
+				// bottom
+				-0.5f, -0.5f,  -0.5f, downColor.x, downColor.y, downColor.z,
+				-0.5f, -0.5f,   0.5f, downColor.x, downColor.y, downColor.z,
+				0.5f,  -0.5f,   0.5f, downColor.x, downColor.y, downColor.z,
+				0.5f,  -0.5f,  -0.5f, downColor.x, downColor.y, downColor.z,
 		});
 		vertices.flip();
 
@@ -87,13 +87,16 @@ public class ShapeInsideOutCubeColor extends Shape {
 		//												 v - Normalized ? (between 0 - 1)
 		//														 v - Offset between things (size of a line)
 		//																	   v - Where to start ?
-		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * (Float.SIZE/8) , 0);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 6 * (Float.SIZE/8) , 0);
+		
+		GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 6 * (Float.SIZE/8) , 3 * (Float.SIZE/8));
 
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);
 		GL20.glDisableVertexAttribArray(0);
+		GL20.glDisableVertexAttribArray(1);
 	}
 
 	@Override
@@ -103,20 +106,18 @@ public class ShapeInsideOutCubeColor extends Shape {
 		GL30.glBindVertexArray(VAO);
 
 		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
 	}
 
 	@Override
 	public void render() {
-		shaderProgram.setUniform("u_scale", scale);
-		shaderProgram.setUniform("u_upColor", upColor);
-		shaderProgram.setUniform("u_downColor", downColor);
-
 		GL11.glDrawElements(GL11.GL_TRIANGLES, 36, GL11.GL_UNSIGNED_INT, 0);
 	}
 
 	@Override
 	public void postRender() {
 		GL20.glDisableVertexAttribArray(0);
+		GL20.glDisableVertexAttribArray(1);
 
 		GL30.glBindVertexArray(0);
 

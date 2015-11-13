@@ -13,9 +13,9 @@ uniform vec3 u_texCoord;
 
 out vec4 Color;
 out vec2 TexCoord;
+out float Z_far;
 
-void main()
-{	 
+void main() { 
 	mat4 model = u_model * 10;
 	gl_Position = (model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0));
 	
@@ -25,20 +25,21 @@ void main()
 	
 	vec2 texCoord;
 	
-	if(position.x < 0){
+	if (position.x < 0) {
 		texCoord.x = x * factor;
 	}
-	if(position.x > 0){
+	if (position.x > 0) {
 		texCoord.x = (x+1) * factor;
 	}
 	
-	if(position.y > 0){
+	if (position.y > 0) {
 		texCoord.y = y * factor;
 	}
-	if(position.y < 0){
+	if (position.y < 0) {
 		texCoord.y = (y+1) * factor;
 	}
     
 	Color = vec4(u_color, 1.0);
 	TexCoord = texCoord;
+	Z_far = 10.0;
 }
