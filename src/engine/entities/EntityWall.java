@@ -1,5 +1,7 @@
 package engine.entities;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import engine.shapes.ShapeCubeTexture;
 
 /**
@@ -24,6 +26,12 @@ public class EntityWall extends EntityActor {
 
 	@Override
 	public void render(Camera camera) {
+		Vector3f result = new Vector3f();
+		Vector3f.sub(camera.position, position, result);
+		
+		if(result.length() > Math.abs(camera.getzFar()))
+			return;
+		
 		shape.preRender();
 
 		setUniforms(camera);

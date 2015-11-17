@@ -33,6 +33,12 @@ public class EntityActor extends Entity {
 
 	@Override
 	public void render(Camera camera) {
+		Vector3f result = new Vector3f();
+		Vector3f.sub(camera.position, position, result);
+		
+		if(result.length() > Math.abs(camera.getzFar()))
+			return;
+		
 		shape.preRender();
 
 		setUniforms(camera);

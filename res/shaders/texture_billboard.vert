@@ -18,8 +18,8 @@ out vec2 TexCoord;
 out float Z_far;
 
 void main() {	    
-	float scale = u_model[0][0];
-	gl_Position = u_projection * (u_view * u_model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0) * scale);
+	vec3 scale = vec3(u_model[0][0], u_model[1][1], u_model[2][2]);
+	gl_Position = u_projection * (u_view * u_model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0) * vec4(scale, 1.0));
 	
 	float x = u_texCoord.x;
 	float y = u_texCoord.y;

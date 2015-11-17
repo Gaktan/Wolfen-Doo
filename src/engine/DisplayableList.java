@@ -40,7 +40,7 @@ public class DisplayableList implements Displayable {
 
 	@Override
 	public boolean update(float dt) {
-		
+
 		for (Displayable d : toBeAdded) {
 			list.add(d);
 		}

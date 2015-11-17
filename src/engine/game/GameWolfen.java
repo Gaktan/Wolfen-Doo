@@ -9,18 +9,22 @@ import engine.DisplayableText;
 import engine.animations.AnimatedActor;
 import engine.animations.CustomAnimatedActorExample;
 import engine.entities.Camera;
-import engine.entities.ParticleSystem;
+import engine.entities.EntityActor;
 import engine.generator.MapReader;
 import engine.generator.MazeGenerator;
+import engine.particles.ParticleSystem;
+import engine.particles.ParticleSystemBlood;
 import engine.shapes.*;
+import engine.weapons.Weapon;
+import engine.weapons.WeaponRevolver;
 
 @SuppressWarnings("unused")
 public class GameWolfen extends Game {
 
 	private static final float MAX_DELTA = 20.f;
 	
-	private static final float Z_NEAR = 0.1f;
-	private static final float Z_FAR = 100.0f;
+	public static final float Z_NEAR = 0.1f;
+	public static final float Z_FAR = 100.0f;
 
 	public ShaderProgram shaderProgramTex;
 	public ShaderProgram shaderProgramColor;
@@ -30,7 +34,6 @@ public class GameWolfen extends Game {
 	public Camera camera;
 
 	public ShapeQuadTexture shapeAnimatedSmurf;
-	public ShapeQuadTexture shapeImpact;
 
 	public DisplayableList ac;
 	public Map map;
@@ -46,6 +49,8 @@ public class GameWolfen extends Game {
 	public long elapsedTime;
 	public Fps fps;
 	public long l_fps;
+	
+	public Weapon currentWeapon;
 
 	@Override
 	public void init() {
@@ -78,16 +83,14 @@ public class GameWolfen extends Game {
 		camera.setPosition(new Vector3f(2, 0, 2));
 		
 		setZfar(camera.getzFar());
+		
+		ac = new DisplayableList();
 
 		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
 
-		shapeImpact = new ShapeQuadTexture(shaderProgramTex, "bullet_impact");
-
 		MapReader mr = new MapReader(this, "01");
 		map = mr.createMap();
-		//map = new MazeGenerator(this, 20, 50).generate();
-
-		ac = new DisplayableList();
+		//map = new MazeGenerator(this, 75, 75).generate();
 
 		ac.add(map);
 
@@ -96,17 +99,27 @@ public class GameWolfen extends Game {
 		animatedActorTest.position.z = 5;
 		ac.add(animatedActorTest);
 
-
 		bmf = new BitMapFont(this, "char", 256, 16);
 
 		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "", false);
 		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "", false);
 		textEntities = bmf.createString(new Vector3f(-.95f, .75f, 0), "", false);
 
+		/*
+		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
+		gui.position.x = 0f;
+		gui.position.y = -0.9f;
+		gui.scale.x = 20f;
+		gui.scale.y = 2f;
+		ac.add(gui);
+		*/
+		
 		fps = new Fps();
 
-		ParticleSystem ps = new ParticleSystem(this, new Vector3f(4, 0, 4), 16000);
+		ParticleSystem ps = new ParticleSystemBlood(new Vector3f(4, 0, 4), 16000);
 		ac.add(ps);
+
+		currentWeapon = new WeaponRevolver(camera);
 	}
 
 	@Override
@@ -129,6 +142,8 @@ public class GameWolfen extends Game {
 		textPos.update(elapsedTime);
 		textFps.update(elapsedTime);
 		textEntities.update(elapsedTime);
+		
+		currentWeapon.update(elapsedTime);
 
 		l_fps = fps.update();
 	}
@@ -145,6 +160,8 @@ public class GameWolfen extends Game {
 		textPos.render(camera);
 		textFps.render(camera);
 		textEntities.render(camera);
+		
+		currentWeapon.render(camera);
 	}
 
 	@Override
@@ -180,5 +197,9 @@ public class GameWolfen extends Game {
 		shaderProgramTexCamera.setUniform("u_zfar", zFar);
 		
 		ShaderProgram.unbind();
+	}
+	
+	public static GameWolfen getInstance() {
+		return (GameWolfen) instance;
 	}
 }

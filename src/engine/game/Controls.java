@@ -9,9 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 import engine.entities.Camera;
 import engine.entities.Entity;
 import engine.entities.EntityDoor;
-import engine.entities.EntityProjctile;
 import engine.util.EAngle;
-import engine.util.MathUtil;
 import engine.util.MatrixUtil;
 
 /**
@@ -34,10 +32,10 @@ public class Controls {
 
 		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
-			
+
 			if (Keyboard.getEventKeyState())
 				handlePress(key, camera, dt);
-			
+
 			else
 				handleRelease(key, camera, dt);
 		}
@@ -56,22 +54,22 @@ public class Controls {
 
 		if (isKeyDown(KEY_ADD))
 			camera.setFov(camera.getFov() + 1);
-		
+
 		if (isKeyDown(KEY_SUBTRACT))
 			camera.setFov(camera.getFov() - 1);
 
 		if (isKeyDown(KEY_ESCAPE))
 			Game.end();
-		
+
 		if (isKeyDown(KEY_1))
-			((GameWolfen) Game.getInstance()).setZfar(camera.getzFar() - 0.1f);
+			GameWolfen.getInstance().setZfar(camera.getzFar() - 0.1f);
 		if (isKeyDown(KEY_2))
-			((GameWolfen) Game.getInstance()).setZfar(camera.getzFar() + 0.1f);
-		
-		handleMouse(camera);  	
+			GameWolfen.getInstance().setZfar(camera.getzFar() + 0.1f);
+
+		handleMouse(camera, dt);  	
 	}
 
-	private static void handleMouse(Camera camera) {
+	private static void handleMouse(Camera camera, float dt) {
 		int mouseMovedX = Mouse.getX() - lastX;
 		int mouseMovedY = Mouse.getY() - lastY;
 
@@ -82,7 +80,7 @@ public class Controls {
 
 		if (Mouse.isButtonDown(2))
 			lockMouse = !lockMouse;
-		
+
 		if (actionPress) {
 			actionPress = false;
 			Vector3f lineVector = new Vector3f();
@@ -101,41 +99,16 @@ public class Controls {
 			Vector3f.add(forward, right, lineVector);
 
 			lineVector.normalise();
-			
-			Entity e = ((GameWolfen) GameWolfen.getInstance()).map.rayCast(new Vector3f(camera.position), lineVector, 1.5f);
-			
+
+			Entity e = GameWolfen.getInstance().map.rayCast(new Vector3f(camera.position), lineVector, 1.5f);
+
 			if (e instanceof EntityDoor) {
 				((EntityDoor) e).toggle();
 			}
 		}
 
 		if (Mouse.isButtonDown(0)) {
-			Vector3f linePosition = new Vector3f(camera.getPosition());
-			Vector3f lineVector = new Vector3f();
-
-			float diff = 0.1f;
-
-			linePosition.x += MathUtil.random(-diff, diff);
-			linePosition.y += MathUtil.random(-diff, diff);
-			linePosition.z += MathUtil.random(-diff, diff);
-
-			EAngle angle = new EAngle(camera.viewAngle);
-			angle.yaw -= 45;
-			angle.pitch = -angle.pitch;
-
-			Vector3f forward = angle.toVector();
-
-			forward.normalise();
-
-			Vector3f right = new Vector3f();
-			Vector3f.cross(MatrixUtil.Y_AXIS, forward, right);
-
-			Vector3f.add(forward, right, lineVector);
-
-			lineVector.normalise();
-
-			((GameWolfen) GameWolfen.getInstance()).ac.add(new EntityProjctile(linePosition, lineVector, 
-					((GameWolfen) GameWolfen.getInstance()).map));
+			GameWolfen.getInstance().currentWeapon.fire();
 		}
 
 		if (lockMouse)
@@ -157,7 +130,7 @@ public class Controls {
 
 		if (key == KEY_D)
 			camera.movementGoal.x = 0;
-		
+
 		if(key == KEY_E)
 			actionPress = false;
 	}
@@ -174,23 +147,20 @@ public class Controls {
 
 		if (key == KEY_D)
 			camera.movementGoal.x = camSpeed;
-		
+
 		if(key == KEY_E)
 			actionPress = true;
 
 		if (key == KEY_UP)
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_back");
+			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_back");
 
-		if (key == KEY_DOWN){
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_front");
-		}
+		if (key == KEY_DOWN)
+			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_front");
 
-		if (key == KEY_LEFT){
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_left");
-		}
+		if (key == KEY_LEFT)
+			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_left");
 
-		if (key == KEY_RIGHT){
-			((GameWolfen)GameWolfen.getInstance()).animatedActorTest.setAnimation("a_running_right");
-		}
+		if (key == KEY_RIGHT)
+			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_right");
 	}
 }

@@ -29,9 +29,9 @@ public abstract class Entity implements Displayable {
 
 	@Override
 	public boolean update(float dt) {
-		this.position.x += (velocity.getX() * dt / 100.0f);
-		this.position.y += (velocity.getY() * dt / 100.0f);
-		this.position.z += (velocity.getZ() * dt / 100.0f);
+		this.position.x += (velocity.getX() * (dt / 100.0f));
+		this.position.y += (velocity.getY() * (dt / 100.0f));
+		this.position.z += (velocity.getZ() * (dt / 100.0f));
 
 		return !delete;
 	}

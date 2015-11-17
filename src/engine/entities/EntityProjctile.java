@@ -1,9 +1,14 @@
 package engine.entities;
 
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Color;
 
 import engine.Displayable;
+import engine.game.GameWolfen;
 import engine.game.Map;
+import engine.particles.Particle;
+import engine.particles.ParticleSystemImpact;
+import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 
 /**
@@ -14,11 +19,17 @@ public class EntityProjctile extends EntityLine {
 
 	protected Map map;
 	protected int bounces;
+
+	protected static final float SPEED;
+	protected static final ShapeQuadTexture SHAPE_IMPACT;
 	
-	private static final float SPEED = 2.2f;
+	static {
+		SPEED = 2.2f;
+		SHAPE_IMPACT = new ShapeQuadTexture(GameWolfen.getInstance().shaderProgramTex, "bullet_impact");
+	}
 
 	public EntityProjctile(Vector3f position, Vector3f direction, Map map) {
-		super(position, new Vector3f());
+		super(position, new Vector3f(), new Color(0xffff4c), new Color(0xffde4c));
 
 		this.map = map;
 
@@ -33,11 +44,11 @@ public class EntityProjctile extends EntityLine {
 
 		boolean b = false;
 		boolean drawImpact = true;
-		
+
 		boolean result = super.update(dt);
-		
+
 		Vector3f.add(position, velocity, positionB);
-		
+
 		if (position.x < 0 || position.z < 0 || position.x > map.x || position.z > map.y) {
 			return false;
 		}
@@ -47,21 +58,33 @@ public class EntityProjctile extends EntityLine {
 
 		Vector3f normal = new Vector3f();
 		Vector3f impactPosition = new Vector3f();
-		
+
 		int oldX = -1, oldZ = -1;
 
-		for(float i = 0f; i < 1f; i += 0.025f) {
-			if (position.y + (velocity.y * i) > 0.5f)
+		for (float i = 0f; i < 1f; i += 0.025f) {
+			if (position.y + (velocity.y * i) < -0.5f) {
+				b = true;
+				normal.y = 1f;
+				impactPosition.y = -0.5f;
+				impactPosition.x = position.x + (velocity.x * i);
+				impactPosition.z = position.z + (velocity.z * i);
 				break;
-			if (position.y + (velocity.y * i) < -0.5f)
+			}
+			if (position.y + (velocity.y * i) > 0.5f) {
+				b = true;
+				normal.y = -1f;
+				impactPosition.y = 0f;
+				impactPosition.x = position.x + (velocity.x * i);
+				impactPosition.z = position.z + (velocity.z * i);
 				break;
-
+			}
+			
 			int x = (int) (position.x + (velocity.x * i) + 0.5f);
 			int z = (int) (position.z + (velocity.z * i) + 0.5f);
-			
-			if(x == oldX && z == oldZ)
+
+			if (x == oldX && z == oldZ)
 				continue;
-			
+
 			oldX = x;
 			oldZ = z;
 
@@ -78,14 +101,14 @@ public class EntityProjctile extends EntityLine {
 
 				b = true;
 
-				impactPosition.z = position.z + (velocity.z * i);
-				impactPosition.y = position.y + (velocity.y * i);
 				impactPosition.x = position.x + (velocity.x * i);
+				impactPosition.y = position.y + (velocity.y * i);
+				impactPosition.z = position.z + (velocity.z * i);
 
 				normal.x = x - impactPosition.x;
 				normal.z = z - impactPosition.z;
 
-				if(Math.abs(normal.x) > Math.abs(normal.z)) {
+				if (Math.abs(normal.x) > Math.abs(normal.z)) {
 					normal.z = 0;
 					normal.x = -normal.x;
 					impactPosition.x = (int) impactPosition.x + 0.5f;
@@ -97,27 +120,6 @@ public class EntityProjctile extends EntityLine {
 				}
 
 				break;
-			}
-		}
-
-		if (!b) {
-			for (float i = 0f; i < 1f; i += 0.025f) {
-				if (position.y + (velocity.y * i) < -0.5f) {
-					b = true;
-					normal.y = 1f;
-					impactPosition.y = -0.5f;
-					impactPosition.x = position.x + (velocity.x * i);
-					impactPosition.z = position.z + (velocity.z * i);
-					break;
-				}
-				if (position.y + (velocity.y * i) > 0.5f) {
-					b = true;
-					normal.y = -1f;
-					impactPosition.y = 0.5f;
-					impactPosition.x = position.x + (velocity.x * i);
-					impactPosition.z = position.z + (velocity.z * i);
-					break;
-				}
 			}
 		}
 
@@ -147,41 +149,49 @@ public class EntityProjctile extends EntityLine {
 			}
 
 			else if (drawImpact) {
-				normal.scale(MathUtil.random(0.99f, 1.01f));
-
-				Particle e = new Particle(map.game, map.game.shapeImpact, 4000, new Vector3f());
-
-				Vector3f newPos = new Vector3f(impactPosition);
-				Vector3f newRot = new Vector3f();
-
-				float pi2 = (float) (Math.PI / 2);
-
-				if (normal.x != 0)  {
-					newRot.y = pi2 * normal.x;
-					newPos.x = impactPosition.x + normal.x * 0.01f;
-				}
-
-				else if (normal.z != 0)  {
-					newRot.y = pi2 - pi2 * normal.z;
-					newPos.z = impactPosition.z + normal.z * 0.01f;
-				}
-
-				else if (normal.y != 0) {
-					newRot.x = pi2 * -normal.y;
-					newPos.y = (int) (position.y + 0.5f) + 0.5f * -normal.y * 0.99f;
-				}
-
-				e.position = newPos;
-				e.rotation = newRot;
-
-				e.setPaused(true);
-
-				map.game.ac.add(e);
-
+				createImpact(impactPosition, normal);
 				return false;
 			}
 		}
 
 		return result;
+	}
+
+	protected void createImpact(Vector3f impactPosition, Vector3f normal) {
+		normal.scale(MathUtil.random(0.99f, 1.01f));
+
+		Particle e = new Particle(SHAPE_IMPACT, 4000, new Vector3f());
+
+		Vector3f newPos = new Vector3f(impactPosition);
+		Vector3f newRot = new Vector3f();
+
+		float pi2 = (float) (Math.PI / 2);
+
+		if (normal.x != 0)  {
+			newRot.y = pi2 * normal.x;
+			newPos.x = impactPosition.x + normal.x * 0.01f;
+		}
+
+		else if (normal.z != 0)  {
+			newRot.y = pi2 - pi2 * normal.z;
+			newPos.z = impactPosition.z + normal.z * 0.01f;
+		}
+
+		else if (normal.y != 0) {
+			newRot.x = pi2 * -normal.y;
+			newPos.y = (int) (impactPosition.y + 0.5f) + 0.5f * -normal.y * 0.99f;
+		}
+
+		e.position = newPos;
+		e.rotation = newRot;
+		e.scale.scale(0.1f);
+
+		e.setPaused(true);
+
+		GameWolfen.getInstance().ac.add(e);
+		
+		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3f(newPos),
+				new Vector3f(velocity), new Vector3f(normal));
+		GameWolfen.getInstance().ac.add(particles);
 	}
 }

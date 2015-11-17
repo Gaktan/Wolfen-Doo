@@ -1,10 +1,10 @@
-package engine.entities;
+package engine.particles;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import engine.game.GameWolfen;
+import engine.entities.Camera;
+import engine.entities.EntityActor;
 import engine.shapes.Shape;
-import engine.util.MathUtil;
 
 /**
  * Short living Actor
@@ -13,21 +13,13 @@ import engine.util.MathUtil;
 public class Particle extends EntityActor {
 
 	private float life;
-	private static final float factor = 1f;
 	private boolean paused;
 	private static final Vector3f GRAVITY = new Vector3f(0, -0.04f, 0);
 
-	public Particle(GameWolfen game, Shape shape, float life, Vector3f position){
+	public Particle(Shape shape, float life, Vector3f position){
 		super(shape);
 
-		this.position = new Vector3f(position);
-
-		velocity = new Vector3f(MathUtil.randomNegative(-factor, factor), 0.5f, MathUtil.randomNegative(-factor, factor));
-		scale.scale(MathUtil.random(0.05f, 0.1f));
-
-		//Random r = new Random();
-		//actor.color = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
-
+		this.position = position;
 		this.life = life;
 	}
 
@@ -40,12 +32,14 @@ public class Particle extends EntityActor {
 
 		if (paused)
 			return true;
-
-		Vector3f.add(velocity, GRAVITY, velocity);
+		
+		velocity.x += GRAVITY.x * dt / 10f;
+		velocity.y += GRAVITY.y * dt / 10f;
+		velocity.z += GRAVITY.z * dt / 10f;
 
 		//position of the floor - size of Particle
-		if (position.y <= -0.45f) {
-			position.y = -0.45f;
+		if (position.y <= -0.5f + (scale.y * 0.5f)) {
+			position.y = -0.5f + (scale.y * 0.5f);
 			paused = true;
 		}
 		else

@@ -7,7 +7,7 @@ import org.lwjgl.opengl.DisplayMode;
 
 public abstract class Game {    
 
-	private static Game instance;
+	protected static Game instance;
 
 	/**  
 	 * limit the fps
