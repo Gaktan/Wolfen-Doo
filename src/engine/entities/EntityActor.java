@@ -50,11 +50,7 @@ public class EntityActor extends Entity {
 	/**
 	 * Sets the uniforms to be used in the shader. Do not call this
 	 */
-	public void setUniforms(Camera camera) {
-		shape.getShaderProgram().setUniform("u_projection", camera.projection);
-
-		shape.getShaderProgram().setUniform("u_view", camera.getMatrixView());
-		
+	public void setUniforms(Camera camera) {		
 		shape.getShaderProgram().setUniform("u_texCoord", textureCoordinate);
 		
 		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3f(color));
