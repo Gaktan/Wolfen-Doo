@@ -131,8 +131,11 @@ public class Controls {
 		if (key == KEY_D)
 			camera.movementGoal.x = 0;
 
-		if(key == KEY_E)
+		if (key == KEY_E)
 			actionPress = false;
+
+		if (key == KEY_R)
+			GameWolfen.getInstance().currentWeapon.forceReload();
 	}
 
 	private static void handlePress(int key, Camera camera, float dt) {

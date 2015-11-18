@@ -9,8 +9,8 @@ wall{U, wall_portrait, 1}
 billboard{X, pillar, 0}
 wall{A, wall_hole, 0}
 animation{W, mul_test, 1}
-door{-, wall_portrait, 0 0 -0.9, 1, 0.5}
-door{|, wall_portrait, 0.9 0 0, 0, 3.7}
+door{-, door, 0 0 -0.9, 1, 0.5}
+door{|, door, 0.9 0 0, 0, 3.7}
 door{_, pillar, 0 -0.9 0, 1, 1.0}
 
 map{

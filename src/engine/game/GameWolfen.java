@@ -1,5 +1,7 @@
 package engine.game;
 
+import java.util.Map.Entry;
+
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -25,11 +27,6 @@ public class GameWolfen extends Game {
 	
 	public static final float Z_NEAR = 0.1f;
 	public static final float Z_FAR = 100.0f;
-
-	public ShaderProgram shaderProgramTex;
-	public ShaderProgram shaderProgramColor;
-	public ShaderProgram shaderProgramTexBill;
-	public ShaderProgram shaderProgramTexCamera;
 
 	public Camera camera;
 
@@ -74,10 +71,10 @@ public class GameWolfen extends Game {
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glFrontFace(GL11.GL_CW);
 
-		shaderProgramTex = new ShaderProgram("texture");
-		shaderProgramColor = new ShaderProgram("color");
-		shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture");
-		shaderProgramTexCamera = new ShaderProgram("texture_camera", "texture");
+		ShaderProgram shaderProgramTex = new ShaderProgram("texture");
+		ShaderProgram shaderProgramColor = new ShaderProgram("color");
+		ShaderProgram shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
+		ShaderProgram shaderProgramTexCamera = new ShaderProgram("texture_camera", "texture", "texture_camera");
 
 		camera = new Camera(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
 		camera.setPosition(new Vector3f(2, 0, 2));
@@ -95,16 +92,15 @@ public class GameWolfen extends Game {
 		ac.add(map);
 
 		animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
-		animatedActorTest.position.x = 3;
-		animatedActorTest.position.z = 5;
+		animatedActorTest.position.set(3, 0, 5);
 		ac.add(animatedActorTest);
 
-		bmf = new BitMapFont(this, "char", 256, 16);
+		bmf = new BitMapFont(new ShapeQuadTexture(shaderProgramTexCamera, "char"), 256, 16);
 
 		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "", false);
 		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "", false);
 		textEntities = bmf.createString(new Vector3f(-.95f, .75f, 0), "", false);
-
+		
 		/*
 		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
 		gui.position.x = 0f;
@@ -178,24 +174,23 @@ public class GameWolfen extends Game {
 
 	@Override
 	public void dispose() {
-		shaderProgramTex.dispose();
-		shaderProgramColor.dispose();
-		shaderProgramTexBill.dispose();
-		shaderProgramTexCamera.dispose();
+		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
+		    ShaderProgram program = entry.getValue();
+
+		   program.dispose();
+		}
 	}
 	
 	protected void setZfar(float zFar) {
 		camera.setzFar(zFar);
 		
-		shaderProgramTex.bind();
-		shaderProgramTex.setUniform("u_zfar", zFar);
-		shaderProgramColor.bind();
-		shaderProgramColor.setUniform("u_zfar", zFar);
-		shaderProgramTexBill.bind();
-		shaderProgramTexBill.setUniform("u_zfar", zFar);
-		shaderProgramTexCamera.bind();
-		shaderProgramTexCamera.setUniform("u_zfar", zFar);
-		
+		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
+		    ShaderProgram program = entry.getValue();
+
+		   program.bind();
+		   program.setUniform("u_zfar", zFar);
+		}
+
 		ShaderProgram.unbind();
 	}
 	

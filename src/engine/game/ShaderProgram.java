@@ -3,6 +3,10 @@ package engine.game;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -16,31 +20,28 @@ import engine.util.MatrixUtil;
  */
 public class ShaderProgram {
 	// ProgramID
-	int programID;
+	protected int programID;
 
 	// Vertex Shader ID
-	int vertexShaderID;
+	protected int vertexShaderID;
 	// Fragment Shader ID
-	int fragmentShaderID;
+	protected int fragmentShaderID;
+	
+	protected static final HashMap<String, ShaderProgram> allPrograms = new HashMap<String, ShaderProgram>();
 
-	/**
-	 * Create a new ShaderProgram.
-	 */
-	public ShaderProgram() {
-		programID = glCreateProgram();
-	}
-	
 	public ShaderProgram(String name) {
-		this(name, name);
+		this(name, name, name);
 	}
 	
-	public ShaderProgram(String vertex, String fragment) {
-		this();
+	public ShaderProgram(String vertex, String fragment, String programName) {		
+		programID = glCreateProgram();
 		
 		attachVertexShader("res/shaders/" + vertex + ".vert");
 		attachFragmentShader("res/shaders/" + fragment + ".frag");
 		
 		link();
+		
+		allPrograms.put(programName, this);
 	}
 
 	/**
@@ -187,6 +188,14 @@ public class ShaderProgram {
 	 */
 	public void setUniform(String name, float f) {
 		glUniform1f(glGetUniformLocation(programID, name), f);
+	}
+	
+	public static Set<Entry<String, ShaderProgram>> getAllPrograms() {
+		return allPrograms.entrySet();
+	}
+	
+	public static ShaderProgram getProgram(String name) {
+		return allPrograms.get(name);
 	}
 
 }

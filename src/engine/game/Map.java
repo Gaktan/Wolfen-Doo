@@ -38,7 +38,7 @@ public class Map implements Displayable{
 			Vector3f downColor = new Vector3f(0.75f, 0.75f, 0.75f);
 			Vector3f upColor = new Vector3f(0.35f, 0.75f, 0.9f);
 			
-			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramColor, upColor, downColor);
+			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
 
 			sky = new EntityActor(skyShape);
 		}
@@ -105,7 +105,7 @@ public class Map implements Displayable{
 
 		list = new DisplayableArray2D(x, y);
 
-		ShapeCubeTexture shapeCube = new ShapeCubeTexture(game.shaderProgramTex, "wall");
+		ShapeCubeTexture shapeCube = new ShapeCubeTexture(ShaderProgram.getProgram("texture"), "wall");
 
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {

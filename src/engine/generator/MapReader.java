@@ -279,13 +279,13 @@ public class MapReader {
 
 	private ShaderProgram getProgram(String shaderProgram) {
 		if (shaderProgram.equals(PROGRAM_TEXTURE))
-			return game.shaderProgramTex;
+			return ShaderProgram.getProgram("texture");
 
 		if (shaderProgram.equals(PROGRAM_BILLBOARD_TEXTURE))
-			return game.shaderProgramTexBill;
+			return ShaderProgram.getProgram("texture_billboard");
 
 		if (shaderProgram.equals(PROGRAM_BILLBOARD_ANIMATED))
-			return game.shaderProgramTexBill;
+			return ShaderProgram.getProgram("texture_billboard");
 
 		return null;
 	}
@@ -299,7 +299,7 @@ public class MapReader {
 		downColor.scale(1.0f / 256);
 		upColor.scale(1.0f / 256);
 
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramColor, upColor, downColor);
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
 
 		map.sky = new EntityActor(skyShape);
 	}

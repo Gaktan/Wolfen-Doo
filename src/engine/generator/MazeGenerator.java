@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
 import engine.entities.EntityActor;
 import engine.game.GameWolfen;
 import engine.game.Map;
+import engine.game.ShaderProgram;
 import engine.shapes.ShapeInsideOutCubeColor;
 
 /**
@@ -108,7 +109,7 @@ public class MazeGenerator extends Generator {
 		Vector3f downColor = new Vector3f(0, 0, 0);
 		Vector3f upColor = new Vector3f(1, 1, 1);
 
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(game.shaderProgramColor, upColor, downColor);
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
 
 		mapR.sky = new EntityActor(skyShape);;
 		

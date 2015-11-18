@@ -2,7 +2,7 @@ package engine.particles;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import engine.game.GameWolfen;
+import engine.game.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 
@@ -14,8 +14,8 @@ public class ParticleSystemBlood extends ParticleSystem {
 	public ParticleSystemBlood(Vector3f position, int life) {
 		super(position, life);
 
-		blood1Shape = new ShapeQuadTexture(GameWolfen.getInstance().shaderProgramTexBill, "blood");
-		blood2Shape = new ShapeQuadTexture(GameWolfen.getInstance().shaderProgramTexBill, "blood2");
+		blood1Shape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_billboard"), "blood");
+		blood2Shape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_billboard"), "blood2");
 
 		newParticlesPerFrame = 10;
 		maxParticles = 100;
@@ -25,7 +25,7 @@ public class ParticleSystemBlood extends ParticleSystem {
 	@Override
 	protected Particle newParticle(float maxLife) {
 		int r = (int) MathUtil.random(0, 2);
-		
+
 		Particle p;
 
 		switch (r) {
@@ -36,10 +36,10 @@ public class ParticleSystemBlood extends ParticleSystem {
 			p = new Particle(blood2Shape, MathUtil.random(1000, maxLife), new Vector3f(position));
 			break;
 		}
-		
+
 		p.velocity = new Vector3f(MathUtil.randomNegative(-1, 1), 0.5f, MathUtil.randomNegative(-1, 1));
 		p.scale.scale(MathUtil.random(0.05f, 0.1f));
-		
+
 		return p;
 	}
 

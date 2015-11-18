@@ -2,7 +2,6 @@ package engine;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import engine.game.GameWolfen;
 import engine.shapes.ShapeQuadTexture;
 
 /**
@@ -19,8 +18,8 @@ public class BitMapFont {
 
 	private ShapeQuadTexture shape;
 
-	public BitMapFont(GameWolfen game, String path, int imageSize, int charSize) {
-		shape = new ShapeQuadTexture(game.shaderProgramTexCamera, path);
+	public BitMapFont(ShapeQuadTexture shape, int imageSize, int charSize) {
+		this.shape = shape;
 
 		this.imageSize = imageSize;
 		this.charSize = charSize;

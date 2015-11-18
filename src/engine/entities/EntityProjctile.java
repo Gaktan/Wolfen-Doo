@@ -6,6 +6,7 @@ import org.newdawn.slick.Color;
 import engine.Displayable;
 import engine.game.GameWolfen;
 import engine.game.Map;
+import engine.game.ShaderProgram;
 import engine.particles.Particle;
 import engine.particles.ParticleSystemImpact;
 import engine.shapes.ShapeQuadTexture;
@@ -25,7 +26,7 @@ public class EntityProjctile extends EntityLine {
 	
 	static {
 		SPEED = 2.2f;
-		SHAPE_IMPACT = new ShapeQuadTexture(GameWolfen.getInstance().shaderProgramTex, "bullet_impact");
+		SHAPE_IMPACT = new ShapeQuadTexture(ShaderProgram.getProgram("texture"), "bullet_impact");
 	}
 
 	public EntityProjctile(Vector3f position, Vector3f direction, Map map) {

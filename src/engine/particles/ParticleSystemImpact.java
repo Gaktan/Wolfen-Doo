@@ -3,7 +3,7 @@ package engine.particles;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
-import engine.game.GameWolfen;
+import engine.game.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 
@@ -20,7 +20,7 @@ public class ParticleSystemImpact extends ParticleSystem {
 		direction.normalise();
 		this.impactNormal = impactNormal;
 
-		particleShape = new ShapeQuadTexture(GameWolfen.getInstance().shaderProgramTexBill, "particle");
+		particleShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_billboard"), "particle");
 
 		newParticlesPerFrame = 10;
 		maxParticles = 10;
