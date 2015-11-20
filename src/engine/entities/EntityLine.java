@@ -12,7 +12,7 @@ import engine.util.MatrixUtil;
  */
 public class EntityLine extends Entity {
 
-	protected Vector3f positionB;
+	public Vector3f positionB;
 	protected Color colorA;
 	protected Color colorB;
 	

@@ -1,4 +1,4 @@
-package engine.weapons;
+package game.weapons;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -10,21 +10,22 @@ import engine.game.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.EAngle;
 import engine.util.MathUtil;
+import engine.weapons.Weapon;
 
 public class WeaponRevolver extends Weapon {
-		
-	private AnimatedActor revolver;
-	
+
 	public WeaponRevolver(Camera camera) {
-		super(camera, 300f, 6, 1000f, 40);
-		
+		super(camera, 300f, 6, 1000f, 40, 600f);
+
 		updateAmmoText();
 
 		ShapeQuadTexture revolverShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_camera"), "revolver");
+
+		weaponSprite = new AnimatedActor(revolverShape, "revolver", "a_idle");
+		weaponSprite.position.set(POSITION_CENTER.x, POSITION_CENTER.y);
+		weaponSprite.scale.set(15f, 15f, 15f);
 		
-		revolver = new AnimatedActor(revolverShape, "revolver", "a_idle");
-		revolver.position.set(0, -0.25f);
-		revolver.scale.set(15f, 15f, 15f);
+		bendingCurve.scale(2f);
 	}
 
 	@Override
@@ -38,45 +39,29 @@ public class WeaponRevolver extends Weapon {
 		linePosition.y += MathUtil.random(-0.1f, 0);
 
 		EAngle angle = new EAngle(camera.viewAngle);
-		
+
 		angle.yaw -= 90;
 		angle.pitch = -angle.pitch;
-		
+
 		angle.yaw += MathUtil.randomNegative(-3, 3);
 
 		Vector3f lineVector = angle.toVector();
 		lineVector.normalise();
 
 		GameWolfen.getInstance().ac.add(new EntityProjctile(linePosition, lineVector, GameWolfen.getInstance().map));
-		
-		revolver.setAnimation("a_fire");
-	}
 
-	@Override
-	public void render(Camera camera) {
-		revolver.render(camera);
-
-		super.render(camera);
+		weaponSprite.setAnimation("a_fire");
 	}
 
 	@Override
 	public boolean update(float dt) {
-		revolver.update(dt);
-		
+
 		super.update(dt);
-		
+
 		if (currentCooldown < 0) {
-			revolver.setAnimation("a_idle");
+			weaponSprite.setAnimation("a_idle");
 		}
 
 		return true;
-	}
-
-	@Override
-	public void delete() {}
-
-	@Override
-	public int size() {
-		return revolver.size() + super.size();
 	}
 }

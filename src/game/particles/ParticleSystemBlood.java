@@ -1,8 +1,10 @@
-package engine.particles;
+package game.particles;
 
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.game.ShaderProgram;
+import engine.particles.Particle;
+import engine.particles.ParticleSystem;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 

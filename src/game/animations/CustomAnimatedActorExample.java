@@ -1,7 +1,8 @@
-package engine.animations;
+package game.animations;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.EntityLine;
 import engine.shapes.Orientation;

@@ -22,13 +22,15 @@ public class EntityDoor extends EntityWall  {
 		CLOSING
 	}
 
-	private DoorState state;
+	protected DoorState state;
 
-	private Vector3f originialPosition;
-	private Vector3f openingPosition;
+	protected Vector3f originialPosition;
+	protected Vector3f openingPosition;
+	protected Vector3f lastKnownPosition;
 
-	private float openingSpeed;
-	private boolean stateChanged;
+	protected float openingTime;
+
+	protected float timeStamp;
 
 	public EntityDoor(ShapeCubeTexture shape) {
 		super(shape);
@@ -37,10 +39,11 @@ public class EntityDoor extends EntityWall  {
 
 		originialPosition = new Vector3f();
 		openingPosition = new Vector3f();
+		
+		lastKnownPosition = originialPosition;
 
 		state = DoorState.CLOSED;
-		stateChanged = false;
-		openingSpeed = 0.5f;
+		openingTime = 0.5f;
 
 		setSolid(true);
 	}
@@ -54,73 +57,31 @@ public class EntityDoor extends EntityWall  {
 			return result;
 		}
 
-		if (state == DoorState.OPEN && stateChanged) {
-			stateChanged = false;
+		if (state == DoorState.OPEN) {
 			return result;
 		}
 
+		timeStamp += dt;
+		
 		if (state == DoorState.OPENING) {
-			if (stateChanged) {
-				stateChanged = false;
-				Vector3f.sub(openingPosition, originialPosition, velocity);
+			Vector3f newPos = MathUtil.approach(openingPosition, lastKnownPosition, timeStamp / openingTime * 0.01f);
+			position.set(newPos);
 
-				if (velocity.length() == 0) {
-					state = DoorState.CLOSED;
-					return result;
-				}
-
-				velocity.normalise();
-				velocity.scale(0.1f);
-				velocity.scale(openingSpeed);
-			}
-
-			float distance = MathUtil.distance(position, originialPosition);
-			float distance2 = MathUtil.distance(originialPosition, openingPosition);
-
-			if (distance > distance2) {
-				stateChanged = true;
+			if (MathUtil.vectorEquals(position, openingPosition)) {
 				state = DoorState.OPEN;
-
-				velocity.x = 0;
-				velocity.y = 0;
-				velocity.z = 0;
-
-				position.x = openingPosition.x;
-				position.y = openingPosition.y;
-				position.z = openingPosition.z;
+				timeStamp = 0f;
+				lastKnownPosition = openingPosition;
 			}
 		}
 
 		else if (state == DoorState.CLOSING) {
-			if (stateChanged) {
+			Vector3f newPos = MathUtil.approach(originialPosition, lastKnownPosition, timeStamp / openingTime * 0.01f);
+			position.set(newPos);
 
-				stateChanged = false;
-				Vector3f.sub(originialPosition, openingPosition, velocity);
-
-				if(velocity.length() == 0) {
-					state = DoorState.OPEN;
-					return result;
-				}
-
-				velocity.normalise();
-				velocity.scale(0.1f);
-				velocity.scale(openingSpeed);
-			}
-
-			float distance = MathUtil.distance(position, openingPosition);
-			float distance2 = MathUtil.distance(originialPosition, openingPosition);
-
-			if (distance > distance2) {
+			if (MathUtil.vectorEquals(position, originialPosition)) {
 				state = DoorState.CLOSED;
-				stateChanged = true;
-
-				velocity.x = 0;
-				velocity.y = 0;
-				velocity.z = 0;
-
-				position.x = originialPosition.x;
-				position.y = originialPosition.y;
-				position.z = originialPosition.z;
+				timeStamp = 0f;
+				lastKnownPosition = originialPosition;
 			}
 		}
 
@@ -135,24 +96,15 @@ public class EntityDoor extends EntityWall  {
 	 * Toggle the door's state
 	 */
 	public void toggle() {
-		if (state == DoorState.CLOSED) {
+		lastKnownPosition = position;
+		timeStamp = 0;
+		
+		if (state == DoorState.CLOSED || state == DoorState.CLOSING) {
 			state = DoorState.OPENING;
-			stateChanged = true;
 		}
 
-		else if (state == DoorState.OPEN) {
+		else if (state == DoorState.OPEN || state == DoorState.OPENING) {
 			state = DoorState.CLOSING;
-			stateChanged = true;
-		}
-
-		else if (state == DoorState.OPENING) {
-			state = DoorState.CLOSING;
-			stateChanged = true;
-		}
-
-		else if (state == DoorState.CLOSING) {
-			state = DoorState.OPENING;
-			stateChanged = true;
 		}
 	}
 
@@ -188,11 +140,11 @@ public class EntityDoor extends EntityWall  {
 		this.openingPosition = openingPosition;
 	}
 
-	public float getOpeningSpeed() {
-		return openingSpeed;
+	public float getOpeningTime() {
+		return openingTime;
 	}
 
-	public void setOpeningSpeed(float openingSpeed) {
-		this.openingSpeed = openingSpeed;
+	public void setOpeningTime(float openingTime) {
+		this.openingTime = openingTime;
 	}
 }

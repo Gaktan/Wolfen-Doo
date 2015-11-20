@@ -33,10 +33,10 @@
 
 * Same as wall, but for making doors. You can choose the opening direction and the speed
 * {character, string, float(x) float(y) float(z), 
-* int(direction: 0 is vertical. 1 is horizontal. or the other way around), float(speed)}
--> door{-, wall_portrait, 0 0 -0.9, 1, 0.5}
--> door{|, wall_portrait, 0.9 0 0, 0, 3.7}
--> door{_, pillar, 0 -0.9 0, 1, 1.0}
+* int(direction: 0 is vertical. 1 is horizontal. or the other way around), float(opening time)}
+-> door{-, wall_portrait, 0 0 -0.9, 1, 1000}
+-> door{|, wall_portrait, 0.9 0 0, 0, 350}
+-> door{_, pillar, 0 -0.9 0, 1, 1000}
 
 * Map is used to represent what the map will look like in game, using 
 * previously defined characters

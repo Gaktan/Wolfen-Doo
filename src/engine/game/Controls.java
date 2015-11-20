@@ -28,6 +28,8 @@ public class Controls {
 	private static boolean lockMouse = true;
 	private static boolean actionPress = false;
 
+	private static int movingKeyPressed;
+
 	public static void update(Camera camera, float dt){
 
 		while (Keyboard.next()) {
@@ -66,7 +68,9 @@ public class Controls {
 		if (isKeyDown(KEY_2))
 			GameWolfen.getInstance().setZfar(camera.getzFar() + 0.1f);
 
-		handleMouse(camera, dt);  	
+		handleMouse(camera, dt);
+
+		GameWolfen.getInstance().currentWeapon.setMoving(movingKeyPressed != 0);
 	}
 
 	private static void handleMouse(Camera camera, float dt) {
@@ -119,51 +123,68 @@ public class Controls {
 	}
 
 	private static void handleRelease(int key, Camera camera, float dt) {
-		if (key == KEY_Z)
+
+		if (key == KEY_Z) {
 			camera.movementGoal.z = 0;
+			movingKeyPressed--;
+		}
 
-		if (key == KEY_S)
+		else if (key == KEY_S) {
 			camera.movementGoal.z = 0;
+			movingKeyPressed--;
+		}
 
-		if (key == KEY_Q)
+		else if (key == KEY_Q) {
 			camera.movementGoal.x = 0;
+			movingKeyPressed--;
+		}
 
-		if (key == KEY_D)
+		else if (key == KEY_D) {
 			camera.movementGoal.x = 0;
+			movingKeyPressed--;
+		}
 
-		if (key == KEY_E)
+		else if (key == KEY_E)
 			actionPress = false;
 
-		if (key == KEY_R)
+		else if (key == KEY_R)
 			GameWolfen.getInstance().currentWeapon.forceReload();
 	}
 
 	private static void handlePress(int key, Camera camera, float dt) {
-		if (key == KEY_Z)
+		if (key == KEY_Z) {
 			camera.movementGoal.z = camSpeed;
+			movingKeyPressed++;
+		}
 
-		if (key == KEY_S)
+		else if (key == KEY_S) {
 			camera.movementGoal.z = -camSpeed;
+			movingKeyPressed++;
+		}
 
-		if (key == KEY_Q)
+		else if (key == KEY_Q) {
 			camera.movementGoal.x = -camSpeed;
+			movingKeyPressed++;
+		}
 
-		if (key == KEY_D)
+		else if (key == KEY_D) {
 			camera.movementGoal.x = camSpeed;
+			movingKeyPressed++;
+		}
 
-		if(key == KEY_E)
+		else if(key == KEY_E)
 			actionPress = true;
 
-		if (key == KEY_UP)
+		else if (key == KEY_UP)
 			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_back");
 
-		if (key == KEY_DOWN)
+		else if (key == KEY_DOWN)
 			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_front");
 
-		if (key == KEY_LEFT)
+		else if (key == KEY_LEFT)
 			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_left");
 
-		if (key == KEY_RIGHT)
+		else if (key == KEY_RIGHT)
 			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_right");
 	}
 }

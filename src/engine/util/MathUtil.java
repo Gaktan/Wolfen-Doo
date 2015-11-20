@@ -12,9 +12,9 @@ import org.lwjgl.util.vector.Vector3f;
  * @author Gaktan
  */
 public final class MathUtil {
-	
+
 	private static Random random = new Random();
-	
+
 	/**
 	 * Distance between point A and point B
 	 */
@@ -112,16 +112,16 @@ public final class MathUtil {
 	 */
 	public static int parseInt(String value) {
 		try {
-			 return Integer.parseInt(value);
+			return Integer.parseInt(value);
 		} 
 		catch(NumberFormatException e) {
 			System.err.println("Number Format Exception in : " + value);
 			e.printStackTrace();
 		}
-		
+
 		return 0;
 	}
-	
+
 	/**
 	 * Parse string value into float
 	 * 
@@ -135,7 +135,26 @@ public final class MathUtil {
 			System.err.println("Number Format Exception in : " + value);
 			e.printStackTrace();
 		}
-		
+
 		return 0.f;
+	}
+
+	/**
+	 * Checks if two vectors are equals
+	 * @return true if all x, y, z values are the same.
+	 */
+	public static boolean vectorEquals(Vector3f left, Vector3f right) {
+		return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
+	}
+
+	public static float clamp(float f, float min, float max) {
+		if (f < min) {
+			return min;
+		}
+		else if (f > max) {
+			return max;
+		}
+
+		return f;
 	}
 }

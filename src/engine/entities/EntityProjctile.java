@@ -8,9 +8,9 @@ import engine.game.GameWolfen;
 import engine.game.Map;
 import engine.game.ShaderProgram;
 import engine.particles.Particle;
-import engine.particles.ParticleSystemImpact;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
+import game.particles.ParticleSystemImpact;
 
 /**
  * Line that flows through the map and bounces (optionnal)

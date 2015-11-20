@@ -34,10 +34,10 @@ public class Map implements Displayable{
 		this.game = game;
 
 		if (sky == null) {
-			
+
 			Vector3f downColor = new Vector3f(0.75f, 0.75f, 0.75f);
 			Vector3f upColor = new Vector3f(0.35f, 0.75f, 0.9f);
-			
+
 			ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
 
 			sky = new EntityActor(skyShape);
@@ -153,12 +153,13 @@ public class Map implements Displayable{
 	 * @param orientation see Orientation Class
 	 * @param speed opening speed
 	 */
-	public void newDoor(float x, float y, ShapeCubeTexture shape, Vector3f openingPosition, int orientation, float speed) {
+	public void newDoor(float x, float y, ShapeCubeTexture shape, Vector3f openingPosition, int orientation, float time) {
 		x = this.x - x - 1;
+
 		EntityDoor e = new EntityDoor(shape);
+
 		e.position = new Vector3f(x, 0, y);
-		if (((orientation & Orientation.NORTH) == Orientation.NORTH) 
-				|| ((orientation & Orientation.SOUTH) == Orientation.SOUTH )) {
+		if ((orientation & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
 			e.scale.x = 0.1f;
 		}
 		else {
@@ -168,7 +169,7 @@ public class Map implements Displayable{
 		e.setOriginialPosition(new Vector3f(x, 0, y));
 		Vector3f.add(e.position, openingPosition, openingPosition);
 		e.setOpeningPosition(openingPosition);
-		e.setOpeningSpeed(speed);
+		e.setOpeningTime(time);
 
 		list.add(e, (int)x, (int)y);
 	}
@@ -214,7 +215,7 @@ public class Map implements Displayable{
 	private int processOrientation(EntityActor actor, int i, int j, int o) {
 		if (actor instanceof EntityDoor)
 			return o;
-		
+
 		Displayable d = list.get(i, j);
 
 		if (!(d instanceof EntityWall)) 

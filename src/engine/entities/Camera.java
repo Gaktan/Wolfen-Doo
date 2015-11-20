@@ -62,7 +62,7 @@ public class Camera extends Entity {
 	public boolean update(float elapsedTime) {
 		boolean result = super.update(elapsedTime);
 		
-		float dt = (float) elapsedTime / slipperyLevel;
+		float dt = elapsedTime / slipperyLevel;
 
 		movement = MathUtil.approach(movementGoal, movement, dt);
 

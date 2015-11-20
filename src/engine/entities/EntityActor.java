@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.shapes.Shape;
+import engine.util.MathUtil;
 import engine.util.MatrixUtil;
 import engine.util.TextureUtil;
 
@@ -32,11 +33,8 @@ public class EntityActor extends Entity {
 	}
 
 	@Override
-	public void render(Camera camera) {
-		Vector3f result = new Vector3f();
-		Vector3f.sub(camera.position, position, result);
-		
-		if(result.length() > Math.abs(camera.getzFar()))
+	public void render(Camera camera) {		
+		if(MathUtil.distance(camera.position, position) > Math.abs(camera.getzFar()))
 			return;
 		
 		shape.preRender();

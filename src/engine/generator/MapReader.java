@@ -83,7 +83,7 @@ public class MapReader {
 	protected class MapInfoDoor extends MapInfo {
 		protected Vector3f openingPosition;
 		protected int orientation;
-		protected float speed;
+		protected float openingTime;
 
 		public MapInfoDoor() {
 			type = MapInfoType.DOOR;
@@ -198,7 +198,7 @@ public class MapReader {
 					else if (mapInfo.type == MapInfoType.DOOR) {
 						MapInfoDoor mapInfoDoor = (MapInfoDoor) mapInfo;
 						map.newDoor(i, j, (ShapeCubeTexture) shape, new Vector3f(mapInfoDoor.openingPosition),
-								mapInfoDoor.orientation, mapInfoDoor.speed);
+								mapInfoDoor.orientation, mapInfoDoor.openingTime);
 					}
 				}
 			} // for j
@@ -241,7 +241,7 @@ public class MapReader {
 
 			mapInfoDoor.openingPosition = readVector3f(values[2]);
 			mapInfoDoor.orientation = ((MathUtil.parseInt(values[3]) == 1) ? Orientation.NORTH : Orientation.WEST);
-			mapInfoDoor.speed = MathUtil.parseFloat(values[4]);
+			mapInfoDoor.openingTime = MathUtil.parseFloat(values[4]);
 
 			mapInfoDoor.shape = shape;
 			mapInfoDoor.solid = true;

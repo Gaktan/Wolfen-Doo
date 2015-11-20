@@ -9,24 +9,24 @@ import engine.BitMapFont;
 import engine.DisplayableList;
 import engine.DisplayableText;
 import engine.animations.AnimatedActor;
-import engine.animations.CustomAnimatedActorExample;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
 import engine.generator.MapReader;
 import engine.generator.MazeGenerator;
 import engine.particles.ParticleSystem;
-import engine.particles.ParticleSystemBlood;
 import engine.shapes.*;
 import engine.weapons.Weapon;
-import engine.weapons.WeaponRevolver;
+import game.animations.CustomAnimatedActorExample;
+import game.particles.ParticleSystemBlood;
+import game.weapons.WeaponRevolver;
 
 @SuppressWarnings("unused")
 public class GameWolfen extends Game {
 
 	private static final float MAX_DELTA = 20.f;
 
-	public static final float Z_NEAR = 0.1f;
-	public static final float Z_FAR = 100.0f;
+	private static final float Z_NEAR = 0.1f;
+	private static final float Z_FAR = 100.0f;
 
 	public Camera camera;
 
@@ -124,6 +124,9 @@ public class GameWolfen extends Game {
 		if (elapsedTime > MAX_DELTA) {
 			elapsedTime = MAX_DELTA;
 		}
+		
+		// Timescale!
+		//elapsedTime *= 0.1f;
 
 		Controls.update(camera, elapsedTime);
 
