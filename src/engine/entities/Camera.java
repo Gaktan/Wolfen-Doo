@@ -85,7 +85,7 @@ public class Camera extends Entity {
 	}
 	
 	@Override
-	public void render(Camera camera) {}
+	public void render() {}
 
 	/**
 	 * Resets the projection Matrix

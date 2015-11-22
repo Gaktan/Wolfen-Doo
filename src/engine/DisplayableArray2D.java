@@ -1,7 +1,5 @@
 package engine;
 
-import engine.entities.Camera;
-
 /**
  * 2D array containing Displayables
  * @author Gaktan
@@ -38,11 +36,11 @@ public class DisplayableArray2D implements Displayable {
 	}
 
 	@Override
-	public void render(Camera camera) {
+	public void render() {
 		for (int i = 0; i < sizeX; i++){
 			for (int j = 0; j < sizeY; j++){
 				if (list[i][j] != null)
-					list[i][j].render(camera);
+					list[i][j].render();
 			}
 		}
 	}

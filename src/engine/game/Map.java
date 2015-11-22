@@ -5,7 +5,6 @@ import org.lwjgl.util.vector.Vector3f;
 import engine.Displayable;
 import engine.DisplayableArray2D;
 import engine.animations.AnimatedActor;
-import engine.entities.Camera;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
@@ -92,9 +91,9 @@ public class Map implements Displayable{
 	}
 
 	@Override
-	public void render(Camera camera) {
-		sky.render(camera);
-		list.render(camera);
+	public void render() {
+		sky.render();
+		list.render();
 	}
 
 	/**

@@ -1,7 +1,5 @@
 package engine;
 
-import engine.entities.Camera;
-
 /**
  * Highest interface of the engine. Allows you to update and render any object
  * @author Gaktan
@@ -19,7 +17,7 @@ public interface Displayable {
 	 * Used to render an object
 	 * @param camera
 	 */
-	public void render(Camera camera);
+	public void render();
 	
 	/**
 	 * Should be used to delete the object

@@ -3,8 +3,6 @@ package engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import engine.entities.Camera;
-
 /**
  * Acts as an ArrayList for Displayables
  * @author Gaktan
@@ -63,9 +61,9 @@ public class DisplayableList implements Displayable {
 	}
 
 	@Override
-	public void render(Camera camera) {
+	public void render() {
 		for (Displayable d : list) {
-			d.render(camera);
+			d.render();
 		}
 	}
 

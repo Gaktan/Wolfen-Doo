@@ -1,13 +1,17 @@
-package engine.entities;
+package game.entities;
 
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.Displayable;
+import engine.entities.Entity;
+import engine.entities.EntityActor;
+import engine.entities.EntityDoor;
+import engine.entities.EntityLine;
+import engine.entities.EntityWall;
 import engine.game.GameWolfen;
 import engine.game.Map;
 import engine.game.ShaderProgram;
-import engine.particles.Particle;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 import game.particles.ParticleSystemImpact;
@@ -161,7 +165,7 @@ public class EntityProjctile extends EntityLine {
 	protected void createImpact(Vector3f impactPosition, Vector3f normal) {
 		normal.scale(MathUtil.random(0.99f, 1.01f));
 
-		Particle e = new Particle(SHAPE_IMPACT, 4000, new Vector3f());
+		EntityActor e = new EntityActor(null);
 
 		Vector3f newPos = new Vector3f(impactPosition);
 		Vector3f newRot = new Vector3f();
@@ -187,9 +191,7 @@ public class EntityProjctile extends EntityLine {
 		e.rotation = newRot;
 		e.scale.scale(0.1f);
 
-		e.setPaused(true);
-
-		GameWolfen.getInstance().ac.add(e);
+		GameWolfen.getInstance().bulletHoles.add(e);
 		
 		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3f(newPos),
 				new Vector3f(velocity), new Vector3f(normal));

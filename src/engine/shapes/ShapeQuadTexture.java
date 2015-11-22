@@ -18,7 +18,7 @@ import engine.util.TextureUtil;
  */
 public class ShapeQuadTexture extends Shape {
 
-	private int textureID;
+	protected int textureID;
 
 	public ShapeQuadTexture(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram);
@@ -61,15 +61,18 @@ public class ShapeQuadTexture extends Shape {
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
 
+		GL20.glEnableVertexAttribArray(0);
 		//					  	  v - position in layout (see shader)
 		//							  v - Nb of component per vertex (2 for 2D (x, y))
 		//												 v - Normalized ? (between 0 - 1)
 		//														 v - Offset between things (size of a line)
 		//																	   v - Where to start ?
 		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE/8) , 0);
+		
+		GL20.glEnableVertexAttribArray(1);
 		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE/8) , 2 * (Float.SIZE/8));
 
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
+		//GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);
@@ -80,9 +83,6 @@ public class ShapeQuadTexture extends Shape {
 		shaderProgram.bind();
 
 		GL30.glBindVertexArray(VAO);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
 
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
@@ -98,11 +98,16 @@ public class ShapeQuadTexture extends Shape {
 		//	GL13.glActiveTexture(0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-
 		GL30.glBindVertexArray(0);
 
 		ShaderProgram.unbind();
+	}
+
+	public int getVAO() {
+		return VAO;
+	}
+	
+	public int getVBO() {
+		return VBO;
 	}
 }

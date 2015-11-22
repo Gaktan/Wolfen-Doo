@@ -37,7 +37,7 @@ public abstract class Entity implements Displayable {
 	}
 
 	@Override
-	public abstract void render(Camera camera);
+	public abstract void render();
 
 	/**
 	 * Finds this entity is colliding with an other one

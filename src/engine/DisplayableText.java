@@ -3,7 +3,6 @@ package engine;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
-import engine.entities.Camera;
 import engine.entities.EntityActor;
 
 /**
@@ -64,11 +63,11 @@ public class DisplayableText extends DisplayableList {
 	}
 
 	@Override
-	public void render(Camera camera) {
+	public void render() {
 		if (!hasDepth)
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
-		super.render(camera);
+		super.render();
 		
 		if (!hasDepth)
 			GL11.glEnable(GL11.GL_DEPTH_TEST);

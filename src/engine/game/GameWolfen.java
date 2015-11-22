@@ -6,6 +6,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.BitMapFont;
+import engine.DisplayableInstancedList;
 import engine.DisplayableList;
 import engine.DisplayableText;
 import engine.animations.AnimatedActor;
@@ -34,6 +35,7 @@ public class GameWolfen extends Game {
 
 	public DisplayableList ac;
 	public Map map;
+	public DisplayableInstancedList<ShapeInstancedQuadTexture> bulletHoles;
 
 	/* TEMP STUFF */
 
@@ -75,6 +77,8 @@ public class GameWolfen extends Game {
 		ShaderProgram shaderProgramColor = new ShaderProgram("color");
 		ShaderProgram shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
 		ShaderProgram shaderProgramTexCamera = new ShaderProgram("texture_camera", "texture", "texture_camera");
+		ShaderProgram shaderProgramTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture", 
+				"texture_billboard_instanced");
 
 		camera = new Camera(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
 		camera.setPosition(new Vector3f(2, 0, 2));
@@ -116,6 +120,11 @@ public class GameWolfen extends Game {
 		ac.add(ps);
 
 		currentWeapon = new WeaponRevolver(camera);
+
+		bulletHoles = new DisplayableInstancedList<ShapeInstancedQuadTexture>(
+				new ShapeInstancedQuadTexture(shaderProgramTexBillInstanced, "bullet_impact"));
+
+		ac.add(bulletHoles);
 	}
 
 	@Override
@@ -124,7 +133,7 @@ public class GameWolfen extends Game {
 		if (elapsedTime > MAX_DELTA) {
 			elapsedTime = MAX_DELTA;
 		}
-		
+
 		// Timescale!
 		//elapsedTime *= 0.1f;
 
@@ -154,7 +163,7 @@ public class GameWolfen extends Game {
 		//GL11.glClearColor(0, 0, 0, 1);
 
 		camera.apply();
-		
+
 		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
 			ShaderProgram program = entry.getValue();
 
@@ -162,16 +171,16 @@ public class GameWolfen extends Game {
 			program.setUniform("u_projection", camera.projection);
 			program.setUniform("u_view", camera.getMatrixView());
 		}
-		
+
 		ShaderProgram.unbind();
-		
-		ac.render(camera);
 
-		textPos.render(camera);
-		textFps.render(camera);
-		textEntities.render(camera);
+		ac.render();
 
-		currentWeapon.render(camera);
+		textPos.render();
+		textFps.render();
+		textEntities.render();
+
+		currentWeapon.render();
 	}
 
 	@Override

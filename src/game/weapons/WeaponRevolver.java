@@ -4,18 +4,18 @@ import org.lwjgl.util.vector.Vector3f;
 
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
-import engine.entities.EntityProjctile;
 import engine.game.GameWolfen;
 import engine.game.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.weapons.Weapon;
+import game.entities.EntityProjctile;
 
 public class WeaponRevolver extends Weapon {
 
 	public WeaponRevolver(Camera camera) {
-		super(camera, 300f, 6, 1000f, 40, 600f);
+		super(camera, 0f, 6000, 1000f, 40, 600f);
 
 		updateAmmoText();
 

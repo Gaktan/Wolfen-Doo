@@ -232,10 +232,11 @@ public abstract class Weapon implements Displayable{
 		weaponSprite.position.set(currentPos);
 	}
 
-	public void render(Camera camera) {
-		weaponSprite.render(camera);
-		reloadingText.render(camera);
-		ammoText.render(camera);
+	@Override
+	public void render() {
+		weaponSprite.render();
+		reloadingText.render();
+		ammoText.render();
 	}
 
 	@Override

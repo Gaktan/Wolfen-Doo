@@ -109,6 +109,7 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
 
+		GL20.glEnableVertexAttribArray(0);
 		//					  	  v - position in layout (see shader)
 		//							  v - Nb of component per vertex (2 for 2D (x, y))
 		//												 v - Normalized ? (between 0 - 1)
@@ -116,14 +117,13 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		//																	   v - Where to start ?
 		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 5 * (Float.SIZE/8) , 0);
 
+		GL20.glEnableVertexAttribArray(1);
 		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 5 * (Float.SIZE/8) , 3 * (Float.SIZE/8));
 
 		//GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
 	}
 
 	@Override
@@ -150,15 +150,11 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 	@Override
 	public void preRender() {
 		super.preRender();
-
-		GL20.glEnableVertexAttribArray(1);
 	}
 
 	@Override
 	public void postRender() {
 		super.postRender();
-
-		GL20.glDisableVertexAttribArray(1);
 	}
 
 	public void render(int orientation) {

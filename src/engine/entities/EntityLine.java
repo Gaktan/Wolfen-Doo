@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
+import engine.game.GameWolfen;
 import engine.util.MatrixUtil;
 
 /**
@@ -29,10 +30,10 @@ public class EntityLine extends Entity {
 	}
 
 	@Override
-	public void render(Camera camera) {
+	public void render() {
 		GL11.glPushMatrix();
 
-		GL11.glLoadMatrix(MatrixUtil.toFloatBuffer(camera.getProjectionXview()));
+		GL11.glLoadMatrix(MatrixUtil.toFloatBuffer(GameWolfen.getInstance().camera.getProjectionXview()));
 
 		GL11.glLineWidth(2.5f);
 		GL11.glColor3f(colorA.r, colorA.g, colorA.b);

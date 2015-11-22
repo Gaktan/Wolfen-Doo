@@ -3,15 +3,13 @@ package game.animations;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.animations.AnimatedActor;
-import engine.entities.Camera;
 import engine.entities.EntityLine;
+import engine.game.GameWolfen;
 import engine.shapes.Orientation;
 import engine.shapes.Shape;
 import engine.util.MathUtil;
 
 public class CustomAnimatedActorExample extends AnimatedActor {
-
-	protected Camera camera;
 
 	protected Vector3f lookingPoint;
 	protected Vector3f lookingDirection;
@@ -39,37 +37,35 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		dirLine.update(dt);
 		Vector3f.add(position, lookingDirection, lookingPoint);
 
-		if (camera != null) {
-			Vector3f vec1 = camera.viewAngle.toVector();
+		Vector3f vec1 = GameWolfen.getInstance().camera.viewAngle.toVector();
 
-			float angle = (float) (Math.atan2(lookingDirection.z, lookingDirection.x) - Math.atan2(vec1.z, vec1.x)) + PI_OVER_2 / 2f;
+		float angle = (float) (Math.atan2(lookingDirection.z, lookingDirection.x) - Math.atan2(vec1.z, vec1.x)) + PI_OVER_2 / 2f;
 
-			if (angle < 0) angle += 2 * Math.PI;
+		if (angle < 0) angle += 2 * Math.PI;
 
-			if (angle < PI_OVER_2) {
-				changeOrientation(Orientation.EAST);
-			}
-			else if (angle >= PI_OVER_2 && angle < Math.PI) {
-				changeOrientation(Orientation.SOUTH);
-			}
-			else if (angle >= Math.PI && angle < PI_OVER_2*3.f) {
-				changeOrientation(Orientation.WEST);
-			}
-			else {
-				changeOrientation(Orientation.NORTH);
-			}
+		if (angle < PI_OVER_2) {
+			changeOrientation(Orientation.EAST);
+		}
+		else if (angle >= PI_OVER_2 && angle < Math.PI) {
+			changeOrientation(Orientation.SOUTH);
+		}
+		else if (angle >= Math.PI && angle < PI_OVER_2 * 3.f) {
+			changeOrientation(Orientation.WEST);
+		}
+		else {
+			changeOrientation(Orientation.NORTH);
 		}
 
 		return result;
 	}
 
 	private void changeOrientation(int newOrientation) {
-		
+
 		if (orientation == newOrientation)
 			return;
-		
+
 		orientation = newOrientation;
-		
+
 		switch (orientation) {
 		case Orientation.EAST:
 			setAnimation("a_running_right");
@@ -87,10 +83,8 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 	}
 
 	@Override
-	public void render(Camera camera) {
-		super.render(camera);
-		dirLine.render(camera);
-
-		this.camera = camera;
+	public void render() {
+		super.render();
+		dirLine.render();
 	}
 }

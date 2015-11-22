@@ -6,12 +6,11 @@ import org.newdawn.slick.Color;
 import engine.game.ShaderProgram;
 import engine.particles.Particle;
 import engine.particles.ParticleSystem;
-import engine.shapes.ShapeQuadTexture;
+import engine.shapes.ShapeInstancedQuadTexture;
 import engine.util.MathUtil;
 
 public class ParticleSystemImpact extends ParticleSystem {
 
-	private ShapeQuadTexture particleShape;
 	private Vector3f direction;
 	private Vector3f impactNormal;
 
@@ -22,7 +21,7 @@ public class ParticleSystemImpact extends ParticleSystem {
 		direction.normalise();
 		this.impactNormal = impactNormal;
 
-		particleShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_billboard"), "particle");
+		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"), "particle");
 
 		newParticlesPerFrame = 10;
 		maxParticles = 10;
@@ -31,7 +30,7 @@ public class ParticleSystemImpact extends ParticleSystem {
 
 	@Override
 	protected Particle newParticle(float maxLife) {
-		Particle p = new Particle(particleShape, maxLife, new Vector3f(position));
+		Particle p = new Particle(maxLife, new Vector3f(position), 0.025f);
 
 		p.velocity = new Vector3f(direction);
 
@@ -64,8 +63,6 @@ public class ParticleSystemImpact extends ParticleSystem {
 
 		p.velocity.normalise();
 		p.velocity.scale(0.8f);
-
-		p.scale.scale(0.025f);
 
 		float green = MathUtil.random(0.5f, 1.f);
 		p.color = new Color(1.f, green, 0.2f);
