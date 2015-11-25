@@ -12,28 +12,57 @@ import org.lwjgl.opengl.GL33;
 
 import engine.game.ShaderProgram;
 
-/**
- * 2D Shape of a simple quad
- */
-public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Instantiable{
+public class ShapeInstancedCubeTexture extends ShapeQuadTexture implements Instantiable {
 
 	protected int instancedVBO;
 
-	public ShapeInstancedQuadTexture(ShaderProgram shaderProgram, String texture) {
+	public ShapeInstancedCubeTexture(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram, texture);
 	}
 
-	public void init() {
-		FloatBuffer vertices = BufferUtils.createFloatBuffer(6 * 4);
-		vertices.put(new float[]{ 
-				// pos			tex coord
-				-0.5f, -0.5f,	0.f, 1.f,
-				-0.5f, +0.5f,	0.f, 0.f,
-				+0.5f, +0.5f,	1.f, 0.f,
+	@Override
+	protected void init() {
+		FloatBuffer vertices = BufferUtils.createFloatBuffer(24 * 5);
+		vertices.put(new float[] {
+				// front1			// Tex Pos
+				-0.5f, -0.5f, -0.5f, 	0f, 1f,
+				0.5f, -0.5f,  -0.5f,	1f, 1f,
+				0.5f,  0.5f,  -0.5f,	1f, 0f,
+
+				// front2
+				0.5f,  0.5f,  -0.5f,	1f, 0f,
+				-0.5f,  0.5f,  -0.5f,	0f, 0f,
+				-0.5f, -0.5f,  -0.5f, 	0f, 1f,
+
+				// back1
+				-0.5f, -0.5f,  0.5f, 	0f, 1f,
+				0.5f,  0.5f,  0.5f,		1f, 0f,
+				0.5f, -0.5f,  0.5f,		1f, 1f,
+
+				// back2
+				0.5f,  0.5f,  0.5f,		1f, 0f,
+				-0.5f, -0.5f,  0.5f, 	0f, 1f,
+				-0.5f,  0.5f,  0.5f,	0f, 0f,
 				
-				+0.5f, +0.5f,	1.f, 0.f,
-				+0.5f, -0.5f,	1.f, 1.f,
-				-0.5f, -0.5f,	0.f, 1.f,
+				// left1
+				0.5f, -0.5f, -0.5f, 	0f, 1f,
+				0.5f, -0.5f,  0.5f,		1f, 1f,
+				0.5f,  0.5f,  0.5f,		1f, 0f,
+
+				// left2
+				0.5f,  0.5f,  0.5f,		1f, 0f,
+				0.5f,  0.5f,  -0.5f,	0f, 0f,
+				0.5f, -0.5f,  -0.5f, 	0f, 1f,
+				
+				// right1
+				-0.5f, -0.5f, -0.5f, 	0f, 1f,
+				-0.5f,  0.5f,  0.5f,	1f, 0f,
+				-0.5f, -0.5f,  0.5f,	1f, 1f,
+
+				// right2
+				-0.5f,  0.5f,  0.5f,	1f, 0f,
+				-0.5f, -0.5f,  -0.5f, 	0f, 1f,
+				-0.5f,  0.5f,  -0.5f,	0f, 0f,
 		});
 		vertices.flip();
 
@@ -51,17 +80,15 @@ public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Insta
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
 
 		GL20.glEnableVertexAttribArray(0);
-
 		//					  	  v - position in layout (see shader)
 		//							  v - Nb of component per vertex (2 for 2D (x, y))
 		//												 v - Normalized ? (between 0 - 1)
 		//														 v - Offset between things (size of a line)
 		//																	   v - Where to start ?
-		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE/8), 0);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 5 * (Float.SIZE/8) , 0);
 
 		GL20.glEnableVertexAttribArray(1);
-		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE/8), 2 * (Float.SIZE/8));
-
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 5 * (Float.SIZE/8) , 3 * (Float.SIZE/8));
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instancedVBO);
 		GL20.glEnableVertexAttribArray(2);
@@ -72,13 +99,13 @@ public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Insta
 
 		GL20.glEnableVertexAttribArray(4);
 		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 7 * (Float.SIZE/8));
-		
+
 		GL20.glEnableVertexAttribArray(5);
 		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 11 * (Float.SIZE/8));
-		
+
 		GL20.glEnableVertexAttribArray(6);
 		GL20.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 15 * (Float.SIZE/8));
-		
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
 		GL33.glVertexAttribDivisor(2, 1);
@@ -86,22 +113,26 @@ public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Insta
 		GL33.glVertexAttribDivisor(4, 1);
 		GL33.glVertexAttribDivisor(5, 1);
 		GL33.glVertexAttribDivisor(6, 1);
-		
+
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);
 	}
 
+	@Override
+	public void render() {}
+
+
 	public void render(int amount) {
-		GL31.glDrawArraysInstanced(GL11.GL_TRIANGLES, 0, 6, amount);
+		GL31.glDrawArraysInstanced(GL11.GL_TRIANGLES, 0, 24, amount);
 	}
 
 	public void setData(FloatBuffer fb) {
 		GL30.glBindVertexArray(VAO);
-		
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instancedVBO);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, fb, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		
+
 		GL30.glBindVertexArray(0);
 	}
 }

@@ -19,9 +19,8 @@ out float Z_far;
 
 void main() {
 
-	vec4 scale = vec4(model[0][0], model[1][1], model[2][2], 1.0);
-	gl_Position = u_projection * (u_view * model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0) * scale);
-
+	gl_Position = u_projection * u_view * model * vec4(position, 1.0);
+	
 	Color = vec4(color, 1.0);
 	TexCoord = texCoord;
 	Z_far = u_zfar;

@@ -26,7 +26,7 @@ public class ParticleSystemBlood extends ParticleSystem {
 
 		Particle p;
 		p = new Particle(MathUtil.random(500, maxLife / 2), new Vector3f(position), scale);
-		p.velocity = new Vector3f(MathUtil.randomNegative(-0.5f, 0.5f), 0.1f, MathUtil.randomNegative(-0.5f, 0.5f));
+		p.velocity = new Vector3f(MathUtil.randomNegative(-0.5f, 0.5f), MathUtil.random(-0.1f, 0.1f), MathUtil.randomNegative(-0.5f, 0.5f));
 		p.velocity.normalise();
 		//p.velocity.scale(0.25f);
 

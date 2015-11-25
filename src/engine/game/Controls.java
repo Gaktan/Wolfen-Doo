@@ -174,17 +174,5 @@ public class Controls {
 
 		else if(key == KEY_E)
 			actionPress = true;
-
-		else if (key == KEY_UP)
-			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_back");
-
-		else if (key == KEY_DOWN)
-			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_front");
-
-		else if (key == KEY_LEFT)
-			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_left");
-
-		else if (key == KEY_RIGHT)
-			GameWolfen.getInstance().animatedActorTest.setAnimation("a_running_right");
 	}
 }

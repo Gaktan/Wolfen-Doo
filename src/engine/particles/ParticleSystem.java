@@ -4,10 +4,12 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.shapes.ShapeInstancedQuadTexture;
+import engine.util.MatrixUtil;
 
 /**
  * Object used to generate particles
@@ -52,40 +54,39 @@ public abstract class ParticleSystem implements Displayable {
 			}
 		}
 
-		if (life < 0 || !list.isEmpty()) {
+		ArrayList<Particle> destroyList = new ArrayList<Particle>();
 
-			ArrayList<Particle> destroyList = new ArrayList<Particle>();
+		for (Particle p : list) {
+			boolean b = p.update(dt);
 
-			for (Particle p : list) {
-				boolean b = p.update(dt);
-
-				if (!b) {
-					destroyList.add(p);
-				}
-			}
-
-			for (Particle p : destroyList) {
-				list.remove(p);
+			if (!b) {
+				destroyList.add(p);
 			}
 		}
-		else {
+
+		for (Particle p : destroyList) {
+			list.remove(p);
+		}
+
+		if (list.isEmpty()) {
 			return false;
 		}
 
-		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 3 + 1));
+		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16));
 
 		for (Particle p : list) {
-			float[] array = new float[(3 + 3 + 1)];
-
+			float[] array = new float[3];
 			array[0] = p.color.r;
 			array[1] = p.color.g;
 			array[2] = p.color.b;
-			array[3] = p.position.x;
-			array[4] = p.position.y;
-			array[5] = p.position.z;
-			array[6] = p.getScale();
-
 			fb1.put(array);
+
+			Matrix4f model = MatrixUtil.createIdentityMatrix();
+			model.m30 = p.position.x;
+			model.m31 = p.position.y;
+			model.m32 = p.position.z;
+			model = model.scale(new Vector3f(p.scale, p.scale, p.scale));
+			model.store(fb1);
 		}
 
 		fb1.flip();

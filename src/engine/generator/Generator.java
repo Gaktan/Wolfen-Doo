@@ -1,7 +1,6 @@
 package engine.generator;
 
 import engine.game.GameWolfen;
-import engine.game.Map;
 
 /**
  * The Generator class is used to generate any kind of 2D map
@@ -39,5 +38,5 @@ public abstract class Generator {
 	 * 
 	 * @return newly generated Map
 	 */
-	public abstract Map generate();
+	public abstract OldMap generate();
 }

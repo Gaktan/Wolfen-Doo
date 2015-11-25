@@ -3,15 +3,15 @@ package game.entities;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
-import engine.Displayable;
-import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
+import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
-import engine.entities.EntityWall;
 import engine.game.GameWolfen;
-import engine.game.Map;
 import engine.game.ShaderProgram;
+import engine.generator.Map;
+import engine.generator.Map.DoorShapeInfo;
+import engine.generator.Map.ShapeInfo;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 import game.particles.ParticleSystemImpact;
@@ -27,7 +27,7 @@ public class EntityProjctile extends EntityLine {
 
 	protected static final float SPEED;
 	protected static final ShapeQuadTexture SHAPE_IMPACT;
-	
+
 	static {
 		SPEED = 2.2f;
 		SHAPE_IMPACT = new ShapeQuadTexture(ShaderProgram.getProgram("texture"), "bullet_impact");
@@ -54,7 +54,7 @@ public class EntityProjctile extends EntityLine {
 
 		Vector3f.add(position, velocity, positionB);
 
-		if (position.x < 0 || position.z < 0 || position.x > map.x || position.z > map.y) {
+		if (position.x < 0 || position.z < 0 || position.x > map.getSizeX() || position.z > map.getSizeY()) {
 			return false;
 		}
 
@@ -83,7 +83,7 @@ public class EntityProjctile extends EntityLine {
 				impactPosition.z = position.z + (velocity.z * i);
 				break;
 			}
-			
+
 			int x = (int) (position.x + (velocity.x * i) + 0.5f);
 			int z = (int) (position.z + (velocity.z * i) + 0.5f);
 
@@ -93,16 +93,21 @@ public class EntityProjctile extends EntityLine {
 			oldX = x;
 			oldZ = z;
 
-			Displayable d = map.list.get(x, z);
-			if (d instanceof Entity) {
-				Entity e = (Entity) d;
+			ShapeInfo info = map.get(x, z);
 
-				if (!e.isSolid())
+			if (info != null) {
+
+				if (!info.isSolid())
 					continue;
-				if (!(e instanceof EntityWall))
+
+				if (info instanceof DoorShapeInfo) {
+					EntityDoor door = (EntityDoor) map.getActor(x, z);
+					if (door.getState() != DoorState.OPEN) {
+						return false;
+					}
+
 					continue;
-				if (e instanceof EntityDoor)
-					drawImpact = false;
+				}
 
 				b = true;
 
@@ -155,8 +160,9 @@ public class EntityProjctile extends EntityLine {
 
 			else if (drawImpact) {
 				createImpact(impactPosition, normal);
-				return false;
 			}
+
+			return false;
 		}
 
 		return result;
@@ -192,7 +198,7 @@ public class EntityProjctile extends EntityLine {
 		e.scale.scale(0.1f);
 
 		GameWolfen.getInstance().bulletHoles.add(e);
-		
+
 		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3f(newPos),
 				new Vector3f(velocity), new Vector3f(normal));
 		GameWolfen.getInstance().ac.add(particles);

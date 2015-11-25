@@ -1,13 +1,14 @@
 package engine;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Acts as an ArrayList for Displayables
  * @author Gaktan
  */
-public class DisplayableList implements Displayable {
+public class DisplayableList implements Displayable, Iterable<Displayable> {
 	
 	public List<Displayable> list;
 	private List<Displayable> toBeAdded;
@@ -33,7 +34,7 @@ public class DisplayableList implements Displayable {
 	 * @param d Displayable to remove
 	 */
 	public void remove(Displayable d) {
-		toBeDeleted.remove(d);
+		toBeDeleted.add(d);
 	}
 
 	@Override
@@ -80,6 +81,11 @@ public class DisplayableList implements Displayable {
 		}
 		
 		return size;
+	}
+
+	@Override
+	public Iterator<Displayable> iterator() {
+		return list.iterator();
 	}
 
 }

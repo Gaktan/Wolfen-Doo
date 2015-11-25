@@ -9,7 +9,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import engine.entities.EntityActor;
 import engine.game.GameWolfen;
-import engine.game.Map;
 import engine.game.ShaderProgram;
 import engine.shapes.ShapeInsideOutCubeColor;
 
@@ -24,7 +23,7 @@ public class MazeGenerator extends Generator {
 	}
 
 	@Override
-	public Map generate() {
+	public OldMap generate() {
 		int total = sizeX*sizeY;
 		boolean visited[][] = new boolean[sizeX][sizeY];
 		int visitedCount = 0;
@@ -104,7 +103,7 @@ public class MazeGenerator extends Generator {
 			}
 		}
 
-		Map mapR = new Map(game, sizeX, sizeY, null);
+		OldMap mapR = new OldMap(game, sizeX, sizeY, null);
 		
 		Vector3f downColor = new Vector3f(0, 0, 0);
 		Vector3f upColor = new Vector3f(1, 1, 1);

@@ -12,8 +12,11 @@ import engine.DisplayableText;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
-import engine.generator.MapReader;
+import engine.generator.Map;
+import engine.generator.OldMap;
+import engine.generator.OldMapReader;
 import engine.generator.MazeGenerator;
+import engine.generator.MapReader;
 import engine.particles.ParticleSystem;
 import engine.shapes.*;
 import engine.weapons.Weapon;
@@ -79,6 +82,8 @@ public class GameWolfen extends Game {
 		ShaderProgram shaderProgramTexCamera = new ShaderProgram("texture_camera", "texture", "texture_camera");
 		ShaderProgram shaderProgramTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture", 
 				"texture_billboard_instanced");
+		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", 
+				"texture_instanced");
 
 		camera = new Camera(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
 		camera.setPosition(new Vector3f(2, 0, 2));
@@ -89,10 +94,14 @@ public class GameWolfen extends Game {
 
 		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
 
-		MapReader mr = new MapReader(this, "01");
-		map = mr.createMap();
+		//MapReader mr = new MapReader(this, "01.map");
+		//map = mr.createMap();
 		//map = new MazeGenerator(this, 75, 75).generate();
 
+		//ac.add(map);
+
+		MapReader mr = new MapReader("01.map");
+		map = mr.createMap();
 		ac.add(map);
 
 		animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
@@ -122,7 +131,7 @@ public class GameWolfen extends Game {
 		currentWeapon = new WeaponRevolver(camera);
 
 		bulletHoles = new DisplayableInstancedList<ShapeInstancedQuadTexture>(
-				new ShapeInstancedQuadTexture(shaderProgramTexBillInstanced, "bullet_impact"));
+				new ShapeInstancedQuadTexture(shaderProgramTexInstanced, "bullet_impact"), false);
 
 		ac.add(bulletHoles);
 	}

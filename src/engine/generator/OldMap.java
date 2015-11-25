@@ -1,4 +1,4 @@
-package engine.game;
+package engine.generator;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -9,12 +9,14 @@ import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.entities.EntityWall;
+import engine.game.GameWolfen;
+import engine.game.ShaderProgram;
 import engine.shapes.*;
 
 /**
  * Used to render a 2D grid map
  */
-public class Map implements Displayable{
+public class OldMap implements Displayable{
 
 	public EntityActor sky;
 	public DisplayableArray2D list;
@@ -23,11 +25,11 @@ public class Map implements Displayable{
 
 	public GameWolfen game;
 
-	public Map(GameWolfen game) {
+	public OldMap(GameWolfen game) {
 		this(game, 20, 20, null);
 	}
 
-	public Map(GameWolfen game, int x, int y, EntityActor sky) {
+	public OldMap(GameWolfen game, int x, int y, EntityActor sky) {
 		list = new DisplayableArray2D(x, y);
 
 		this.game = game;

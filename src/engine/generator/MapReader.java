@@ -1,23 +1,16 @@
 package engine.generator;
 
-import java.util.HashMap;
-
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.entities.EntityActor;
-import engine.game.GameWolfen;
-import engine.game.Map;
 import engine.game.ShaderProgram;
 import engine.shapes.Orientation;
-import engine.shapes.Shape;
-import engine.shapes.ShapeCubeTexture;
 import engine.shapes.ShapeInsideOutCubeColor;
-import engine.shapes.ShapeQuadTexture;
 import engine.util.FileUtil;
 import engine.util.MathUtil;
 
 /**
- * MapReader class is used to read a map from a .map file
+ * NewMapReader class is used to read a map from a .map file
  * 
  * For an example, see res/maps/map.example
  * 
@@ -53,48 +46,9 @@ public class MapReader {
 	protected int height;
 	protected Map map;
 
-	protected HashMap<Character, MapInfo> infoMap;
 
-	protected GameWolfen game;
-
-	/**
-	 * Used by MapInfo to get the type of the entity
-	 */
-	protected enum MapInfoType {
-		WALL,
-		BILLBOARD,
-		ANIMATED_BILLBOARD,
-		DOOR
-	}
-
-	/**
-	 * Used to store informations about entity creation commands
-	 */
-	protected class MapInfo {
-		protected Shape shape;
-		protected boolean solid;
-
-		protected MapInfoType type;
-	}
-
-	/**
-	 * MapInfo specifically made for doors (as they hold much more information)
-	 */
-	protected class MapInfoDoor extends MapInfo {
-		protected Vector3f openingPosition;
-		protected int orientation;
-		protected float openingTime;
-
-		public MapInfoDoor() {
-			type = MapInfoType.DOOR;
-		}
-	}
-
-	public MapReader(GameWolfen game, String path) {
-		this.game = game;
+	public MapReader(String path) {
 		this.path = path;
-
-		infoMap = new HashMap<Character, MapInfo>();
 	}
 
 	/**
@@ -102,23 +56,21 @@ public class MapReader {
 	 * @return Map created from designated file
 	 */
 	public Map createMap() {
-		map = new Map(game);
 
+		map = new Map();
 		readFile(path);
-
 		map.setSize(width, height);
-		map.setSky();
-		readMap(mapData);
+		map.buildMapFromString(mapData);
 
-		map.setOrientation();
-
-		System.out.println(map.list);
+		for (int i = 0; i < height; i++) {
+			System.out.println(mapData.substring(i * height, (i+1) * height));
+		}
 
 		return map;
 	}
 
 	protected void readFile(String path) {
-		String data = FileUtil.readFromFile("res/maps/" + path + ".map");
+		String data = FileUtil.readFromFile("res/maps/" + path);
 
 		int start = 0;
 		int end = 0;
@@ -169,129 +121,43 @@ public class MapReader {
 
 	}
 
-	protected void readMap(String value) {
-		for (int i = 0; i < width; i++)
-		{
-			for (int j = 0; j < height; j++)
-			{
-				char c = value.charAt((i * width) + j);
-
-				MapInfo mapInfo = infoMap.get(c);
-
-				if (mapInfo != null) {
-					Shape shape = mapInfo.shape;
-
-					boolean solid = mapInfo.solid;
-
-					if (mapInfo.type == MapInfoType.ANIMATED_BILLBOARD) {
-						map.newAnimatedActor(i, j, shape, solid);
-					}
-
-					else if (mapInfo.type == MapInfoType.WALL) {
-						map.newWall(i, j, (ShapeCubeTexture) shape, solid);
-					}
-
-					else if (mapInfo.type == MapInfoType.BILLBOARD) {
-						map.newActor(i, j, shape, solid);
-					}
-
-					else if (mapInfo.type == MapInfoType.DOOR) {
-						MapInfoDoor mapInfoDoor = (MapInfoDoor) mapInfo;
-						map.newDoor(i, j, (ShapeCubeTexture) shape, new Vector3f(mapInfoDoor.openingPosition),
-								mapInfoDoor.orientation, mapInfoDoor.openingTime);
-					}
-				}
-			} // for j
-		} // for i
-	}
-
 	protected void createShape(String command, String value) {
 		String[] values = value.split(", ");
-
-		ShaderProgram program = null;
-		Shape shape = null;
 
 		char ch = values[0].charAt(0);
 		String s_image = values[1];
 
-		MapInfo mapInfo = new MapInfo();
-
 		if (command.equals(COMMAND_ANIMATION)) {
-			program = getProgram(PROGRAM_BILLBOARD_ANIMATED);
-			shape = createShape(SHAPE_QUAD_TEXTURE, program, s_image);
-			mapInfo.type = MapInfoType.ANIMATED_BILLBOARD;
-		}
-
-		else if (command.equals(COMMAND_BILLBOARD)) {
-			program = getProgram(PROGRAM_BILLBOARD_TEXTURE);
-			shape = createShape(SHAPE_QUAD_TEXTURE, program, s_image);
-			mapInfo.type = MapInfoType.BILLBOARD;
-		}
-
-		else if (command.equals(COMMAND_WALL)) {
-			program = getProgram(PROGRAM_TEXTURE);
-			shape = createShape(SHAPE_CUBE_TEXTURE, program, s_image);
-			mapInfo.type = MapInfoType.WALL;
-		}
-
-		else if (command.equals(COMMAND_DOOR)) {
-			program = getProgram(PROGRAM_TEXTURE);
-			shape = createShape(SHAPE_CUBE_TEXTURE, program, s_image);
-			MapInfoDoor mapInfoDoor = new MapInfoDoor();
-
-			mapInfoDoor.openingPosition = readVector3f(values[2]);
-			mapInfoDoor.orientation = ((MathUtil.parseInt(values[3]) == 1) ? Orientation.NORTH : Orientation.WEST);
-			mapInfoDoor.openingTime = MathUtil.parseFloat(values[4]);
-
-			mapInfoDoor.shape = shape;
-			mapInfoDoor.solid = true;
-
-			infoMap.put(ch, mapInfoDoor);
 			return;
 		}
 
-		int solid = 0;
-		String s_solid = values[2];
+		else if (command.equals(COMMAND_BILLBOARD)) {
+			String s_solid = values[2];
 
-		try {
-			solid = Integer.parseInt(s_solid);
-		}
-		catch (NumberFormatException e){
-			e.printStackTrace();
+			boolean solid = (MathUtil.parseInt(s_solid) == 1);
+
+			map.newBillboard(ch, s_image, solid);
 		}
 
-		mapInfo.shape = shape;
-		mapInfo.solid = solid == 1f;
+		else if (command.equals(COMMAND_WALL)) {
+			String s_solid = values[2];
 
-		infoMap.put(ch, mapInfo);
-	}
+			boolean solid = (MathUtil.parseInt(s_solid) == 1);
 
-	protected Shape createShape(String shape, ShaderProgram program, String texture) {
+			map.newWall(ch, s_image, solid);
+		}
 
-		if (shape.equals(SHAPE_CUBE_TEXTURE))
-			return new ShapeCubeTexture(program, texture);
-
-		if (shape.equals(SHAPE_QUAD_TEXTURE))
-			return new ShapeQuadTexture(program, texture);
-
-		return null;
-	}
-
-	private ShaderProgram getProgram(String shaderProgram) {
-		if (shaderProgram.equals(PROGRAM_TEXTURE))
-			return ShaderProgram.getProgram("texture");
-
-		if (shaderProgram.equals(PROGRAM_BILLBOARD_TEXTURE))
-			return ShaderProgram.getProgram("texture_billboard");
-
-		if (shaderProgram.equals(PROGRAM_BILLBOARD_ANIMATED))
-			return ShaderProgram.getProgram("texture_billboard");
-
-		return null;
+		else if (command.equals(COMMAND_DOOR)) {
+			
+			Vector3f openingPosition = readVector3f(values[2]);
+			int orientation = ((MathUtil.parseInt(values[3]) == 1) ? Orientation.NORTH : Orientation.WEST);
+			float openingTime = MathUtil.parseFloat(values[4]);
+			
+			map.newDoor(ch, s_image, openingPosition, orientation, openingTime);
+		}
 	}
 
 	protected void setSky(String value) {
-
 		String[] values = value.split(", ");
 		Vector3f downColor = readVector3f(values[0]);
 		Vector3f upColor = readVector3f(values[1]);
@@ -301,7 +167,7 @@ public class MapReader {
 
 		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
 
-		map.sky = new EntityActor(skyShape);
+		map.setSky(new EntityActor(skyShape));
 	}
 
 	protected Vector3f readVector3f(String value) {
