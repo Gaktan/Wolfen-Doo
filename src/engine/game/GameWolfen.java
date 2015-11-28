@@ -4,11 +4,13 @@ import java.util.Map.Entry;
 
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Color;
 
 import engine.BitMapFont;
 import engine.DisplayableInstancedList;
 import engine.DisplayableList;
 import engine.DisplayableText;
+import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
@@ -38,7 +40,7 @@ public class GameWolfen extends Game {
 
 	public DisplayableList ac;
 	public Map map;
-	public DisplayableInstancedList<ShapeInstancedQuadTexture> bulletHoles;
+	public DisplayableInstancedList bulletHoles;
 
 	/* TEMP STUFF */
 
@@ -80,6 +82,7 @@ public class GameWolfen extends Game {
 		ShaderProgram shaderProgramColor = new ShaderProgram("color");
 		ShaderProgram shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
 		ShaderProgram shaderProgramTexCamera = new ShaderProgram("texture_camera", "texture", "texture_camera");
+		ShaderProgram shaderProgramTexCameraInstanced = new ShaderProgram("texture_camera_instanced", "texture", "texture_camera_instanced");
 		ShaderProgram shaderProgramTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture", 
 				"texture_billboard_instanced");
 		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", 
@@ -92,7 +95,7 @@ public class GameWolfen extends Game {
 
 		ac = new DisplayableList();
 
-		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test");
+		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test.png");
 
 		//MapReader mr = new MapReader(this, "01.map");
 		//map = mr.createMap();
@@ -100,19 +103,31 @@ public class GameWolfen extends Game {
 
 		//ac.add(map);
 
-		MapReader mr = new MapReader("01.map");
-		map = mr.createMap();
+		MapReader mr = new MapReader();
+		map = mr.createMap("01.map");
 		ac.add(map);
 
 		animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
 		animatedActorTest.position.set(3, 0, 5);
 		ac.add(animatedActorTest);
 
-		bmf = new BitMapFont(new ShapeQuadTexture(shaderProgramTexCamera, "char"), 256, 16);
+		bmf = new BitMapFont(new ShapeInstancedQuadTexture(shaderProgramTexCameraInstanced, "char.png"), 256, 256, 16, 16);
 
-		textPos = bmf.createString(new Vector3f(-.95f, .95f, 0), "", false);
-		textFps = bmf.createString(new Vector3f(-.95f, .85f, 0), "", false);
-		textEntities = bmf.createString(new Vector3f(-.95f, .75f, 0), "", false);
+		textPos = bmf.createString(new Vector3f(-1f, 1f, 0), "", 0.85f);
+		textFps = bmf.createString(new Vector3f(-1f, .9f, 0), "", 0.85f);
+		textEntities = bmf.createString(new Vector3f(-1f, .8f, 0), "", 0.85f);
+
+		BitMapFont worldFont = new BitMapFont(new ShapeInstancedQuadTexture(shaderProgramTexInstanced, "char.png"),
+				256, 256, 16, 16);
+
+		String welcomeText = "Hello and welcome to Wolfen-doo. You can't to much right now,\n"
+				+ "but it will come, don't worry.\n"
+				+ "Use ZQSD to move around, mouse to look and shoot,\n"
+				+ "'E' to open doors, 'R' to reload.";
+
+		DisplayableText text = worldFont.createString(new Vector3f(0.5f, 0.4f, 0.5f), welcomeText, 0.45f, 
+				new Color(0f, 0f, 0f), true);
+		ac.add(text);
 
 		/*
 		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
@@ -130,8 +145,8 @@ public class GameWolfen extends Game {
 
 		currentWeapon = new WeaponRevolver(camera);
 
-		bulletHoles = new DisplayableInstancedList<ShapeInstancedQuadTexture>(
-				new ShapeInstancedQuadTexture(shaderProgramTexInstanced, "bullet_impact"), false);
+		bulletHoles = new DisplayableInstancedList(new ShapeInstancedQuadTexture(shaderProgramTexInstanced, 
+				"bullet_impact.png"), false);
 
 		ac.add(bulletHoles);
 	}

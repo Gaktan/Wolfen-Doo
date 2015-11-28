@@ -29,16 +29,6 @@ public class MapReader {
 	protected static final String COMMAND_MAP = "map";
 	protected static final String COMMAND_SKY = "sky";
 
-	// Shader Programs
-	protected static final String PROGRAM_TEXTURE = "texture";
-	protected static final String PROGRAM_BILLBOARD_ANIMATED = "billboard_animated";
-	protected static final String PROGRAM_BILLBOARD_TEXTURE = "billboard_texture";
-
-	// Shapes
-	protected static final String SHAPE_CUBE_TEXTURE = "cube_texture";
-	protected static final String SHAPE_QUAD_TEXTURE = "quad_texture";
-
-	protected String path;
 	protected String mapData;
 
 	protected String name;
@@ -47,15 +37,13 @@ public class MapReader {
 	protected Map map;
 
 
-	public MapReader(String path) {
-		this.path = path;
-	}
+	public MapReader() {}
 
 	/**
 	 * Starts the process of reading the map
 	 * @return Map created from designated file
 	 */
-	public Map createMap() {
+	public Map createMap(String path) {
 
 		map = new Map();
 		readFile(path);

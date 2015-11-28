@@ -21,7 +21,7 @@ public class ParticleSystemImpact extends ParticleSystem {
 		direction.normalise();
 		this.impactNormal = impactNormal;
 
-		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"), "particle");
+		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"), "particle.png");
 
 		newParticlesPerFrame = 10;
 		maxParticles = 10;

@@ -27,6 +27,7 @@ public class Particle {
 	}
 
 	public boolean update(float dt) {
+		
 		life -= dt;
 
 		if (life <= 0)
@@ -35,7 +36,7 @@ public class Particle {
 		if (paused)
 			return true;
 		
-		dt = dt * .01f;
+		dt = dt * .005f;
 
 		velocity.x += GRAVITY.x * dt;
 		velocity.y += GRAVITY.y * dt;

@@ -15,7 +15,7 @@ import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.game.GameWolfen;
 import engine.game.ShaderProgram;
-import engine.shapes.Instantiable;
+import engine.shapes.InstancedTexturedShape;
 import engine.shapes.Orientation;
 import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
@@ -30,11 +30,10 @@ public class Map implements Displayable {
 
 	protected char map[][];
 
-	protected EntityActor sky;
-
 	protected HashMap<Character, ShapeInfo> shapeMap;
 
 	protected DisplayableList actorsList;
+	protected EntityActor sky;
 
 	protected boolean delete;
 
@@ -136,7 +135,7 @@ public class Map implements Displayable {
 				if (info == null)
 					continue;
 
-				if (info.shape instanceof Instantiable) {
+				if (info.shape instanceof InstancedTexturedShape) {
 					info.amount++;
 				}
 
@@ -170,13 +169,13 @@ public class Map implements Displayable {
 
 			ShapeInfo info = entry.getValue();
 
-			if (!(info.shape instanceof Instantiable)) {
+			if (!(info.shape instanceof InstancedTexturedShape)) {
 				continue;
 			}
 
 			int amount = info.amount;
 
-			FloatBuffer fb = BufferUtils.createFloatBuffer(amount * (3 + 16));
+			FloatBuffer fb = BufferUtils.createFloatBuffer(amount * (3 + 16 + 1));
 
 			for (int i = 0; i < sizeX; i++) {
 				for (int j = 0; j < sizeY; j++) {
@@ -197,12 +196,14 @@ public class Map implements Displayable {
 					model.m32 = j;
 					model.store(fb);
 
+					fb.put(-1f);
+
 				} // for j
 			} // for i
 
 			fb.flip();
 
-			((Instantiable) info.shape).setData(fb);
+			((InstancedTexturedShape) info.shape).setData(fb);
 		}
 
 	}
@@ -249,9 +250,13 @@ public class Map implements Displayable {
 		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
 			ShapeInfo info = entry.getValue();
 
-			if (info.shape instanceof Instantiable) {
+			if (info.shape instanceof InstancedTexturedShape) {
 				info.shape.preRender();
-				((Instantiable) info.shape).render(info.amount);
+
+				// TODO: change this in case you want to make animated walls / spritesheets
+				//info.shape.getShaderProgram().setUniform("u_imageInfo", new Vector4f(1, 1, 1, 1));
+
+				((InstancedTexturedShape) info.shape).render(info.amount);
 				info.shape.postRender();
 			}
 		}
@@ -274,7 +279,7 @@ public class Map implements Displayable {
 
 			total += info.amount;
 		}
-		
+
 		total += actorsList.size();
 
 		return total;
@@ -325,7 +330,7 @@ public class Map implements Displayable {
 
 		return null;
 	}
-	
+
 	/**
 	 * Casts a ray to find the nearest entity in its direction
 	 * @param position Position to cast the ray from

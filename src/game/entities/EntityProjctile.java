@@ -8,11 +8,9 @@ import engine.entities.EntityDoor;
 import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
 import engine.game.GameWolfen;
-import engine.game.ShaderProgram;
 import engine.generator.Map;
 import engine.generator.Map.DoorShapeInfo;
 import engine.generator.Map.ShapeInfo;
-import engine.shapes.ShapeQuadTexture;
 import engine.util.MathUtil;
 import game.particles.ParticleSystemImpact;
 
@@ -26,11 +24,9 @@ public class EntityProjctile extends EntityLine {
 	protected int bounces;
 
 	protected static final float SPEED;
-	protected static final ShapeQuadTexture SHAPE_IMPACT;
 
 	static {
 		SPEED = 2.2f;
-		SHAPE_IMPACT = new ShapeQuadTexture(ShaderProgram.getProgram("texture"), "bullet_impact");
 	}
 
 	public EntityProjctile(Vector3f position, Vector3f direction, Map map) {

@@ -15,9 +15,11 @@ import engine.game.ShaderProgram;
 /**
  * 2D Shape of a simple quad
  */
-public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Instantiable{
+public class ShapeInstancedQuadTexture extends InstancedTexturedShape {
 
-	protected int instancedVBO;
+	public ShapeInstancedQuadTexture(ShaderProgram shaderProgram, int textureID) {
+		super(shaderProgram, textureID);
+	}
 
 	public ShapeInstancedQuadTexture(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram, texture);
@@ -30,7 +32,7 @@ public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Insta
 				-0.5f, -0.5f,	0.f, 1.f,
 				-0.5f, +0.5f,	0.f, 0.f,
 				+0.5f, +0.5f,	1.f, 0.f,
-				
+
 				+0.5f, +0.5f,	1.f, 0.f,
 				+0.5f, -0.5f,	1.f, 1.f,
 				-0.5f, -0.5f,	0.f, 1.f,
@@ -65,20 +67,23 @@ public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Insta
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instancedVBO);
 		GL20.glEnableVertexAttribArray(2);
-		GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 0);
+		GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 0);
 
 		GL20.glEnableVertexAttribArray(3);
-		GL20.glVertexAttribPointer(3, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 3 * (Float.SIZE/8));
+		GL20.glVertexAttribPointer(3, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 3 * (Float.SIZE/8));
 
 		GL20.glEnableVertexAttribArray(4);
-		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 7 * (Float.SIZE/8));
-		
+		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 7 * (Float.SIZE/8));
+
 		GL20.glEnableVertexAttribArray(5);
-		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 11 * (Float.SIZE/8));
-		
+		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 11 * (Float.SIZE/8));
+
 		GL20.glEnableVertexAttribArray(6);
-		GL20.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 15 * (Float.SIZE/8));
-		
+		GL20.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 15 * (Float.SIZE/8));
+
+		GL20.glEnableVertexAttribArray(7);
+		GL20.glVertexAttribPointer(7, 1, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 19 * (Float.SIZE/8));
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
 		GL33.glVertexAttribDivisor(2, 1);
@@ -86,7 +91,8 @@ public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Insta
 		GL33.glVertexAttribDivisor(4, 1);
 		GL33.glVertexAttribDivisor(5, 1);
 		GL33.glVertexAttribDivisor(6, 1);
-		
+		GL33.glVertexAttribDivisor(7, 1);
+
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);
 	}
@@ -97,11 +103,19 @@ public class ShapeInstancedQuadTexture extends ShapeQuadTexture implements Insta
 
 	public void setData(FloatBuffer fb) {
 		GL30.glBindVertexArray(VAO);
-		
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instancedVBO);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, fb, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		
+
 		GL30.glBindVertexArray(0);
+	}
+
+	@Override
+	public Shape copy() {
+		ShapeInstancedQuadTexture shape = new ShapeInstancedQuadTexture(shaderProgram, textureID);
+		shape.init();
+
+		return shape;
 	}
 }

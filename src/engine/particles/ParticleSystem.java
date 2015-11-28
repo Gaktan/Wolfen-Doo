@@ -72,7 +72,7 @@ public abstract class ParticleSystem implements Displayable {
 			return false;
 		}
 
-		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16));
+		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
 
 		for (Particle p : list) {
 			float[] array = new float[3];
@@ -87,6 +87,8 @@ public abstract class ParticleSystem implements Displayable {
 			model.m32 = p.position.z;
 			model = model.scale(new Vector3f(p.scale, p.scale, p.scale));
 			model.store(fb1);
+			
+			fb1.put(-1f);
 		}
 
 		fb1.flip();

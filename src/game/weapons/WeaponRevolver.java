@@ -15,15 +15,15 @@ import game.entities.EntityProjctile;
 public class WeaponRevolver extends Weapon {
 
 	public WeaponRevolver(Camera camera) {
-		super(camera, 0f, 6000, 1000f, 40, 600f);
+		super(camera, 300f, 6, 1000f, 40, 600f);
 
 		updateAmmoText();
 
-		ShapeQuadTexture revolverShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_camera"), "revolver");
+		ShapeQuadTexture revolverShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_camera"), "revolver.png");
 
 		weaponSprite = new AnimatedActor(revolverShape, "revolver", "a_idle");
 		weaponSprite.position.set(POSITION_CENTER.x, POSITION_CENTER.y);
-		weaponSprite.scale.set(15f, 15f, 15f);
+		weaponSprite.scale.set(1.5f, 1.5f, 1.5f);
 		
 		bendingCurve.scale(2f);
 	}

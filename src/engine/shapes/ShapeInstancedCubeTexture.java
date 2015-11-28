@@ -12,12 +12,14 @@ import org.lwjgl.opengl.GL33;
 
 import engine.game.ShaderProgram;
 
-public class ShapeInstancedCubeTexture extends ShapeQuadTexture implements Instantiable {
-
-	protected int instancedVBO;
+public class ShapeInstancedCubeTexture extends InstancedTexturedShape {
 
 	public ShapeInstancedCubeTexture(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram, texture);
+	}
+
+	public ShapeInstancedCubeTexture(ShaderProgram shaderProgram, int textureID) {
+		super(shaderProgram, textureID);
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class ShapeInstancedCubeTexture extends ShapeQuadTexture implements Insta
 				0.5f,  0.5f,  0.5f,		1f, 0f,
 				-0.5f, -0.5f,  0.5f, 	0f, 1f,
 				-0.5f,  0.5f,  0.5f,	0f, 0f,
-				
+
 				// left1
 				0.5f, -0.5f, -0.5f, 	0f, 1f,
 				0.5f, -0.5f,  0.5f,		1f, 1f,
@@ -53,7 +55,7 @@ public class ShapeInstancedCubeTexture extends ShapeQuadTexture implements Insta
 				0.5f,  0.5f,  0.5f,		1f, 0f,
 				0.5f,  0.5f,  -0.5f,	0f, 0f,
 				0.5f, -0.5f,  -0.5f, 	0f, 1f,
-				
+
 				// right1
 				-0.5f, -0.5f, -0.5f, 	0f, 1f,
 				-0.5f,  0.5f,  0.5f,	1f, 0f,
@@ -92,19 +94,22 @@ public class ShapeInstancedCubeTexture extends ShapeQuadTexture implements Insta
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instancedVBO);
 		GL20.glEnableVertexAttribArray(2);
-		GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 0);
+		GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 0);
 
 		GL20.glEnableVertexAttribArray(3);
-		GL20.glVertexAttribPointer(3, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 3 * (Float.SIZE/8));
+		GL20.glVertexAttribPointer(3, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 3 * (Float.SIZE/8));
 
 		GL20.glEnableVertexAttribArray(4);
-		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 7 * (Float.SIZE/8));
+		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 7 * (Float.SIZE/8));
 
 		GL20.glEnableVertexAttribArray(5);
-		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 11 * (Float.SIZE/8));
+		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 11 * (Float.SIZE/8));
 
 		GL20.glEnableVertexAttribArray(6);
-		GL20.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 19 * (Float.SIZE/8), 15 * (Float.SIZE/8));
+		GL20.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 15 * (Float.SIZE/8));
+
+		GL20.glEnableVertexAttribArray(7);
+		GL20.glVertexAttribPointer(7, 1, GL11.GL_FLOAT, false, 20 * (Float.SIZE/8), 19 * (Float.SIZE/8));
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
@@ -113,19 +118,18 @@ public class ShapeInstancedCubeTexture extends ShapeQuadTexture implements Insta
 		GL33.glVertexAttribDivisor(4, 1);
 		GL33.glVertexAttribDivisor(5, 1);
 		GL33.glVertexAttribDivisor(6, 1);
+		GL33.glVertexAttribDivisor(7, 1);
 
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);
 	}
 
 	@Override
-	public void render() {}
-
-
 	public void render(int amount) {
 		GL31.glDrawArraysInstanced(GL11.GL_TRIANGLES, 0, 24, amount);
 	}
 
+	@Override
 	public void setData(FloatBuffer fb) {
 		GL30.glBindVertexArray(VAO);
 
@@ -134,5 +138,13 @@ public class ShapeInstancedCubeTexture extends ShapeQuadTexture implements Insta
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
 		GL30.glBindVertexArray(0);
+	}
+
+	@Override
+	public Shape copy() {
+		ShapeInstancedCubeTexture shape = new ShapeInstancedCubeTexture(shaderProgram, textureID);
+		shape.init();
+
+		return shape;
 	}
 }

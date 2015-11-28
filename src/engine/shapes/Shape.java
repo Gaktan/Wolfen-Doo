@@ -1,5 +1,8 @@
 package engine.shapes;
 
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL30;
+
 import engine.game.ShaderProgram;
 
 /**
@@ -49,5 +52,15 @@ public abstract class Shape {
 
 	public ShaderProgram getShaderProgram() {
 		return shaderProgram;
+	}
+	
+	public Shape copy() {
+		return null;
+	}
+	
+	public void dispose() {
+		GL15.glDeleteBuffers(EBO);
+		GL15.glDeleteBuffers(VBO);
+		GL30.glDeleteVertexArrays(VAO);
 	}
 }

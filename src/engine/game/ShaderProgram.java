@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import engine.util.FileUtil;
 import engine.util.MatrixUtil;
@@ -170,6 +171,15 @@ public class ShaderProgram {
 	 */
 	public void setUniform(String name, Matrix4f value) {
 		glUniformMatrix4(glGetUniformLocation(programID, name), false, MatrixUtil.toFloatBuffer(value));
+	}
+	
+	/**
+	 * Sets a uniform vector variable
+	 * @param name The name of the uniform
+	 * @param v The value of the vector
+	 */
+	public void setUniform(String name, Vector4f v) {
+		glUniform4f(glGetUniformLocation(programID, name), v.x, v.y, v.z, v.w);
 	}
 
 	/**

@@ -20,7 +20,7 @@ import org.newdawn.slick.opengl.TextureLoader;
  */
 public final class TextureUtil {
 	
-	public static final int NO_TEXTURE = loadTexture("noTexture");
+	public static final int NO_TEXTURE = loadTexture("noTexture.png");
 	
 	/**
 	 * Loads a texture from a file
@@ -41,7 +41,7 @@ public final class TextureUtil {
 		Texture t;
 		
 		try {
-			t = TextureLoader.getTexture("PNG", new FileInputStream("res/images/" + path + ".png"));
+			t = TextureLoader.getTexture("PNG", new FileInputStream("res/images/" + path));
 			ByteBuffer b = BufferUtils.createByteBuffer(t.getTextureData().length);
 			b.put(t.getTextureData());
 			b.flip();

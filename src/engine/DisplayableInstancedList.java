@@ -6,17 +6,16 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
 import engine.entities.EntityActor;
-import engine.shapes.Instantiable;
-import engine.shapes.Shape;
+import engine.shapes.InstancedTexturedShape;
 import engine.util.MatrixUtil;
 
-public class DisplayableInstancedList<E extends Shape & Instantiable> extends DisplayableList {
+public class DisplayableInstancedList extends DisplayableList {
 
-	protected E shape;
+	protected InstancedTexturedShape shape;
 	protected boolean doUpdate;
 	protected boolean updatedList;
 
-	public DisplayableInstancedList(E shape, boolean doUpdate) {
+	public DisplayableInstancedList(InstancedTexturedShape shape, boolean doUpdate) {
 		this.shape = shape;
 		this.doUpdate = doUpdate;
 	}
@@ -43,7 +42,7 @@ public class DisplayableInstancedList<E extends Shape & Instantiable> extends Di
 			
 			updatedList = false;
 
-			FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16));
+			FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
 
 			for (Displayable d : list) {
 				
@@ -69,6 +68,8 @@ public class DisplayableInstancedList<E extends Shape & Instantiable> extends Di
 				model.m32 = a.position.z;
 				model = model.scale(a.scale);
 				model.store(fb1);
+				
+				fb1.put(-1f);
 			}
 
 			fb1.flip();
@@ -82,6 +83,9 @@ public class DisplayableInstancedList<E extends Shape & Instantiable> extends Di
 	@Override
 	public void render() {
 		shape.preRender();
+		
+		// TODO: change this in case you want to make animated walls / spritesheets
+		//shape.getShaderProgram().setUniform("u_imageInfo", new Vector4f(1, 1, 1, 1));
 
 		shape.render(list.size());
 

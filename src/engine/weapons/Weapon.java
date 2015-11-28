@@ -1,9 +1,11 @@
 package engine.weapons;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.DisplayableText;
+import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.game.GameWolfen;
@@ -78,11 +80,8 @@ public abstract class Weapon implements Displayable{
 		shotsLeft = shotsCapacity;
 		currentReloading = reloadingTime;
 
-		String text = "reloading...";
-		float size = (text.length()+0.5f) * 0.5f * -0.05f - 0.1f;
-
-		reloadingText = GameWolfen.getInstance().bmf.createString(new Vector3f(size, 0, 0), "", false);
-		ammoText = GameWolfen.getInstance().bmf.createString(new Vector3f(0.6f, -0.95f, 0), "", false);
+		reloadingText = GameWolfen.getInstance().bmf.createString(new Vector3f(0, 0, 0), "", 1f, TextPosition.CENTER, false);
+		ammoText = GameWolfen.getInstance().bmf.createString(new Vector3f(1f, -1f, 0), "", 1f, TextPosition.RIGHT, false);
 		updateAmmoText();
 
 		bobbingState = BobbingState.IDLE;
@@ -234,7 +233,10 @@ public abstract class Weapon implements Displayable{
 
 	@Override
 	public void render() {
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		weaponSprite.render();
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		
 		reloadingText.render();
 		ammoText.render();
 	}

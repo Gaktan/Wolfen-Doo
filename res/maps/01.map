@@ -4,14 +4,14 @@ height{20}
 
 sky{237 157 95, 252 231 227}
 
-wall{O, wall, 1}
-wall{U, wall_portrait, 1}
-billboard{X, pillar, 0}
-wall{A, wall_hole, 0}
-animation{W, mul_test, 1}
-door{-, door, 0 0 -0.9, 1, 1000}
-door{|, door, 0.9 0 0, 0, 350}
-door{_, pillar, 0 -0.9 0, 1, 1000}
+wall{O, wall.png, 1}
+wall{U, wall_portrait.png, 1}
+billboard{X, pillar.png, 0}
+wall{A, wall_hole.png, 0}
+animation{W, mul_test.png, 1}
+door{-, door.png, 0 0 -0.9, 1, 1000}
+door{|, door.png, 0.9 0 0, 0, 350}
+door{_, pillar.png, 0 -0.9 0, 1, 1000}
 
 map{
 OOOOOOOOOOOOOOOOOOOO
@@ -30,8 +30,8 @@ O         OOOAAO   O
 U     X            O
 O                  O
 O          X X  O  O
-O   W       X OOOO O
-U           X   O  O
+U   W       X OOOO O
+O           X   O  O
 O                  O
 OOOOOUOOOOOOOOOOOOOO
 }

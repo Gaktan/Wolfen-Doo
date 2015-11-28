@@ -1,78 +1,144 @@
 package engine;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
+import java.nio.FloatBuffer;
 
-import engine.entities.EntityActor;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+import org.newdawn.slick.Color;
+
+import engine.shapes.InstancedTexturedShape;
+import engine.util.MatrixUtil;
 
 /**
  * Used to render text
  * @author Gaktan
  */
-public class DisplayableText extends DisplayableList {
-	
-	private String text;
-	private Vector3f position;
-	private BitMapFont font;
-	private boolean hasDepth;
-	
-	public DisplayableText(Vector3f position, String text, BitMapFont font, boolean hasDepth) {
+public class DisplayableText implements Displayable {
+
+	protected String text;
+	protected Vector3f position;
+	protected BitMapFont font;
+	protected float textSize;
+	protected InstancedTexturedShape shape;
+	protected Color color;
+
+	protected int charCount;
+
+	protected TextPosition textPosition;
+	protected boolean hasDepth;
+
+	public enum TextPosition {
+		LEFT,
+		CENTER,
+		RIGHT
+	}
+
+	public DisplayableText(Vector3f position, String text, BitMapFont font, float textSize, Color color, TextPosition textPosition, boolean hasDepth) {
 		this.position = position;
 		this.font = font;
-		
-		changeText(text);
+		this.textSize = textSize;
+		this.color = color;
+		this.textPosition = textPosition;
 		this.hasDepth = hasDepth;
+		this.shape = (InstancedTexturedShape) font.getShape().copy();
+
+		changeText(text);
 	}
-	
+
 	/**
 	 * You should probably want to use setText instead
 	 */
 	public void changeText(String newText) {
-		
-		this.text = newText;
-		
-		list.clear();
-		
-		Vector3f newPosition = new Vector3f();
-		Vector3f halfDir = new Vector3f(1, 0, 0);
-		halfDir = (Vector3f) halfDir.scale(0.08f);
-		
-		for (char c : newText.toCharArray()) {
-			int i_c = (int) c;
 
-			if (i_c > font.getAmountOfChars()) {
-				i_c = 0;
+		this.text = newText;
+
+		FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * (3 + 16 + 1));
+
+		Vector3f newPosition = new Vector3f();
+		Vector3f halfDir = new Vector3f(0.08f * textSize, 0, 0);
+		Vector3f startingPosition = new Vector3f(position);
+
+		if (textPosition == TextPosition.RIGHT) {
+			startingPosition.x -= newText.length() * 0.085f * textSize;
+			startingPosition.y += (0.09f * textSize);
+		}
+		else if (textPosition == TextPosition.CENTER){
+			startingPosition.x -= (newText.length() * 0.08f * textSize) * 0.5f;
+			startingPosition.y += (0.08f * textSize) * 0.5f;
+		}
+
+		charCount = 0;
+
+		for (char c : newText.toCharArray()) {
+			if (c > font.getAmountOfChars()) {
+				c = 0;
 			}
 
-			EntityActor actorChar = new EntityActor(font.getShape());
+			if (c == '\n') {
+				newPosition.set(0f, 0f, 0f);
+				startingPosition.y -= (0.09f * textSize);
+				continue;
+			}
 
-			Vector3f.add(position, newPosition, actorChar.position);
-			
-			int charsPerLine = font.getImageSize() / font.getCharSize();
-			
-			float y = i_c / charsPerLine;
-			float x = i_c % charsPerLine;
+			if (c != ' ') {
 
-			Vector3f vec = new Vector3f(x, y, font.getImageFactor());
-			actorChar.textureCoordinate = vec;
-			
-			add(actorChar);
+				Vector3f pos = new Vector3f(startingPosition);
+
+				pos.x += (0.1f * textSize) * 0.5f + newPosition.x;
+				pos.y -= (0.1f * textSize) * 0.5f + newPosition.y;
+				pos.z += (0.1f * textSize) * 0.5f + newPosition.z;
+
+				float[] array = new float[3];
+				array[0] = color.r;
+				array[1] = color.g;
+				array[2] = color.b;
+				fb.put(array);
+
+				Matrix4f model = MatrixUtil.createIdentityMatrix();
+				model.m30 = pos.x;
+				model.m31 = pos.y;
+				model.m32 = pos.z;
+				model = model.scale(new Vector3f(0.1f * textSize, 0.1f * textSize, 0.1f * textSize));
+				model.store(fb);
+
+				fb.put(c);
+
+				charCount++;
+			}
 
 			Vector3f.add(newPosition, halfDir, newPosition);
 		}
+
+		fb.flip();
+		shape.setData(fb);
+	}
+
+	@Override
+	public boolean update(float dt) {
+		return true;
 	}
 
 	@Override
 	public void render() {
 		if (!hasDepth)
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
-		
-		super.render();
-		
+
+		shape.preRender();
+
+		shape.getShaderProgram().setUniform("u_imageInfo", new Vector4f(font.getImageWidth(), font.getImageHeight(),
+				font.getCharWidth(), font.getCharHeight()));	
+
+		shape.render(charCount);
+
+		shape.postRender();
+
 		if (!hasDepth)
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
-	
+
 	public String getText() {
 		return text;
 	}
@@ -84,15 +150,15 @@ public class DisplayableText extends DisplayableList {
 	public void setText(String text) {
 		if(text.equals(this.text))
 			return;
-		
+
 		changeText(text);
 	}
 
-	public Vector3f getPosition() {
-		return position;
-	}
+	@Override
+	public void delete() {}
 
-	public void setPosition(Vector3f position) {
-		this.position = position;
+	@Override
+	public int size() {
+		return charCount;
 	}
 }

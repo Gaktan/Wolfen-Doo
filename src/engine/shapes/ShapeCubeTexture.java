@@ -11,18 +11,22 @@ import org.lwjgl.opengl.GL30;
 
 import engine.game.ShaderProgram;
 
-public class ShapeCubeTexture extends ShapeQuadTexture {
+public class ShapeCubeTexture extends TexturedShape {
 
-	private static IntBuffer i_n;
-	private static IntBuffer i_s;
-	private static IntBuffer i_e;
-	private static IntBuffer i_w;
-
-	private int orientation;
+	public ShapeCubeTexture(ShaderProgram shaderProgram, int textureID) {
+		super(shaderProgram, textureID);
+	}
 
 	public ShapeCubeTexture(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram, texture);
 	}
+
+	protected static IntBuffer i_n;
+	protected static IntBuffer i_s;
+	protected static IntBuffer i_e;
+	protected static IntBuffer i_w;
+
+	protected int orientation;
 
 	@Override
 	protected void init() {
@@ -40,25 +44,6 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 				-0.5f,  0.5f, -0.5f,	1f, 0f,
 		});
 		vertices.flip();
-
-		/*
-		indices = BufferUtils.createIntBuffer(8 * 3);
-		indices.put(new int[]{
-				// front
-				1, 0, 2,
-				3, 2, 0,
-				// back
-				6, 7, 5,
-				4, 5, 7,
-				// left
-				0, 4, 3,
-				7, 3, 4,
-				// right
-				5, 1, 6,
-				2, 6, 1,
-		});
-		indices.flip();
-		 */
 
 		i_n = BufferUtils.createIntBuffer(2 * 3);
 		i_n.put(new int[] {
@@ -147,19 +132,16 @@ public class ShapeCubeTexture extends ShapeQuadTexture {
 		}		
 	}
 
-	@Override
-	public void preRender() {
-		super.preRender();
-	}
-
-	@Override
-	public void postRender() {
-		super.postRender();
-	}
-
 	public void render(int orientation) {
 		this.orientation = orientation;
 
 		render();
+	}
+
+	@Override
+	public Shape copy() {
+		ShapeCubeTexture shape = new ShapeCubeTexture(shaderProgram, textureID);
+		shape.init();
+		return shape;
 	}
 }
