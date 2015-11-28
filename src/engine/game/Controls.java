@@ -2,6 +2,8 @@ package engine.game;
 
 import static org.lwjgl.input.Keyboard.*;
 
+import java.awt.im.InputContext;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -29,9 +31,26 @@ public class Controls {
 	private static boolean actionPress = false;
 
 	private static int movingKeyPressed;
+	
+	private static int k_forward = KEY_W;
+	private static int k_left = KEY_A;
+	private static int k_back = KEY_S;
+	private static int k_right = KEY_D;
+	
+	static {
+		InputContext context = InputContext.getInstance();  
+	    System.out.println("Keyboard language : " + context.getLocale().toString());
+	    
+	    if (context.getLocale().toString().startsWith("fr")) {
+	    	k_forward = KEY_Z;
+	    	k_left = KEY_Q;
+	    }
+	}
 
-	public static void update(Camera camera, float dt){
-
+	public static void update(Camera camera, float dt) {
+		
+		 
+		
 		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
 
@@ -124,22 +143,22 @@ public class Controls {
 
 	private static void handleRelease(int key, Camera camera, float dt) {
 
-		if (key == KEY_Z) {
+		if (key == k_forward) {
 			camera.movementGoal.z = 0;
 			movingKeyPressed--;
 		}
 
-		else if (key == KEY_S) {
+		else if (key == k_back) {
 			camera.movementGoal.z = 0;
 			movingKeyPressed--;
 		}
 
-		else if (key == KEY_Q) {
+		else if (key == k_left) {
 			camera.movementGoal.x = 0;
 			movingKeyPressed--;
 		}
 
-		else if (key == KEY_D) {
+		else if (key == k_right) {
 			camera.movementGoal.x = 0;
 			movingKeyPressed--;
 		}
@@ -152,22 +171,22 @@ public class Controls {
 	}
 
 	private static void handlePress(int key, Camera camera, float dt) {
-		if (key == KEY_Z) {
+		if (key == k_forward) {
 			camera.movementGoal.z = camSpeed;
 			movingKeyPressed++;
 		}
 
-		else if (key == KEY_S) {
+		else if (key == k_back) {
 			camera.movementGoal.z = -camSpeed;
 			movingKeyPressed++;
 		}
 
-		else if (key == KEY_Q) {
+		else if (key == k_left) {
 			camera.movementGoal.x = -camSpeed;
 			movingKeyPressed++;
 		}
 
-		else if (key == KEY_D) {
+		else if (key == k_right) {
 			camera.movementGoal.x = camSpeed;
 			movingKeyPressed++;
 		}

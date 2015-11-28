@@ -35,7 +35,8 @@ public class BitMapFont {
 	}
 
 	public DisplayableText createString(Vector3f position, String str, float textSize, Color color, TextPosition textPosition, boolean hasDepth) {
-		return new DisplayableText(position, str, this, textSize, color, textPosition, hasDepth);
+		DisplayableText text = new DisplayableText(position, str, this, textSize, color, textPosition, hasDepth);
+		return text;
 	}
 
 	public DisplayableText createString(Vector3f position, String str, float textSize, TextPosition textPosition, boolean hasDepth) {
@@ -69,6 +70,7 @@ public class BitMapFont {
 	public DisplayableText createString(Vector3f position, String str, float textSize) {
 		return createString(position, str, textSize, TextPosition.LEFT);
 	}
+	
 
 	public int getAmountOfChars() {
 		return amountOfChars;

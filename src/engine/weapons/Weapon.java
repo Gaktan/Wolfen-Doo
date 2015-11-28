@@ -80,8 +80,8 @@ public abstract class Weapon implements Displayable{
 		shotsLeft = shotsCapacity;
 		currentReloading = reloadingTime;
 
-		reloadingText = GameWolfen.getInstance().bmf.createString(new Vector3f(0, 0, 0), "", 1f, TextPosition.CENTER, false);
-		ammoText = GameWolfen.getInstance().bmf.createString(new Vector3f(1f, -1f, 0), "", 1f, TextPosition.RIGHT, false);
+		reloadingText = GameWolfen.getInstance().bmf.createString(new Vector3f(0, 0, 0), "", 1f, TextPosition.CENTER);
+		ammoText = GameWolfen.getInstance().bmf.createString(new Vector3f(1f, -1f, 0), "", 1f, TextPosition.RIGHT);
 		updateAmmoText();
 
 		bobbingState = BobbingState.IDLE;
@@ -214,7 +214,7 @@ public abstract class Weapon implements Displayable{
 
 	}
 
-	protected void moveToPosition (Vector3f start, Vector3f goal) {
+	protected void moveToPosition(Vector3f start, Vector3f goal) {
 		Vector3f vDiff = new Vector3f();
 		Vector3f.sub(goal, start, vDiff);
 		float diff = vDiff.length();

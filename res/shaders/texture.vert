@@ -16,9 +16,9 @@ out vec2 TexCoord;
 out vec4 Color;
 out float Z_far;
 
-void main() {	    
+void main() {
     gl_Position = u_projection * u_view * u_model * vec4(position, 1.0);
-	
+
 	TexCoord = texCoord;
 	Color = vec4(u_color, 1.0);
 	Z_far = u_zfar;

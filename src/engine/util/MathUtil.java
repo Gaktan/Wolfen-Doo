@@ -148,13 +148,12 @@ public final class MathUtil {
 	}
 
 	public static float clamp(float f, float min, float max) {
-		if (f < min) {
-			return min;
-		}
-		else if (f > max) {
-			return max;
-		}
+		return Math.max(min, Math.min(max, f));
+	}
 
-		return f;
+	public static float smoothStep(float edge0, float edge1, float x) {
+		x = clamp((x - edge0)/(edge1 - edge0), 0f, 1f); 
+		// Evaluate polynomial
+		return x*x*(3 - 2*x);
 	}
 }

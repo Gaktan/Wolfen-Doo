@@ -29,6 +29,10 @@ public class DisplayableText implements Displayable {
 
 	protected TextPosition textPosition;
 	protected boolean hasDepth;
+	protected boolean delete;
+	protected boolean updatedText;
+
+	protected float rotation;
 
 	public enum TextPosition {
 		LEFT,
@@ -38,6 +42,7 @@ public class DisplayableText implements Displayable {
 
 	public DisplayableText(Vector3f position, String text, BitMapFont font, float textSize, Color color, TextPosition textPosition, boolean hasDepth) {
 		this.position = position;
+		this.text = text;
 		this.font = font;
 		this.textSize = textSize;
 		this.color = color;
@@ -45,15 +50,14 @@ public class DisplayableText implements Displayable {
 		this.hasDepth = hasDepth;
 		this.shape = (InstancedTexturedShape) font.getShape().copy();
 
-		changeText(text);
+		delete = false;
+		updatedText = true;
 	}
 
 	/**
 	 * You should probably want to use setText instead
 	 */
-	public void changeText(String newText) {
-
-		this.text = newText;
+	public void updateText() {
 
 		FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * (3 + 16 + 1));
 
@@ -62,17 +66,17 @@ public class DisplayableText implements Displayable {
 		Vector3f startingPosition = new Vector3f(position);
 
 		if (textPosition == TextPosition.RIGHT) {
-			startingPosition.x -= newText.length() * 0.085f * textSize;
+			startingPosition.x -= text.length() * 0.085f * textSize;
 			startingPosition.y += (0.09f * textSize);
 		}
 		else if (textPosition == TextPosition.CENTER){
-			startingPosition.x -= (newText.length() * 0.08f * textSize) * 0.5f;
+			startingPosition.x -= (text.length() * 0.08f * textSize) * 0.5f;
 			startingPosition.y += (0.08f * textSize) * 0.5f;
 		}
 
 		charCount = 0;
 
-		for (char c : newText.toCharArray()) {
+		for (char c : text.toCharArray()) {
 			if (c > font.getAmountOfChars()) {
 				c = 0;
 			}
@@ -84,7 +88,6 @@ public class DisplayableText implements Displayable {
 			}
 
 			if (c != ' ') {
-
 				Vector3f pos = new Vector3f(startingPosition);
 
 				pos.x += (0.1f * textSize) * 0.5f + newPosition.x;
@@ -98,9 +101,18 @@ public class DisplayableText implements Displayable {
 				fb.put(array);
 
 				Matrix4f model = MatrixUtil.createIdentityMatrix();
-				model.m30 = pos.x;
-				model.m31 = pos.y;
-				model.m32 = pos.z;
+
+				if (rotation != 0) {
+					model.translate(position);
+					model.rotate(rotation, MatrixUtil.Y_AXIS);
+					model.translate(position.negate(null));
+					model.translate(pos);
+				}
+				else {
+					model.m30 = pos.x;
+					model.m31 = pos.y;
+					model.m32 = pos.z;
+				}
 				model = model.scale(new Vector3f(0.1f * textSize, 0.1f * textSize, 0.1f * textSize));
 				model.store(fb);
 
@@ -118,13 +130,19 @@ public class DisplayableText implements Displayable {
 
 	@Override
 	public boolean update(float dt) {
-		return true;
+		if (updatedText) {
+			updatedText = false;
+			updateText();
+		}
+		return !delete;
 	}
 
 	@Override
 	public void render() {
 		if (!hasDepth)
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+		GL11.glDisable(GL11.GL_CULL_FACE);
 
 		shape.preRender();
 
@@ -134,6 +152,8 @@ public class DisplayableText implements Displayable {
 		shape.render(charCount);
 
 		shape.postRender();
+
+		GL11.glEnable(GL11.GL_CULL_FACE);
 
 		if (!hasDepth)
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -150,15 +170,22 @@ public class DisplayableText implements Displayable {
 	public void setText(String text) {
 		if(text.equals(this.text))
 			return;
-
-		changeText(text);
+		
+		this.text = text;
+		updatedText = true;
 	}
 
 	@Override
-	public void delete() {}
+	public void delete() {
+		delete = true;
+	}
 
 	@Override
 	public int size() {
 		return charCount;
+	}
+
+	public void setRotation(float rot) {
+		rotation = (float) Math.toRadians(rot);
 	}
 }

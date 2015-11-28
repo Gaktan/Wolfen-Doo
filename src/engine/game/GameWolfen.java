@@ -14,6 +14,7 @@ import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
+import engine.entities.Item;
 import engine.generator.Map;
 import engine.generator.OldMap;
 import engine.generator.OldMapReader;
@@ -21,8 +22,10 @@ import engine.generator.MazeGenerator;
 import engine.generator.MapReader;
 import engine.particles.ParticleSystem;
 import engine.shapes.*;
+import engine.util.MathUtil;
 import engine.weapons.Weapon;
 import game.animations.CustomAnimatedActorExample;
+import game.entities.RotatingText;
 import game.particles.ParticleSystemBlood;
 import game.weapons.WeaponRevolver;
 
@@ -36,8 +39,6 @@ public class GameWolfen extends Game {
 
 	public Camera camera;
 
-	public ShapeQuadTexture shapeAnimatedSmurf;
-
 	public DisplayableList ac;
 	public Map map;
 	public DisplayableInstancedList bulletHoles;
@@ -48,8 +49,8 @@ public class GameWolfen extends Game {
 	public DisplayableText textPos;
 	public DisplayableText textFps;
 	public DisplayableText textEntities;
+	public DisplayableText textMemory;
 
-	public AnimatedActor animatedActorTest;
 	public long elapsedTime;
 	public Fps fps;
 	public long l_fps;
@@ -95,7 +96,7 @@ public class GameWolfen extends Game {
 
 		ac = new DisplayableList();
 
-		shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test.png");
+		ShapeQuadTexture shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test.png");
 
 		//MapReader mr = new MapReader(this, "01.map");
 		//map = mr.createMap();
@@ -107,7 +108,7 @@ public class GameWolfen extends Game {
 		map = mr.createMap("01.map");
 		ac.add(map);
 
-		animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
+		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
 		animatedActorTest.position.set(3, 0, 5);
 		ac.add(animatedActorTest);
 
@@ -116,18 +117,39 @@ public class GameWolfen extends Game {
 		textPos = bmf.createString(new Vector3f(-1f, 1f, 0), "", 0.85f);
 		textFps = bmf.createString(new Vector3f(-1f, .9f, 0), "", 0.85f);
 		textEntities = bmf.createString(new Vector3f(-1f, .8f, 0), "", 0.85f);
+		textMemory = bmf.createString(new Vector3f(-1f, 0.7f, 0), "", 0.6f, new Color(0f, 0f, 0f));
+		ac.add(textPos);
+		ac.add(textFps);
+		ac.add(textEntities);
+		ac.add(textMemory);
 
 		BitMapFont worldFont = new BitMapFont(new ShapeInstancedQuadTexture(shaderProgramTexInstanced, "char.png"),
 				256, 256, 16, 16);
 
 		String welcomeText = "Hello and welcome to Wolfen-doo. You can't to much right now,\n"
 				+ "but it will come, don't worry.\n"
-				+ "Use ZQSD to move around, mouse to look and shoot,\n"
+				+ "Use WASD to move around, mouse to look and shoot,\n"
 				+ "'E' to open doors, 'R' to reload.";
 
-		DisplayableText text = worldFont.createString(new Vector3f(0.5f, 0.4f, 0.5f), welcomeText, 0.45f, 
+		String rotatedText = "Woaw ! You can even rotate text !";
+		
+		DisplayableText worldText = worldFont.createString(new Vector3f(0.5f, 0.4f, 2f), rotatedText, 0.45f, 
 				new Color(0f, 0f, 0f), true);
-		ac.add(text);
+		worldText.setRotation(90f);
+		worldText.updateText();
+		ac.add(worldText);
+		
+		worldText = worldFont.createString(new Vector3f(0.5f, 0.4f, 0.5f), welcomeText, 0.45f, 
+				new Color(0f, 0f, 0f), true);
+		ac.add(worldText);
+		
+		RotatingText rotatingText = new RotatingText(new Vector3f(9, 0.25f, 3), "WELCOME !", worldFont,
+				1f, new Color(1f, 0f, 1f), TextPosition.CENTER, true);
+		ac.add(rotatingText);
+		
+		Item item = new Item(new ShapeQuadTexture(shaderProgramTex, "wall.png"));
+		item.position.set(9, 0, 3);
+		ac.add(item);
 
 		/*
 		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
@@ -170,11 +192,15 @@ public class GameWolfen extends Game {
 		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
 		textFps.setText("fps : " + l_fps);
 		textEntities.setText("Entities : " + ac.size());
-
-		textPos.update(elapsedTime);
-		textFps.update(elapsedTime);
-		textEntities.update(elapsedTime);
-
+		
+		int mb = 1024 * 1024;
+		
+		textMemory.setText("Total Memory: " + (Runtime.getRuntime().totalMemory() / mb)
+				+ "MB\nFree Memory: " + (Runtime.getRuntime().freeMemory() / mb)
+				+ "MB\nUsed Memory: " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / mb)
+				+ "MB\nMax Memory: " + (Runtime.getRuntime().maxMemory() / mb)
+				+ "MB");
+		
 		currentWeapon.update(elapsedTime);
 
 		l_fps = fps.update();
@@ -199,10 +225,6 @@ public class GameWolfen extends Game {
 		ShaderProgram.unbind();
 
 		ac.render();
-
-		textPos.render();
-		textFps.render();
-		textEntities.render();
 
 		currentWeapon.render();
 	}
