@@ -1,6 +1,7 @@
 #version 330
 
 layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 texCoord;
 
 /* Camera stuff */
 uniform mat4 u_view;
@@ -9,7 +10,8 @@ uniform mat4 u_projection;
 uniform mat4 u_model;
 
 uniform vec3 u_color;
-uniform vec3 u_texCoord;
+uniform vec4 u_imageInfo;
+uniform float u_spriteNumber;
 
 uniform float u_zfar;
 
@@ -21,27 +23,24 @@ void main() {
 	vec3 scale = vec3(u_model[0][0], u_model[1][1], u_model[2][2]);
 	gl_Position = u_projection * (u_view * u_model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0) * vec4(scale, 1.0));
 	
-	float x = u_texCoord.x;
-	float y = u_texCoord.y;
-	float factor = u_texCoord.z;
+	vec2 _texCoord = vec2(texCoord);
 	
-	vec2 texCoord;
-	
-	if (position.x < 0) {
-		texCoord.x = x * factor;
-	}
-	else {
-		texCoord.x = (x+1) * factor;
-	}
-	
-	if (position.y > 0) {
-		texCoord.y = y * factor;
-	}
-	else {
-		texCoord.y = (y+1) * factor;
+	if (u_spriteNumber >= 0.0) {
+
+		float factorX = u_imageInfo.z / u_imageInfo.x;
+		float factorY = u_imageInfo.w / u_imageInfo.y;
+
+		float x = mod(u_spriteNumber, (u_imageInfo.x / u_imageInfo.z));
+		float y = int(u_spriteNumber / (u_imageInfo.x / u_imageInfo.z));
+
+		int posX = int(position.x > 0);
+		_texCoord.x = (x + posX) * factorX;
+
+		int posY = int(position.y < 0);
+		_texCoord.y = (y + posY) * factorY;
 	}
     
 	Color = vec4(u_color, 1.0);
-	TexCoord = texCoord;
+	TexCoord = _texCoord;
 	Z_far = u_zfar;
 }

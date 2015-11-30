@@ -2,17 +2,11 @@ package engine.animations;
 
 import java.util.Arrays;
 
-import org.lwjgl.util.vector.Vector3f;
-
 /**
  * Single animation
  * @author Gaktan
  */
 public class Animation {
-
-	private float imageFactor;
-	private int imagesPerLine;
-
 	private int[] frames;
 
 	private float[] delays;
@@ -21,24 +15,16 @@ public class Animation {
 	private float currentDelay;
 
 	private boolean pause;
-	
-	public Animation() {}
 
-	public Animation(int image_size, int frame_size) {
-		imagesPerLine = image_size / frame_size;
-		imageFactor = (float) frame_size / image_size;
-
+	public Animation() {
 		currentDelay = 0;
 		currentIndex = 0;
 	}
 
 	public Animation(Animation animation) {
-		imagesPerLine = animation.imagesPerLine;
-		imageFactor = animation.imageFactor;
-		
 		frames = animation.frames;
 		delays = animation.delays;
-		
+
 		currentDelay = 0;
 		currentIndex = 0;
 	}
@@ -49,7 +35,7 @@ public class Animation {
 		}
 		Arrays.fill(this.delays, delay);
 	}
-	
+
 	public void setDelays(float[] delays){
 		this.delays = delays;
 	}
@@ -59,7 +45,7 @@ public class Animation {
 			return;
 
 		currentDelay += dt;
-		
+
 		if (currentDelay >= delays[currentIndex]) {
 			nextFrame();
 		}
@@ -77,14 +63,8 @@ public class Animation {
 		}
 	}
 
-	public Vector3f getCurrentUV() {
-		int actualFrame = frames[currentIndex];
-
-		float y = actualFrame / imagesPerLine;
-		float x = actualFrame % imagesPerLine;
-
-		Vector3f vec = new Vector3f(x, y, imageFactor);
-		return vec;
+	public int getCurrentFrame() {
+		return frames[currentIndex];
 	}
 
 	public void pause() {

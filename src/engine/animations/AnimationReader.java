@@ -11,23 +11,17 @@ import engine.util.MathUtil;
  */
 public class AnimationReader {
 	
-	private static final String COMMAND_IMAGE_SIZE = "imagesize";
-	private static final String COMMAND_FRAME_SIZE = "framesize";
-
-	private static final String COMMAND_ANIMATION = "animation";
-	private static final String COMMAND_ANIMATION_NAME = "name";
-	private static final String COMMAND_ANIMATION_FRAMES = "frames";
-	private static final String COMMAND_ANIMATION_DELAYS = "delays";
+	protected static final String COMMAND_ANIMATION = "animation";
+	protected static final String COMMAND_ANIMATION_NAME = "name";
+	protected static final String COMMAND_ANIMATION_FRAMES = "frames";
+	protected static final String COMMAND_ANIMATION_DELAYS = "delays";
 	
-	private HashMap<String, Animation> animations;
+	protected HashMap<String, Animation> animations;
 	
-	private Animation currentAnimation;
-	private String currentAnimationName;
+	protected Animation currentAnimation;
+	protected String currentAnimationName;
 	
-	private boolean framesFirst;
-	
-	private int imageSize;
-	private int frameSize;
+	protected boolean framesFirst;
 	
 	public AnimationReader() {
 		framesFirst = false;
@@ -71,19 +65,13 @@ public class AnimationReader {
 	}
 
 	private void performCommand(String command, String value) {
-		if (command.equals(COMMAND_IMAGE_SIZE)) {
-			imageSize = MathUtil.parseInt(value);
-		}
-		else if (command.equals(COMMAND_FRAME_SIZE)) {
-			frameSize = MathUtil.parseInt(value);
-		}
-		else if (command.equals(COMMAND_ANIMATION)) {			
+		if (command.equals(COMMAND_ANIMATION)) {			
 			int start = 0;
 			int end = 0;
 			
 			String a_command = null;
 			
-			currentAnimation = new Animation(imageSize, frameSize);
+			currentAnimation = new Animation();
 			
 			for (char ch : value.toCharArray()) {
 				if (ch == '[') {

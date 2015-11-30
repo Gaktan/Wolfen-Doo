@@ -1,7 +1,12 @@
 package engine.particles;
 
+import java.nio.FloatBuffer;
+
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
+
+import engine.util.MatrixUtil;
 
 /**
  * Short living Actor
@@ -54,7 +59,23 @@ public class Particle {
 
 		return true;
 	}
+	
+	public void setBufferData(FloatBuffer fb) {
+		float[] array = new float[3];
+		array[0] = color.r;
+		array[1] = color.g;
+		array[2] = color.b;
+		fb.put(array);
 
+		Matrix4f model = MatrixUtil.createIdentityMatrix();
+		model.m30 = position.x;
+		model.m31 = position.y;
+		model.m32 = position.z;
+		model = model.scale(new Vector3f(scale, scale, scale));
+		model.store(fb);
+		
+		fb.put(-1f);
+	}
 	public void delete() {
 		life = 0;
 	}

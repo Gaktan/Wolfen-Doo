@@ -45,10 +45,11 @@ public abstract class Weapon implements Displayable{
 	protected Vector3f lastKnownPosition;
 
 	// 0f, -.25f
+	// TODO: change this
 	static {
-		POSITION_CENTER = new Vector3f(0f, -.25f, 0f);
-		POSITION_LEFT = new Vector3f(-0.2f, -.25f, 0f);
-		POSITION_RIGHT = new Vector3f(0.2f, -.25f, 0f);
+		POSITION_CENTER = new Vector3f(0f, -.575f, 0f);
+		POSITION_LEFT = new Vector3f(-0.2f, -.575f, 0f);
+		POSITION_RIGHT = new Vector3f(0.2f, -.575f, 0f);
 	}
 
 	enum BobbingState {

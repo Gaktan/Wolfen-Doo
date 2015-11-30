@@ -1,7 +1,7 @@
 package engine.animations;
 
 import engine.entities.EntityActor;
-import engine.shapes.Shape;
+import engine.shapes.ShapeSprite;
 
 /**
  * Actor used for animation
@@ -16,7 +16,7 @@ public class AnimatedActor extends EntityActor {
 	 * @param file Name of the animation file (no extension)
 	 * @param currentAnimation Name of the current Animation (by default)
 	 */
-	public AnimatedActor(Shape shape, String file, String currentAnimation) {
+	public AnimatedActor(ShapeSprite shape, String file, String currentAnimation) {
 		super(shape);
 
 		a_file = file;
@@ -25,11 +25,15 @@ public class AnimatedActor extends EntityActor {
 
 	@Override
 	public boolean update(float dt) {
-		
 		a_current.updateFrame(dt);
-		textureCoordinate = a_current.getCurrentUV();
 
 		return super.update(dt);
+	}
+	
+	@Override
+	public void setUniforms() {
+		super.setUniforms();
+		shape.getShaderProgram().setUniform("u_spriteNumber", a_current.getCurrentFrame());
 	}
 
 	/**

@@ -15,15 +15,12 @@ import engine.util.TextureUtil;
 public class EntityActor extends Entity {
 
 	public Shape shape;
-	public Vector3f textureCoordinate;
 	public Color color;
 	public Vector3f rotation;
 
 	public EntityActor(Shape shape) {
 		super();
-
-		textureCoordinate = new Vector3f(5, 0, 1);
-
+		
 		rotation = new Vector3f();
 
 		this.shape = shape;
@@ -44,9 +41,7 @@ public class EntityActor extends Entity {
 	/**
 	 * Sets the uniforms to be used in the shader. Do not call this
 	 */
-	public void setUniforms() {		
-		shape.getShaderProgram().setUniform("u_texCoord", textureCoordinate);
-
+	public void setUniforms() {
 		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3f(color));
 
 		Matrix4f model = MatrixUtil.createIdentityMatrix();

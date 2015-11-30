@@ -83,12 +83,7 @@ public class DisplayableInstancedList extends DisplayableList {
 	@Override
 	public void render() {
 		shape.preRender();
-		
-		// TODO: change this in case you want to make animated walls / spritesheets
-		//shape.getShaderProgram().setUniform("u_imageInfo", new Vector4f(1, 1, 1, 1));
-
 		shape.render(list.size());
-
 		shape.postRender();
 	}
 }

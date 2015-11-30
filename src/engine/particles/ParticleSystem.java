@@ -4,12 +4,10 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.shapes.ShapeInstancedQuadTexture;
-import engine.util.MatrixUtil;
 
 /**
  * Object used to generate particles
@@ -72,30 +70,19 @@ public abstract class ParticleSystem implements Displayable {
 			return false;
 		}
 
-		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
-
-		for (Particle p : list) {
-			float[] array = new float[3];
-			array[0] = p.color.r;
-			array[1] = p.color.g;
-			array[2] = p.color.b;
-			fb1.put(array);
-
-			Matrix4f model = MatrixUtil.createIdentityMatrix();
-			model.m30 = p.position.x;
-			model.m31 = p.position.y;
-			model.m32 = p.position.z;
-			model = model.scale(new Vector3f(p.scale, p.scale, p.scale));
-			model.store(fb1);
-			
-			fb1.put(-1f);
-		}
-
-		fb1.flip();
-
-		particleShape.setData(fb1);
-
+		setBufferData();
+		
 		return true;
+	}
+
+	protected void setBufferData() {
+		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
+		
+		for (Particle p : list) {
+			p.setBufferData(fb1);
+		}
+		fb1.flip();
+		particleShape.setData(fb1);
 	}
 
 	@Override

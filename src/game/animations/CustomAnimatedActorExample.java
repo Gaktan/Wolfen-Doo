@@ -6,7 +6,7 @@ import engine.animations.AnimatedActor;
 import engine.entities.EntityLine;
 import engine.game.GameWolfen;
 import engine.shapes.Orientation;
-import engine.shapes.Shape;
+import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
 
 public class CustomAnimatedActorExample extends AnimatedActor {
@@ -19,7 +19,7 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 
 	private static final float PI_OVER_2 = 3.14159f / 2.f;
 
-	public CustomAnimatedActorExample(Shape shape, String file, String currentAnimation) {
+	public CustomAnimatedActorExample(ShapeSprite shape, String file, String currentAnimation) {
 		super(shape, file, currentAnimation);
 
 		lookingDirection = MathUtil.randomCoord(new Vector3f(-1, 0, -1), new Vector3f(1, 0, 1));

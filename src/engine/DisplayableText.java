@@ -6,10 +6,9 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
 
-import engine.shapes.InstancedTexturedShape;
+import engine.shapes.ShapeInstancedSprite;
 import engine.util.MatrixUtil;
 
 /**
@@ -22,7 +21,7 @@ public class DisplayableText implements Displayable {
 	protected Vector3f position;
 	protected BitMapFont font;
 	protected float textSize;
-	protected InstancedTexturedShape shape;
+	protected ShapeInstancedSprite shape;
 	protected Color color;
 
 	protected int charCount;
@@ -48,7 +47,7 @@ public class DisplayableText implements Displayable {
 		this.color = color;
 		this.textPosition = textPosition;
 		this.hasDepth = hasDepth;
-		this.shape = (InstancedTexturedShape) font.getShape().copy();
+		this.shape = (ShapeInstancedSprite) font.getShape().copy();
 
 		delete = false;
 		updatedText = true;
@@ -77,10 +76,6 @@ public class DisplayableText implements Displayable {
 		charCount = 0;
 
 		for (char c : text.toCharArray()) {
-			if (c > font.getAmountOfChars()) {
-				c = 0;
-			}
-
 			if (c == '\n') {
 				newPosition.set(0f, 0f, 0f);
 				startingPosition.y -= (0.09f * textSize);
@@ -145,12 +140,7 @@ public class DisplayableText implements Displayable {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 
 		shape.preRender();
-
-		shape.getShaderProgram().setUniform("u_imageInfo", new Vector4f(font.getImageWidth(), font.getImageHeight(),
-				font.getCharWidth(), font.getCharHeight()));	
-
 		shape.render(charCount);
-
 		shape.postRender();
 
 		GL11.glEnable(GL11.GL_CULL_FACE);
@@ -170,7 +160,7 @@ public class DisplayableText implements Displayable {
 	public void setText(String text) {
 		if(text.equals(this.text))
 			return;
-		
+
 		this.text = text;
 		updatedText = true;
 	}

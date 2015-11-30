@@ -6,7 +6,7 @@ import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.game.GameWolfen;
 import engine.game.ShaderProgram;
-import engine.shapes.ShapeQuadTexture;
+import engine.shapes.ShapeSprite;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.weapons.Weapon;
@@ -15,15 +15,15 @@ import game.entities.EntityProjctile;
 public class WeaponRevolver extends Weapon {
 
 	public WeaponRevolver(Camera camera) {
-		super(camera, 300f, 6, 1000f, 40, 600f);
+		super(camera, 400f, 6, 1000f, 40, 600f);
 
 		updateAmmoText();
 
-		ShapeQuadTexture revolverShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_camera"), "revolver.png");
+		ShapeSprite revolverShape = new ShapeSprite(ShaderProgram.getProgram("texture_camera"), "revolver.png", 256, 32, 32, 32);
 
 		weaponSprite = new AnimatedActor(revolverShape, "revolver", "a_idle");
 		weaponSprite.position.set(POSITION_CENTER.x, POSITION_CENTER.y);
-		weaponSprite.scale.set(1.5f, 1.5f, 1.5f);
+		weaponSprite.scale.set(.85f, .85f, .85f);
 		
 		bendingCurve.scale(2f);
 	}

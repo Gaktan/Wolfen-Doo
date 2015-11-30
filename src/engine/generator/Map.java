@@ -252,10 +252,6 @@ public class Map implements Displayable {
 
 			if (info.shape instanceof InstancedTexturedShape) {
 				info.shape.preRender();
-
-				// TODO: change this in case you want to make animated walls / spritesheets
-				//info.shape.getShaderProgram().setUniform("u_imageInfo", new Vector4f(1, 1, 1, 1));
-
 				((InstancedTexturedShape) info.shape).render(info.amount);
 				info.shape.postRender();
 			}

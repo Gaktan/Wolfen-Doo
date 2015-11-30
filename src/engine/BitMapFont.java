@@ -4,8 +4,8 @@ import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.DisplayableText.TextPosition;
-import engine.shapes.InstancedTexturedShape;
 import engine.shapes.Shape;
+import engine.shapes.ShapeInstancedSprite;
 
 /**
  * Class used to store a single font and write text with it
@@ -13,25 +13,10 @@ import engine.shapes.Shape;
  */
 public class BitMapFont {
 
-	protected int imageHeight;
-	protected int imageWidth;
+	protected ShapeInstancedSprite shape;
 
-	protected int charHeight;
-	protected int charWidth;
-
-	protected int amountOfChars;
-
-	protected InstancedTexturedShape shape;
-
-	public BitMapFont(InstancedTexturedShape shape, int imageHeight, int imageWidth, int charHeight, int charWidth) {
+	public BitMapFont(ShapeInstancedSprite shape) {
 		this.shape = shape;
-
-		this.imageHeight = imageHeight;
-		this.imageWidth = imageWidth;
-		this.charHeight = charHeight;
-		this.charWidth = charWidth;
-
-		amountOfChars = (imageHeight / charHeight) * (imageWidth / charWidth);
 	}
 
 	public DisplayableText createString(Vector3f position, String str, float textSize, Color color, TextPosition textPosition, boolean hasDepth) {
@@ -70,29 +55,8 @@ public class BitMapFont {
 	public DisplayableText createString(Vector3f position, String str, float textSize) {
 		return createString(position, str, textSize, TextPosition.LEFT);
 	}
-	
-
-	public int getAmountOfChars() {
-		return amountOfChars;
-	}
 
 	public Shape getShape() {
 		return shape;
-	}
-
-	public int getImageHeight() {
-		return imageHeight;
-	}
-
-	public int getImageWidth() {
-		return imageWidth;
-	}
-
-	public int getCharHeight() {
-		return charHeight;
-	}
-
-	public int getCharWidth() {
-		return charWidth;
 	}
 }

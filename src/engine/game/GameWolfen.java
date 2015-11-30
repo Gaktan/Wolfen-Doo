@@ -6,28 +6,19 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
-import engine.BitMapFont;
-import engine.DisplayableInstancedList;
-import engine.DisplayableList;
-import engine.DisplayableText;
+import engine.*;
 import engine.DisplayableText.TextPosition;
-import engine.animations.AnimatedActor;
-import engine.entities.Camera;
-import engine.entities.EntityActor;
-import engine.entities.Item;
-import engine.generator.Map;
-import engine.generator.OldMap;
-import engine.generator.OldMapReader;
-import engine.generator.MazeGenerator;
-import engine.generator.MapReader;
-import engine.particles.ParticleSystem;
+import engine.animations.*;
+import engine.entities.*;
+import engine.generator.*;
+import engine.particles.*;
 import engine.shapes.*;
 import engine.util.MathUtil;
-import engine.weapons.Weapon;
-import game.animations.CustomAnimatedActorExample;
-import game.entities.RotatingText;
-import game.particles.ParticleSystemBlood;
-import game.weapons.WeaponRevolver;
+import engine.weapons.*;
+import game.animations.*;
+import game.entities.*;
+import game.particles.*;
+import game.weapons.*;
 
 @SuppressWarnings("unused")
 public class GameWolfen extends Game {
@@ -96,7 +87,8 @@ public class GameWolfen extends Game {
 
 		ac = new DisplayableList();
 
-		ShapeQuadTexture shapeAnimatedSmurf = new ShapeQuadTexture(shaderProgramTexBill, "mul_test.png");
+		ShapeSprite shapeAnimatedSmurf = new ShapeSprite(shaderProgramTexBill, "mul_test.png", 256, 256, 64, 64);
+		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256, 256, 64, 64);
 
 		//MapReader mr = new MapReader(this, "01.map");
 		//map = mr.createMap();
@@ -112,19 +104,15 @@ public class GameWolfen extends Game {
 		animatedActorTest.position.set(3, 0, 5);
 		ac.add(animatedActorTest);
 
-		bmf = new BitMapFont(new ShapeInstancedQuadTexture(shaderProgramTexCameraInstanced, "char.png"), 256, 256, 16, 16);
+		bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "char.png", 256, 256, 16, 16));
 
 		textPos = bmf.createString(new Vector3f(-1f, 1f, 0), "", 0.85f);
 		textFps = bmf.createString(new Vector3f(-1f, .9f, 0), "", 0.85f);
 		textEntities = bmf.createString(new Vector3f(-1f, .8f, 0), "", 0.85f);
 		textMemory = bmf.createString(new Vector3f(-1f, 0.7f, 0), "", 0.6f, new Color(0f, 0f, 0f));
-		ac.add(textPos);
-		ac.add(textFps);
-		ac.add(textEntities);
-		ac.add(textMemory);
 
-		BitMapFont worldFont = new BitMapFont(new ShapeInstancedQuadTexture(shaderProgramTexInstanced, "char.png"),
-				256, 256, 16, 16);
+		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "char.png",
+				256, 256, 16, 16));
 
 		String welcomeText = "Hello and welcome to Wolfen-doo. You can't to much right now,\n"
 				+ "but it will come, don't worry.\n"
@@ -162,8 +150,11 @@ public class GameWolfen extends Game {
 
 		fps = new Fps();
 
-		ParticleSystem ps = new ParticleSystemBlood(new Vector3f(4, 0, 4), 16000);
-		ac.add(ps);
+		//ParticleSystem ps = new ParticleSystemBlood(new Vector3f(4, 0, 4), 16000);
+		//ac.add(ps);
+		
+		ParticleSystem psTest = new AnimatedParticleSystemTest(new Vector3f(4, 0, 4), 16000, shapeExplosion);
+		ac.add(psTest);
 
 		currentWeapon = new WeaponRevolver(camera);
 
@@ -188,7 +179,12 @@ public class GameWolfen extends Game {
 		camera.update(elapsedTime);
 
 		ac.update(elapsedTime);
-
+		
+		textPos.update(elapsedTime);
+		textFps.update(elapsedTime);
+		textEntities.update(elapsedTime);
+		textMemory.update(elapsedTime);
+		
 		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
 		textFps.setText("fps : " + l_fps);
 		textEntities.setText("Entities : " + ac.size());
@@ -225,6 +221,11 @@ public class GameWolfen extends Game {
 		ShaderProgram.unbind();
 
 		ac.render();
+		
+		textPos.render();
+		textFps.render();
+		textEntities.render();
+		textMemory.render();
 
 		currentWeapon.render();
 	}
