@@ -37,14 +37,14 @@ public class ShapeInstancedCubeTexture extends InstancedTexturedShape {
 				-0.5f, -0.5f,  -0.5f, 	0f, 1f,
 
 				// back1
-				-0.5f, -0.5f,  0.5f, 	0f, 1f,
-				0.5f,  0.5f,  0.5f,		1f, 0f,
-				0.5f, -0.5f,  0.5f,		1f, 1f,
+				-0.5f, -0.5f,  0.5f, 	1f, 1f,
+				0.5f,  0.5f,  0.5f,		0f, 0f,
+				0.5f, -0.5f,  0.5f,		0f, 1f,
 
 				// back2
-				0.5f,  0.5f,  0.5f,		1f, 0f,
-				-0.5f, -0.5f,  0.5f, 	0f, 1f,
-				-0.5f,  0.5f,  0.5f,	0f, 0f,
+				0.5f,  0.5f,  0.5f,		0f, 0f,
+				-0.5f, -0.5f,  0.5f, 	1f, 1f,
+				-0.5f,  0.5f,  0.5f,	1f, 0f,
 
 				// left1
 				0.5f, -0.5f, -0.5f, 	0f, 1f,
@@ -57,14 +57,14 @@ public class ShapeInstancedCubeTexture extends InstancedTexturedShape {
 				0.5f, -0.5f,  -0.5f, 	0f, 1f,
 
 				// right1
-				-0.5f, -0.5f, -0.5f, 	0f, 1f,
-				-0.5f,  0.5f,  0.5f,	1f, 0f,
-				-0.5f, -0.5f,  0.5f,	1f, 1f,
+				-0.5f, -0.5f, -0.5f, 	1f, 1f,
+				-0.5f,  0.5f,  0.5f,	0f, 0f,
+				-0.5f, -0.5f,  0.5f,	0f, 1f,
 
 				// right2
-				-0.5f,  0.5f,  0.5f,	1f, 0f,
-				-0.5f, -0.5f,  -0.5f, 	0f, 1f,
-				-0.5f,  0.5f,  -0.5f,	0f, 0f,
+				-0.5f,  0.5f,  0.5f,	0f, 0f,
+				-0.5f, -0.5f,  -0.5f, 	1f, 1f,
+				-0.5f,  0.5f,  -0.5f,	1f, 0f,
 		});
 		vertices.flip();
 

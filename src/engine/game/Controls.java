@@ -31,26 +31,24 @@ public class Controls {
 	private static boolean actionPress = false;
 
 	private static int movingKeyPressed;
-	
+
 	private static int k_forward = KEY_W;
 	private static int k_left = KEY_A;
 	private static int k_back = KEY_S;
 	private static int k_right = KEY_D;
-	
+
 	static {
 		InputContext context = InputContext.getInstance();  
-	    System.out.println("Keyboard language : " + context.getLocale().toString());
-	    
-	    if (context.getLocale().toString().startsWith("fr")) {
-	    	k_forward = KEY_Z;
-	    	k_left = KEY_Q;
-	    }
+		System.out.println("Keyboard language : " + context.getLocale().toString());
+
+		if (context.getLocale().toString().startsWith("fr")) {
+			k_forward = KEY_Z;
+			k_left = KEY_Q;
+		}
 	}
 
 	public static void update(Camera camera, float dt) {
-		
-		 
-		
+
 		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
 

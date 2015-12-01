@@ -1,8 +1,10 @@
 package engine.game;
 
+import java.nio.ByteBuffer;
 import java.util.Map.Entry;
 
 import org.lwjgl.opengl.*;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
@@ -14,6 +16,8 @@ import engine.generator.*;
 import engine.particles.*;
 import engine.shapes.*;
 import engine.util.MathUtil;
+import engine.util.MatrixUtil;
+import engine.util.TextureUtil;
 import engine.weapons.*;
 import game.animations.*;
 import game.entities.*;
@@ -79,6 +83,9 @@ public class GameWolfen extends Game {
 				"texture_billboard_instanced");
 		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", 
 				"texture_instanced");
+		ShaderProgram shaderProgramScreen = new ShaderProgram("texture_camera", "screen", "screen");
+		
+		FrameBuffer.getInstance().init();
 
 		camera = new Camera(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
 		camera.setPosition(new Vector3f(2, 0, 2));
@@ -120,21 +127,21 @@ public class GameWolfen extends Game {
 				+ "'E' to open doors, 'R' to reload.";
 
 		String rotatedText = "Woaw ! You can even rotate text !";
-		
+
 		DisplayableText worldText = worldFont.createString(new Vector3f(0.5f, 0.4f, 2f), rotatedText, 0.45f, 
 				new Color(0f, 0f, 0f), true);
 		worldText.setRotation(90f);
 		worldText.updateText();
 		ac.add(worldText);
-		
+
 		worldText = worldFont.createString(new Vector3f(0.5f, 0.4f, 0.5f), welcomeText, 0.45f, 
 				new Color(0f, 0f, 0f), true);
 		ac.add(worldText);
-		
+
 		RotatingText rotatingText = new RotatingText(new Vector3f(9, 0.25f, 3), "WELCOME !", worldFont,
 				1f, new Color(1f, 0f, 1f), TextPosition.CENTER, true);
 		ac.add(rotatingText);
-		
+
 		Item item = new Item(new ShapeQuadTexture(shaderProgramTex, "wall.png"));
 		item.position.set(9, 0, 3);
 		ac.add(item);
@@ -152,7 +159,7 @@ public class GameWolfen extends Game {
 
 		//ParticleSystem ps = new ParticleSystemBlood(new Vector3f(4, 0, 4), 16000);
 		//ac.add(ps);
-		
+
 		ParticleSystem psTest = new AnimatedParticleSystemTest(new Vector3f(4, 0, 4), 16000, shapeExplosion);
 		ac.add(psTest);
 
@@ -179,24 +186,24 @@ public class GameWolfen extends Game {
 		camera.update(elapsedTime);
 
 		ac.update(elapsedTime);
-		
+
 		textPos.update(elapsedTime);
 		textFps.update(elapsedTime);
 		textEntities.update(elapsedTime);
 		textMemory.update(elapsedTime);
-		
+
 		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
 		textFps.setText("fps : " + l_fps);
 		textEntities.setText("Entities : " + ac.size());
-		
+
 		int mb = 1024 * 1024;
-		
+
 		textMemory.setText("Total Memory: " + (Runtime.getRuntime().totalMemory() / mb)
 				+ "MB\nFree Memory: " + (Runtime.getRuntime().freeMemory() / mb)
 				+ "MB\nUsed Memory: " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / mb)
 				+ "MB\nMax Memory: " + (Runtime.getRuntime().maxMemory() / mb)
 				+ "MB");
-		
+
 		currentWeapon.update(elapsedTime);
 
 		l_fps = fps.update();
@@ -204,8 +211,9 @@ public class GameWolfen extends Game {
 
 	@Override
 	public void render() {
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		FrameBuffer.getInstance().bind();
 
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		//GL11.glClearColor(0, 0, 0, 1);
 
 		camera.apply();
@@ -217,17 +225,19 @@ public class GameWolfen extends Game {
 			program.setUniform("u_projection", camera.projection);
 			program.setUniform("u_view", camera.getMatrixView());
 		}
-
 		ShaderProgram.unbind();
 
 		ac.render();
-		
+
 		textPos.render();
 		textFps.render();
 		textEntities.render();
 		textMemory.render();
 
 		currentWeapon.render();
+
+		FrameBuffer.getInstance().render();
+		FrameBuffer.getInstance().unbind();
 	}
 
 	@Override
