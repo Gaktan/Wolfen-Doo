@@ -2,6 +2,8 @@ package engine.shapes;
 
 import java.nio.FloatBuffer;
 
+import org.lwjgl.opengl.GL15;
+
 import engine.game.ShaderProgram;
 
 public abstract class InstancedTexturedShape extends TexturedShape {
@@ -19,6 +21,12 @@ public abstract class InstancedTexturedShape extends TexturedShape {
 	public abstract void render(int amount);
 
 	public abstract void setData(FloatBuffer data);
+	
+	@Override
+	public void dispose() {
+		GL15.glDeleteBuffers(instancedVBO);
+		super.dispose();
+	}
 
 	@Override
 	public void render() {}

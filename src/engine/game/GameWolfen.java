@@ -87,7 +87,7 @@ public class GameWolfen extends Game {
 		
 		FrameBuffer.getInstance().init();
 
-		camera = new Camera(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
+		camera = new Player(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
 		camera.setPosition(new Vector3f(2, 0, 2));
 
 		setZfar(camera.getzFar());
@@ -121,12 +121,12 @@ public class GameWolfen extends Game {
 		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "char.png",
 				256, 256, 16, 16));
 
-		String welcomeText = "Hello and welcome to Wolfen-doo. You can't to much right now,\n"
+		String welcomeText = "Hello and welcome to Wolfen-doo. You can't do much right now,\n"
 				+ "but it will come, don't worry.\n"
 				+ "Use WASD to move around, mouse to look and shoot,\n"
 				+ "'E' to open doors, 'R' to reload.";
 
-		String rotatedText = "Woaw ! You can even rotate text !";
+		String rotatedText = "Woah ! You can even rotate text !";
 
 		DisplayableText worldText = worldFont.createString(new Vector3f(0.5f, 0.4f, 2f), rotatedText, 0.45f, 
 				new Color(0f, 0f, 0f), true);
@@ -222,7 +222,7 @@ public class GameWolfen extends Game {
 			ShaderProgram program = entry.getValue();
 
 			program.bind();
-			program.setUniform("u_projection", camera.projection);
+			program.setUniform("u_projection", camera.getProjection());
 			program.setUniform("u_view", camera.getMatrixView());
 		}
 		ShaderProgram.unbind();

@@ -13,19 +13,19 @@ import engine.util.MatrixUtil;
  */
 public class Camera extends Entity {
 
-	public Matrix4f projection;
-	private Matrix4f view;
-	public Vector3f movementGoal;
-	private Vector3f movement;
+	protected Matrix4f projection;
+	protected Matrix4f view;
+	protected Vector3f movementGoal;
+	protected Vector3f movement;
 
-	private Matrix4f projectionXview;
+	protected Matrix4f projectionXview;
 
-	private float slipperyLevel = 1000.0f;
+	protected float slipperyLevel = 1000.0f;
 
 	// Camera rotation
-	public EAngle viewAngle;
+	protected EAngle viewAngle;
 
-	private float fov, aspect, zNear, zFar;
+	protected float fov, aspect, zNear, zFar;
 
 	public Camera(float fov, float aspect, float zNear, float zFar){
 		super();
@@ -41,14 +41,10 @@ public class Camera extends Entity {
 		view = MatrixUtil.createIdentityMatrix();
 		projectionXview = new Matrix4f();
 
-		position.z = -5;
-
 		movementGoal = new Vector3f();
 		movement = new Vector3f();
 
 		viewAngle = new EAngle();
-		
-		scale.set(.5f, .5f, .5f);
 	}
 
 	/**
@@ -77,7 +73,9 @@ public class Camera extends Entity {
 		forward.scale(movement.x);
 		right.scale(movement.z);
 
-		Vector3f.add(forward, right, velocity);
+		velocity.x = forward.x + right.x;
+		velocity.z = forward.z + right.z;
+		//Vector3f.add(forward, right, velocity);
 
 		Matrix4f.mul(projection, view, projectionXview);
 
@@ -156,5 +154,13 @@ public class Camera extends Entity {
 	 */
 	public Matrix4f getProjectionXview() {
 		return projectionXview;
+	}
+	
+	public Matrix4f getProjection() {
+		return projection;
+	}
+	
+	public EAngle getViewAngle() {
+		return viewAngle;
 	}
 }

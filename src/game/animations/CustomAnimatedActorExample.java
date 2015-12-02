@@ -37,7 +37,7 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		dirLine.update(dt);
 		Vector3f.add(position, lookingDirection, lookingPoint);
 
-		Vector3f vec1 = GameWolfen.getInstance().camera.viewAngle.toVector();
+		Vector3f vec1 = GameWolfen.getInstance().camera.getViewAngle().toVector();
 
 		float angle = (float) (Math.atan2(lookingDirection.z, lookingDirection.x) - Math.atan2(vec1.z, vec1.x)) + PI_OVER_2 / 2f;
 

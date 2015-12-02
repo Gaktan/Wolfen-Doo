@@ -22,13 +22,15 @@ void main() {
  	vec3 tc = texture2D(u_myTexture, coord).rgb;
 	color = vec4(tc, 1.0);
 	
+	/*
 	// b&w
 	//color = texture(u_myTexture, TexCoord);
     float average = 0.2126 * color.g + 0.7152 * color.b + 0.0722 * color.r;
     color = vec4(vec3(average), 1.0);
+    */
 	
-	// 256 colors
 	/*
+	// 256 colors
 	float colors = 6.34132;
 	
 	vec3 tc = texture2D(u_myTexture, TexCoord).rgb;

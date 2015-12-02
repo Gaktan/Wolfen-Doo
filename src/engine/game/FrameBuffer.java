@@ -17,7 +17,7 @@ public class FrameBuffer {
 
 	static {
 		instance = new FrameBuffer("screen");
-		ENABLED = true;
+		ENABLED = false;
 	}
 
 	protected int frameBuffer;

@@ -1,7 +1,11 @@
 package engine.entities;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
+import engine.game.Controls;
+import engine.game.ControlsListener;
+import engine.game.GameWolfen;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeCubeTexture;
 import engine.util.MathUtil;
@@ -10,7 +14,7 @@ import engine.util.MathUtil;
  * Works like a wall, but can be opened
  * @author Gaktan
  */
-public class EntityDoor extends EntityWall  {
+public class EntityDoor extends EntityWall implements ControlsListener {
 
 	/**
 	 * Describes all different states of the door
@@ -39,13 +43,15 @@ public class EntityDoor extends EntityWall  {
 
 		originialPosition = new Vector3f();
 		openingPosition = new Vector3f();
-		
+
 		lastKnownPosition = originialPosition;
 
 		state = DoorState.CLOSED;
 		openingTime = 0.5f;
 
 		setSolid(true);
+
+		Controls.addControlsListener(this);
 	}
 
 	@Override
@@ -62,7 +68,7 @@ public class EntityDoor extends EntityWall  {
 		}
 
 		timeStamp += dt;
-		
+
 		if (state == DoorState.OPENING) {
 			Vector3f newPos = MathUtil.approach(openingPosition, lastKnownPosition, timeStamp / openingTime * 0.01f);
 			position.set(newPos);
@@ -88,6 +94,33 @@ public class EntityDoor extends EntityWall  {
 		return result;
 	}
 
+	@Override
+	public void onKeyPress(int key) {}
+
+	@Override
+	public void onKeyRelease(int key) {
+		if (key == Keyboard.KEY_E) {
+
+			Vector3f diff = new Vector3f();
+			Vector3f.sub(originialPosition, GameWolfen.getInstance().camera.position, diff);
+
+			if (diff.length() > 1.0f)
+				return;
+
+			diff.normalise();
+
+			Vector3f vec1 = GameWolfen.getInstance().camera.getViewAngle().toVector();
+			float angle = (float) ((Math.atan2(diff.z, diff.x) - Math.atan2(vec1.z, vec1.x)) + Math.PI / 4);
+			angle -= Math.PI;
+
+			if (angle < 0) angle += 2 * Math.PI;
+
+			if (angle >= (Math.PI / 2.0) && angle < Math.PI) {
+				toggle();
+			}
+		}
+	}
+
 	public DoorState getState() {
 		return state;
 	}
@@ -98,7 +131,7 @@ public class EntityDoor extends EntityWall  {
 	public void toggle() {
 		lastKnownPosition = position;
 		timeStamp = 0;
-		
+
 		if (state == DoorState.CLOSED || state == DoorState.CLOSING) {
 			state = DoorState.OPENING;
 		}

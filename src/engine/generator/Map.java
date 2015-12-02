@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.DisplayableList;
+import engine.entities.AABBRectangle;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
@@ -217,6 +218,7 @@ public class Map implements Displayable {
 		for (int i = x - 1; i < x + 2; i++) {
 			for (int j = z - 1; j < z + 2; j++) {
 
+				AABBRectangle rect;
 				EntityActor e = getActor(i, j);
 
 				if (e == null) {
@@ -228,12 +230,19 @@ public class Map implements Displayable {
 					if (!info.isSolid())
 						continue;
 
-					e = new EntityActor(null);
-					e.position.set(i, 0, j);
+					rect = new AABBRectangle(new Vector3f(i, 0, j));
+				}
+				else {
+					rect = new AABBRectangle(e);
 				}
 
-				if (GameWolfen.getInstance().camera.collide(e)){
-					GameWolfen.getInstance().camera.collisionHandler(e);
+				AABBRectangle cameraAABB = new AABBRectangle(GameWolfen.getInstance().camera);
+
+				if (cameraAABB.collide(rect)){
+					Vector3f resolution = cameraAABB.resolveCollision(rect);
+					Vector3f cameraPos = GameWolfen.getInstance().camera.position;
+
+					Vector3f.add(cameraPos, resolution, cameraPos);
 				}
 			}
 		}
