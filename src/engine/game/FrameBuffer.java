@@ -21,6 +21,7 @@ public class FrameBuffer {
 	}
 
 	protected int frameBuffer;
+	protected int textureID;
 	protected ShapeQuadTexture screenShape;
 	protected String shaderName;
 
@@ -40,7 +41,7 @@ public class FrameBuffer {
 		int attachment_type = GL11.GL_RGB;
 
 		//Generate texture ID and load texture data 
-		int textureID = GL11.glGenTextures();
+		textureID = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, attachment_type, Game.getInstance().getWidth(), 
 				Game.getInstance().getHeight(), 0, attachment_type, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);

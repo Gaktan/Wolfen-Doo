@@ -104,7 +104,7 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 			Vector3f diff = new Vector3f();
 			Vector3f.sub(originialPosition, GameWolfen.getInstance().camera.position, diff);
 
-			if (diff.length() > 1.0f)
+			if (diff.length() > 1.5f)
 				return;
 
 			diff.normalise();

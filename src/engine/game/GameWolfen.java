@@ -84,12 +84,11 @@ public class GameWolfen extends Game {
 		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", 
 				"texture_instanced");
 		ShaderProgram shaderProgramScreen = new ShaderProgram("texture_camera", "screen", "screen");
-		
+
 		FrameBuffer.getInstance().init();
 
 		camera = new Player(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
-		camera.setPosition(new Vector3f(2, 0, 2));
-
+		//camera.setPosition(new Vector3f(2, 0, 2));
 		setZfar(camera.getzFar());
 
 		ac = new DisplayableList();
@@ -97,14 +96,11 @@ public class GameWolfen extends Game {
 		ShapeSprite shapeAnimatedSmurf = new ShapeSprite(shaderProgramTexBill, "mul_test.png", 256, 256, 64, 64);
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256, 256, 64, 64);
 
-		//MapReader mr = new MapReader(this, "01.map");
-		//map = mr.createMap();
-		//map = new MazeGenerator(this, 75, 75).generate();
-
-		//ac.add(map);
-
-		MapReader mr = new MapReader();
-		map = mr.createMap("01.map");
+		map = new DungeonGenerator(30, 4, 8, 4, false).generate();
+		camera.setPosition(map.getStartingPoint());
+		
+		//MapReader mr = new MapReader();
+		//map = mr.createMap("01.map");
 		ac.add(map);
 
 		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
@@ -187,11 +183,6 @@ public class GameWolfen extends Game {
 
 		ac.update(elapsedTime);
 
-		textPos.update(elapsedTime);
-		textFps.update(elapsedTime);
-		textEntities.update(elapsedTime);
-		textMemory.update(elapsedTime);
-
 		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
 		textFps.setText("fps : " + l_fps);
 		textEntities.setText("Entities : " + ac.size());
@@ -203,6 +194,11 @@ public class GameWolfen extends Game {
 				+ "MB\nUsed Memory: " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / mb)
 				+ "MB\nMax Memory: " + (Runtime.getRuntime().maxMemory() / mb)
 				+ "MB");
+
+		textPos.update(elapsedTime);
+		textFps.update(elapsedTime);
+		textEntities.update(elapsedTime);
+		textMemory.update(elapsedTime);
 
 		currentWeapon.update(elapsedTime);
 

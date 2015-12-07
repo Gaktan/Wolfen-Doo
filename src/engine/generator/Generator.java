@@ -16,9 +16,7 @@ public abstract class Generator {
 	 * 
 	 * @param size Size of the map (min: 3, max: unlimited)
 	 */
-	public Generator(int sizeX, int sizeY) {
-		super();
-		
+	public Generator(int sizeX, int sizeY) {		
 		this.sizeX = sizeX;
 		if(this.sizeX < MIN_SIZE)
 			this.sizeX = MIN_SIZE;

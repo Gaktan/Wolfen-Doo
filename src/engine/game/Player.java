@@ -16,7 +16,7 @@ public class Player extends Camera implements ControlsListener, MouseListener {
 	// Controls
 	protected static final float FORWARD_SPEED = 0.4f;
 	protected static final float SIDEWAYS_SPEED = 0.3f;
-	protected static float UPDOWN_SPEED = 0.2f;
+	protected static float UPDOWN_SPEED = 0.6f;
 	
 	protected int movingKeyPressed;
 

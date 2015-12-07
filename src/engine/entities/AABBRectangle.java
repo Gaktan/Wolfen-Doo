@@ -58,12 +58,12 @@ public class AABBRectangle {
 	public Vector3f resolveCollision(AABBRectangle b) {
 		float size = .5f;
 
-		float leftOverlap = 	(position.x +	size * scale.x) - (b.position.x - 	size * b.scale.x);
-		float rightOverlap = 	(b.position.x +	size * scale.x) - (position.x - 	size * b.scale.x);
-		float frontOverlap = 	(position.z +	size * scale.z) - (b.position.z - 	size * b.scale.z);
-		float backOverlap = 	(b.position.z +	size * scale.z) - (position.z - 	size * b.scale.z);
-		float topOverlap = 		(position.y +	size * scale.y) - (b.position.y - 	size * b.scale.y);
-		float botOverlap = 	(	b.position.y +	size * scale.y) - (position.y - 	size * b.scale.y);
+		float leftOverlap = 	(position.x		+ size * scale.x) - (b.position.x	- size * b.scale.x);
+		float rightOverlap = 	(b.position.x	+ size * scale.x) - (position.x		- size * b.scale.x);
+		float frontOverlap = 	(position.z		+ size * scale.z) - (b.position.z	- size * b.scale.z);
+		float backOverlap = 	(b.position.z	+ size * scale.z) - (position.z		- size * b.scale.z);
+		float topOverlap = 		(position.y		+ size * scale.y) - (b.position.y	- size * b.scale.y);
+		float botOverlap = 		(b.position.y	+ size * scale.y) - (position.y		- size * b.scale.y);
 
 		float smallestOverlap = Float.MAX_VALUE;
 		float shiftX = 0;
@@ -102,19 +102,18 @@ public class AABBRectangle {
 			smallestOverlap = topOverlap;
 			shiftX = 0;
 			shiftZ = 0;
-			shiftY = topOverlap;
+			shiftY = -topOverlap;
 		}
 
 		if (botOverlap < smallestOverlap) {
 			smallestOverlap = botOverlap;
 			shiftX = 0;
 			shiftZ = 0;
-			shiftY = -botOverlap;
+			shiftY = botOverlap;
 		}
 
 		Vector3f ret = new Vector3f(shiftX, shiftY, shiftZ);
 
 		return ret;
 	}
-
 }

@@ -38,6 +38,8 @@ public class Map implements Displayable {
 
 	protected boolean delete;
 
+	protected Vector3f startingPoint;
+
 	public class ShapeInfo {
 
 		protected Shape shape;
@@ -77,10 +79,9 @@ public class Map implements Displayable {
 
 	public Map(int sizeX, int sizeY) {
 		shapeMap = new HashMap<Character, ShapeInfo>();
-
 		actorsList = new DisplayableList();
-
 		delete = false;
+		startingPoint = new Vector3f();
 
 		setSize(sizeX, sizeY);
 	}
@@ -114,56 +115,55 @@ public class Map implements Displayable {
 	}
 
 	/**
-	 * Builds a map on a given string (might get removed)
+	 * Builds a map on a given string
 	 * @param st
 	 */
 	public void buildMapFromString(String st) {
+		
+		System.out.println(sizeX + ", " + sizeY);
 
-		for (int i = 0; i < sizeX; i++) {
-			for (int j = 0; j < sizeY; j++) {
-				char c = st.charAt((i * sizeY) + j);
+		for (int i = 0; i < sizeX * sizeY; i++) {
+			char c = st.charAt(i);
 
-				if (c == ' ')
-					continue;
+			if (c == ' ')
+				continue;
 
-				int x = sizeX - 1 - i;
-				int y = j;
+			int y = (i % sizeY);
+			int x = sizeX - (i / sizeY) - 1;
 
-				map[x][y] = c;
+			map[x][y] = c;
 
-				ShapeInfo info = shapeMap.get(c);
+			ShapeInfo info = shapeMap.get(c);
 
-				if (info == null)
-					continue;
+			if (info == null)
+				continue;
 
-				if (info.shape instanceof InstancedTexturedShape) {
-					info.amount++;
+			if (info.shape instanceof InstancedTexturedShape) {
+				info.amount++;
+			}
+
+			if (info instanceof DoorShapeInfo) {
+
+				DoorShapeInfo doorInfo = (DoorShapeInfo) info;
+				EntityDoor door = new EntityDoor((ShapeCubeTexture) info.shape);
+
+				door.position = new Vector3f(x, 0, y);
+				if ((doorInfo.orientation & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
+					door.scale.x = 0.1f;
+				}
+				else {
+					door.scale.z = 0.1f;
 				}
 
-				if (info instanceof DoorShapeInfo) {
+				door.setOriginialPosition(new Vector3f(x, 0, y));
+				Vector3f openingPosition = new Vector3f(doorInfo.openingPosition);
+				Vector3f.add(door.position, openingPosition, openingPosition);
+				door.setOpeningPosition(openingPosition);
+				door.setOpeningTime(doorInfo.time);
 
-					DoorShapeInfo doorInfo = (DoorShapeInfo) info;
-					EntityDoor door = new EntityDoor((ShapeCubeTexture) info.shape);
-
-					door.position = new Vector3f(x, 0, y);
-					if ((doorInfo.orientation & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
-						door.scale.x = 0.1f;
-					}
-					else {
-						door.scale.z = 0.1f;
-					}
-
-					door.setOriginialPosition(new Vector3f(x, 0, y));
-					Vector3f openingPosition = new Vector3f(doorInfo.openingPosition);
-					Vector3f.add(door.position, openingPosition, openingPosition);
-					door.setOpeningPosition(openingPosition);
-					door.setOpeningTime(doorInfo.time);
-
-					actorsList.add(door);
-				}
-
-			} // for j
-		} // for i
+				actorsList.add(door);
+			}
+		} // for
 
 		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
 			char key = entry.getKey();
@@ -328,6 +328,7 @@ public class Map implements Displayable {
 				}
 
 				if ((int) (actor.position.x + 0.5f) == x && (int) (actor.position.z + 0.5f) == y) {
+					System.out.println("oui");
 					return actor;
 				}
 			}
@@ -393,5 +394,13 @@ public class Map implements Displayable {
 
 	public void setSizeY(int sizeY) {
 		this.sizeY = sizeY;
+	}
+
+	public void setStartingPoint(Vector3f coord) {
+		startingPoint.set(coord);
+	}
+
+	public Vector3f getStartingPoint() {
+		return startingPoint;
 	}
 }

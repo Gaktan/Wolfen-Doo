@@ -35,6 +35,7 @@ public class MapReader {
 	protected int width;
 	protected int height;
 	protected Map map;
+	protected EntityActor sky;
 
 
 	public MapReader() {}
@@ -44,11 +45,13 @@ public class MapReader {
 	 * @return Map created from designated file
 	 */
 	public Map createMap(String path) {
-
 		map = new Map();
 		readFile(path);
 		map.setSize(width, height);
 		map.buildMapFromString(mapData);
+		
+		if (sky != null)
+			map.setSky(sky);
 
 		for (int i = 0; i < height; i++) {
 			System.out.println(mapData.substring(i * height, (i+1) * height));
@@ -74,7 +77,12 @@ public class MapReader {
 			}
 
 			else if (ch == '}') {
-				String value = data.substring(start, end).trim().toLowerCase();
+				String value;
+
+				if (!command.equals(COMMAND_MAP))
+					value = data.substring(start, end).trim().toLowerCase();
+				else
+					value = data.substring(start, end);
 
 				start = end+1;
 
@@ -136,11 +144,11 @@ public class MapReader {
 		}
 
 		else if (command.equals(COMMAND_DOOR)) {
-			
+
 			Vector3f openingPosition = readVector3f(values[2]);
 			int orientation = ((MathUtil.parseInt(values[3]) == 1) ? Orientation.NORTH : Orientation.WEST);
 			float openingTime = MathUtil.parseFloat(values[4]);
-			
+
 			map.newDoor(ch, s_image, openingPosition, orientation, openingTime);
 		}
 	}
@@ -155,7 +163,7 @@ public class MapReader {
 
 		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
 
-		map.setSky(new EntityActor(skyShape));
+		sky = new EntityActor(skyShape);
 	}
 
 	protected Vector3f readVector3f(String value) {
