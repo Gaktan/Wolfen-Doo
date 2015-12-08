@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.DisplayableList;
@@ -23,6 +22,7 @@ import engine.shapes.ShapeCubeTexture;
 import engine.shapes.ShapeInstancedCubeTexture;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.util.MatrixUtil;
+import engine.util.Vector3;
 
 public class Map implements Displayable {
 
@@ -38,7 +38,7 @@ public class Map implements Displayable {
 
 	protected boolean delete;
 
-	protected Vector3f startingPoint;
+	protected Vector3 startingPoint;
 
 	public class ShapeInfo {
 
@@ -59,11 +59,11 @@ public class Map implements Displayable {
 
 	public class DoorShapeInfo extends ShapeInfo {
 
-		protected Vector3f openingPosition;
+		protected Vector3 openingPosition;
 		protected int orientation;
 		protected float time;
 
-		public DoorShapeInfo(Shape shape, boolean solid, Vector3f openingPosition, 
+		public DoorShapeInfo(Shape shape, boolean solid, Vector3 openingPosition, 
 				int orientation, float time) {
 
 			super(shape, solid);
@@ -81,7 +81,7 @@ public class Map implements Displayable {
 		shapeMap = new HashMap<Character, ShapeInfo>();
 		actorsList = new DisplayableList();
 		delete = false;
-		startingPoint = new Vector3f();
+		startingPoint = new Vector3();
 
 		setSize(sizeX, sizeY);
 	}
@@ -105,7 +105,7 @@ public class Map implements Displayable {
 	 * @param orientation See engine.shapes.Orientation Class
 	 * @param time Time to open
 	 */
-	public void newDoor(char c, String texture, Vector3f openingPosition, int orientation, float time) {
+	public void newDoor(char c, String texture, Vector3 openingPosition, int orientation, float time) {
 
 		ShapeCubeTexture shape = new ShapeCubeTexture(ShaderProgram.getProgram("texture"), texture);		
 
@@ -147,17 +147,17 @@ public class Map implements Displayable {
 				DoorShapeInfo doorInfo = (DoorShapeInfo) info;
 				EntityDoor door = new EntityDoor((ShapeCubeTexture) info.shape);
 
-				door.position = new Vector3f(x, 0, y);
+				door.position = new Vector3(x, 0, y);
 				if ((doorInfo.orientation & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
-					door.scale.x = 0.1f;
+					door.scale.setX(0.1f);
 				}
 				else {
-					door.scale.z = 0.1f;
+					door.scale.setZ(0.1f);
 				}
 
-				door.setOriginialPosition(new Vector3f(x, 0, y));
-				Vector3f openingPosition = new Vector3f(doorInfo.openingPosition);
-				Vector3f.add(door.position, openingPosition, openingPosition);
+				door.setOriginialPosition(new Vector3(x, 0, y));
+				Vector3 openingPosition = new Vector3(doorInfo.openingPosition);
+				openingPosition.add(door.position);
 				door.setOpeningPosition(openingPosition);
 				door.setOpeningTime(doorInfo.time);
 
@@ -212,8 +212,8 @@ public class Map implements Displayable {
 	@Override
 	public boolean update(float dt) {
 
-		int x = (int) (GameWolfen.getInstance().camera.position.x + 0.5f);
-		int z = (int) (GameWolfen.getInstance().camera.position.z + 0.5f);
+		int x = (int) (GameWolfen.getInstance().camera.position.getX() + 0.5f);
+		int z = (int) (GameWolfen.getInstance().camera.position.getZ() + 0.5f);
 
 		for (int i = x - 1; i < x + 2; i++) {
 			for (int j = z - 1; j < z + 2; j++) {
@@ -230,7 +230,7 @@ public class Map implements Displayable {
 					if (!info.isSolid())
 						continue;
 
-					rect = new AABBRectangle(new Vector3f(i, 0, j));
+					rect = new AABBRectangle(new Vector3(i, 0, j));
 				}
 				else {
 					rect = new AABBRectangle(e);
@@ -239,10 +239,11 @@ public class Map implements Displayable {
 				AABBRectangle cameraAABB = new AABBRectangle(GameWolfen.getInstance().camera);
 
 				if (cameraAABB.collide(rect)){
-					Vector3f resolution = cameraAABB.resolveCollision(rect);
-					Vector3f cameraPos = GameWolfen.getInstance().camera.position;
+					Vector3 resolution = cameraAABB.resolveCollision(rect);
+					Vector3 cameraPos = GameWolfen.getInstance().camera.position;
 
-					Vector3f.add(cameraPos, resolution, cameraPos);
+					cameraPos.add(resolution);
+					//Vector3.add(cameraPos, resolution, cameraPos);
 				}
 			}
 		}
@@ -291,8 +292,8 @@ public class Map implements Displayable {
 	}
 
 	public void setSky(EntityActor sky) {
-		sky.scale = new Vector3f(sizeX - 0.5f, 1, sizeY - 0.5f);
-		sky.position = new Vector3f((sizeX - 1f) / 2, 0, (sizeY - 1f) / 2f);
+		sky.scale = new Vector3(sizeX - 0.5f, 1, sizeY - 0.5f);
+		sky.position = new Vector3((sizeX - 1f) / 2, 0, (sizeY - 1f) / 2f);
 
 		this.sky = sky;
 	}
@@ -320,15 +321,14 @@ public class Map implements Displayable {
 				if (actor instanceof EntityDoor) {
 					EntityDoor door = (EntityDoor) actor;
 
-					if ((int) (door.getOriginialPosition().x + 0.5f) == x 
-							&& (int) (door.getOriginialPosition().z + 0.5f) == y) {
+					if ((int) (door.getOriginialPosition().getX() + 0.5f) == x 
+							&& (int) (door.getOriginialPosition().getZ() + 0.5f) == y) {
 						return door;
 					}
 					continue;
 				}
 
-				if ((int) (actor.position.x + 0.5f) == x && (int) (actor.position.z + 0.5f) == y) {
-					System.out.println("oui");
+				if ((int) (actor.position.getX() + 0.5f) == x && (int) (actor.position.getZ() + 0.5f) == y) {
 					return actor;
 				}
 			}
@@ -344,20 +344,20 @@ public class Map implements Displayable {
 	 * @param distance Maximum distance
 	 * @return First Entity found. Null if nothing was found
 	 */
-	public Entity rayCast(Vector3f position, Vector3f ray, float distance) {
+	public Entity rayCast(Vector3 position, Vector3 ray, float distance) {
 		if (ray.length() == 0)
 			return null;
 
-		ray.normalise();
+		ray.normalize();
 
 		for (float i = 0f; i < distance; i += 0.04f) {
-			if (position.y + (ray.y * i) > 0.5f)
+			if (position.getY() + (ray.getY() * i) > 0.5f)
 				break;
-			if (position.y + (ray.y * i) < -0.5f)
+			if (position.getY() + (ray.getY() * i) < -0.5f)
 				break;
 
-			int x = (int) (position.x + (ray.x * i) + 0.5f);
-			int z = (int) (position.z + (ray.z * i) + 0.5f);
+			int x = (int) (position.getX() + (ray.getX() * i) + 0.5f);
+			int z = (int) (position.getZ() + (ray.getZ() * i) + 0.5f);
 
 			Entity d = getActor(x, z);
 			if (d != null) {
@@ -396,11 +396,11 @@ public class Map implements Displayable {
 		this.sizeY = sizeY;
 	}
 
-	public void setStartingPoint(Vector3f coord) {
+	public void setStartingPoint(Vector3 coord) {
 		startingPoint.set(coord);
 	}
 
-	public Vector3f getStartingPoint() {
+	public Vector3 getStartingPoint() {
 		return startingPoint;
 	}
 }

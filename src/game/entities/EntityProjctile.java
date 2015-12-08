@@ -1,6 +1,5 @@
 package game.entities;
 
-import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.entities.EntityActor;
@@ -12,6 +11,7 @@ import engine.generator.Map;
 import engine.generator.Map.DoorShapeInfo;
 import engine.generator.Map.ShapeInfo;
 import engine.util.MathUtil;
+import engine.util.Vector3;
 import game.particles.ParticleSystemImpact;
 
 /**
@@ -29,12 +29,12 @@ public class EntityProjctile extends EntityLine {
 		SPEED = 2.2f;
 	}
 
-	public EntityProjctile(Vector3f position, Vector3f direction, Map map) {
-		super(position, new Vector3f(), new Color(0xffff4c), new Color(0xffde4c));
+	public EntityProjctile(Vector3 position, Vector3 direction, Map map) {
+		super(position, new Vector3(), new Color(0xffff4c), new Color(0xffde4c));
 
 		this.map = map;
 
-		this.velocity = (Vector3f) direction.normalise();
+		this.velocity = direction.getNormalize();
 		this.velocity.scale(SPEED);
 
 		this.bounces = 0;
@@ -48,40 +48,41 @@ public class EntityProjctile extends EntityLine {
 
 		boolean result = super.update(dt);
 
-		Vector3f.add(position, velocity, positionB);
+		positionB = position.getAdd(velocity);
+		//Vector3.add(position, velocity, positionB);
 
-		if (position.x < 0 || position.z < 0 || position.x > map.getSizeX() || position.z > map.getSizeY()) {
+		if (position.getX() < 0 || position.getZ() < 0 
+				|| position.getX() > map.getSizeX() || position.getZ() > map.getSizeY()) {
 			return false;
 		}
 
-		if (position.y > 0.5f || position.y < -0.5f)
+		if (position.getY() > 0.5f || position.getY() < -0.5f)
 			return false;
 
-		Vector3f normal = new Vector3f();
-		Vector3f impactPosition = new Vector3f();
+		Vector3 normal = new Vector3();
+		Vector3 impactPosition = new Vector3();
 
 		int oldX = -1, oldZ = -1;
 
 		for (float i = 0f; i < 1f; i += 0.025f) {
-			if (position.y + (velocity.y * i) < -0.5f) {
+			if (position.getY() + (velocity.getY() * i) < -0.5f) {
 				b = true;
-				normal.y = 1f;
-				impactPosition.y = -0.5f;
-				impactPosition.x = position.x + (velocity.x * i);
-				impactPosition.z = position.z + (velocity.z * i);
+				normal.setY(1f);
+				impactPosition.setY(-0.5f);
+				impactPosition.setX(position.getX() + (velocity.getX() * i));
+				impactPosition.setZ(position.getZ() + (velocity.getZ() * i));
 				break;
 			}
-			if (position.y + (velocity.y * i) > 0.5f) {
-				b = true;
-				normal.y = -1f;
-				impactPosition.y = 0f;
-				impactPosition.x = position.x + (velocity.x * i);
-				impactPosition.z = position.z + (velocity.z * i);
+			if (position.getY() + (velocity.getY() * i) > 0.5f) {
+				normal.setY(-1f);
+				impactPosition.setY(0f);
+				impactPosition.setX(position.getX() + (velocity.getX() * i));
+				impactPosition.setZ(position.getZ() + (velocity.getZ() * i));
 				break;
 			}
 
-			int x = (int) (position.x + (velocity.x * i) + 0.5f);
-			int z = (int) (position.z + (velocity.z * i) + 0.5f);
+			int x = (int) (position.getX() + (velocity.getX() * i) + 0.5f);
+			int z = (int) (position.getZ() + (velocity.getZ() * i) + 0.5f);
 
 			if (x == oldX && z == oldZ)
 				continue;
@@ -107,22 +108,22 @@ public class EntityProjctile extends EntityLine {
 
 				b = true;
 
-				impactPosition.x = position.x + (velocity.x * i);
-				impactPosition.y = position.y + (velocity.y * i);
-				impactPosition.z = position.z + (velocity.z * i);
+				impactPosition.setX(position.getX() + (velocity.getX() * i));
+				impactPosition.setY(position.getY() + (velocity.getY() * i));
+				impactPosition.setZ(position.getZ() + (velocity.getZ() * i));
 
-				normal.x = x - impactPosition.x;
-				normal.z = z - impactPosition.z;
+				normal.setX(x - impactPosition.getX());
+				normal.setZ(z - impactPosition.getZ());
 
-				if (Math.abs(normal.x) > Math.abs(normal.z)) {
-					normal.z = 0;
-					normal.x = -normal.x;
-					impactPosition.x = (int) impactPosition.x + 0.5f;
+				if (Math.abs(normal.getX()) > Math.abs(normal.getZ())) {
+					normal.setZ(0f);
+					normal.setX(-normal.getX());
+					impactPosition.setX((int) impactPosition.getX() + 0.5f);
 				}
 				else {
-					normal.x = 0;
-					normal.z = -normal.z;
-					impactPosition.z = (int) impactPosition.z + 0.5f;
+					normal.setX(0f);
+					normal.setZ(-normal.getZ());
+					impactPosition.setZ((int) impactPosition.getZ() + 0.5f);
 				}
 
 				break;
@@ -132,24 +133,22 @@ public class EntityProjctile extends EntityLine {
 		if (b) {
 
 			if (normal.length() != 0)
-				normal.normalise();
+				normal.normalize();
 
 			if (bounces != 0) {
-				if (normal.x != 0)  {
-					velocity.x = -velocity.x;
+				if (normal.getX() != 0)  {
+					velocity.setX(-velocity.getX());
 				}
 
-				else if (normal.z != 0)  {
-					velocity.z = -velocity.z;
+				else if (normal.getZ() != 0)  {
+					velocity.setZ(-velocity.getZ());
 				}
 
-				else if (normal.y != 0) {
-					velocity.y = -velocity.y;
+				else if (normal.getY() != 0) {
+					velocity.setY(-velocity.getY());
 				}
-
-				position.x = impactPosition.x;
-				position.y = impactPosition.y;
-				position.z = impactPosition.z;
+				
+				position.set(impactPosition);
 
 				bounces--;
 			}
@@ -164,29 +163,29 @@ public class EntityProjctile extends EntityLine {
 		return result;
 	}
 
-	protected void createImpact(Vector3f impactPosition, Vector3f normal) {
+	protected void createImpact(Vector3 impactPosition, Vector3 normal) {
 		normal.scale(MathUtil.random(0.99f, 1.01f));
 
 		EntityActor e = new EntityActor(null);
 
-		Vector3f newPos = new Vector3f(impactPosition);
-		Vector3f newRot = new Vector3f();
+		Vector3 newPos = new Vector3(impactPosition);
+		Vector3 newRot = new Vector3();
 
 		float pi2 = (float) (Math.PI / 2);
 
-		if (normal.x != 0)  {
-			newRot.y = pi2 * normal.x;
-			newPos.x = impactPosition.x + normal.x * 0.01f;
+		if (normal.getX() != 0)  {
+			newRot.setY(pi2 * normal.getX());
+			newPos.setX(impactPosition.getX() + normal.getX() * 0.01f);
 		}
 
-		else if (normal.z != 0)  {
-			newRot.y = pi2 - pi2 * normal.z;
-			newPos.z = impactPosition.z + normal.z * 0.01f;
+		else if (normal.getZ() != 0)  {
+			newRot.setY(pi2 - pi2 * normal.getZ());
+			newPos.setZ(impactPosition.getZ() + normal.getZ() * 0.01f);
 		}
 
-		else if (normal.y != 0) {
-			newRot.x = pi2 * -normal.y;
-			newPos.y = (int) (impactPosition.y + 0.5f) + 0.5f * -normal.y * 0.99f;
+		else if (normal.getY() != 0) {
+			newRot.setX(pi2 * -normal.getY());
+			newPos.setY((int) (impactPosition.getY() + 0.5f) + 0.5f * -normal.getY() * 0.99f);
 		}
 
 		e.position = newPos;
@@ -195,8 +194,8 @@ public class EntityProjctile extends EntityLine {
 
 		GameWolfen.getInstance().bulletHoles.add(e);
 
-		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3f(newPos),
-				new Vector3f(velocity), new Vector3f(normal));
+		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3(newPos),
+				new Vector3(velocity), new Vector3(normal));
 		GameWolfen.getInstance().ac.add(particles);
 	}
 }

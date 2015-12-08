@@ -1,12 +1,12 @@
 package engine.entities;
 
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.shapes.Shape;
 import engine.util.MatrixUtil;
 import engine.util.TextureUtil;
+import engine.util.Vector3;
 
 /**
  * Entity that has a textured shape, a color, rotation and scale
@@ -16,12 +16,12 @@ public class EntityActor extends Entity {
 
 	public Shape shape;
 	public Color color;
-	public Vector3f rotation;
+	public Vector3 rotation;
 
 	public EntityActor(Shape shape) {
 		super();
 		
-		rotation = new Vector3f();
+		rotation = new Vector3();
 
 		this.shape = shape;
 
@@ -42,18 +42,18 @@ public class EntityActor extends Entity {
 	 * Sets the uniforms to be used in the shader. Do not call this
 	 */
 	public void setUniforms() {
-		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3f(color));
+		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3(color));
 
 		Matrix4f model = MatrixUtil.createIdentityMatrix();
-		model.rotate(rotation.x, MatrixUtil.X_AXIS);
-		model.rotate(rotation.y, MatrixUtil.Y_AXIS);
-		model.rotate(rotation.z, MatrixUtil.Z_AXIS);
+		model.rotate(rotation.getX(), MatrixUtil.X_AXIS.toVector3f());
+		model.rotate(rotation.getY(), MatrixUtil.Y_AXIS.toVector3f());
+		model.rotate(rotation.getZ(), MatrixUtil.Z_AXIS.toVector3f());
 
-		model.m30 = position.x;
-		model.m31 = position.y;
-		model.m32 = position.z;
+		model.m30 = position.getX();
+		model.m31 = position.getY();
+		model.m32 = position.getZ();
 
-		model = model.scale(scale);
+		model = model.scale(scale.toVector3f());
 
 		shape.getShaderProgram().setUniform("u_model", model);
 	}

@@ -3,17 +3,17 @@ package engine.particles;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.animations.Animation;
 import engine.animations.AnimationManager;
 import engine.util.MatrixUtil;
+import engine.util.Vector3;
 
 public class AnimatedParticle extends Particle {
 
 	protected Animation a_current;
 
-	public AnimatedParticle(float life, Vector3f position, float scale) {
+	public AnimatedParticle(float life, Vector3 position, float scale) {
 		super(life, position, scale);
 	}
 	
@@ -26,6 +26,7 @@ public class AnimatedParticle extends Particle {
 	
 	@Override
 	public void setBufferData(FloatBuffer fb) {
+		//super.setBufferData(fb);
 		float[] array = new float[3];
 		array[0] = color.r;
 		array[1] = color.g;
@@ -33,10 +34,10 @@ public class AnimatedParticle extends Particle {
 		fb.put(array);
 
 		Matrix4f model = MatrixUtil.createIdentityMatrix();
-		model.m30 = position.x;
-		model.m31 = position.y;
-		model.m32 = position.z;
-		model = model.scale(new Vector3f(scale, scale, scale));
+		model.m30 = position.getX();
+		model.m31 = position.getY();
+		model.m32 = position.getZ();
+		model = model.scale(new Vector3(scale).toVector3f());
 		model.store(fb);
 		
 		fb.put(a_current.getCurrentFrame());

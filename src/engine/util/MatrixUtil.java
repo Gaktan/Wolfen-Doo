@@ -4,7 +4,6 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 /**
  * Matrices operations and so on
@@ -14,10 +13,10 @@ import org.lwjgl.util.vector.Vector3f;
 public final class MatrixUtil {
 
 	// Vectors for axes
-	public static final Vector3f 
-	X_AXIS = new Vector3f(1, 0, 0),
-	Y_AXIS = new Vector3f(0, 1, 0),
-	Z_AXIS = new Vector3f(0, 0, 1);
+	public static final Vector3 
+	X_AXIS = new Vector3(1, 0, 0),
+	Y_AXIS = new Vector3(0, 1, 0),
+	Z_AXIS = new Vector3(0, 0, 1);
 
 	/**
 	 * Converts a Matrix into a FloatBuffer
@@ -65,9 +64,9 @@ public final class MatrixUtil {
 	}
 
 	/**
-	 * Creates a Matrix4f from a Vector3f
+	 * Creates a Matrix4f from a Vector3
 	 */
-	public static Matrix4f vectorToMatrix(Vector3f vec) {
+	public static Matrix4f vectorToMatrix(Vector3 vec) {
 		// 1 0 0 x
 		// 0 1 0 y
 		// 0 0 1 z
@@ -76,9 +75,9 @@ public final class MatrixUtil {
 		Matrix4f mat = new Matrix4f();
 		mat.setIdentity();
 
-		mat.m30 = vec.x;
-		mat.m31 = vec.y;
-		mat.m32 = vec.z;
+		mat.m30 = vec.getX();
+		mat.m31 = vec.getY();
+		mat.m32 = vec.getZ();
 		mat.m33 = 1;
 
 		return mat;
@@ -91,33 +90,32 @@ public final class MatrixUtil {
 	 * @param center Coordinates to look at
 	 * @param up Up Vector
 	 */
-	public static Matrix4f lookAt(Vector3f eye,  Vector3f center,  Vector3f up) {
+	public static Matrix4f lookAt(Vector3 eye,  Vector3 center,  Vector3 up) {
 
-		Vector3f f = new Vector3f();
-		Vector3f.sub(center, eye, f);
-		f.normalise();
+		Vector3 f = center.getSub(eye);
+		f.normalize();
 
-		Vector3f u = new Vector3f();
-		up.normalise(u);
+		Vector3 u = up.getNormalize();
 
-		Vector3f s = new Vector3f();
-		Vector3f.cross(f, u, s);
-		s.normalise();
+		Vector3 s = f.getCross(u);
+		//Vector3f.cross(f, u, s);
+		s.normalize();
 
-		Vector3f.cross(s, f, u);
+		u = s.getCross(f);
+		//Vector3f.cross(s, f, u);
 
 		Matrix4f result = new Matrix4f();
-		result.m00 = s.x;
-		result.m10 = s.y;
-		result.m20 = s.z;
-		result.m01 = u.x;
-		result.m11 = u.y;
-		result.m21 = u.z;
-		result.m02 = -f.x;
-		result.m12 = -f.y;
-		result.m22 = -f.z;
+		result.m00 = s.getX();
+		result.m10 = s.getY();
+		result.m20 = s.getZ();
+		result.m01 = u.getX();
+		result.m11 = u.getY();
+		result.m21 = u.getZ();
+		result.m02 = -f.getX();
+		result.m12 = -f.getY();
+		result.m22 = -f.getZ();
 
-		Matrix4f.translate(eye.negate(null), result, result);
+		Matrix4f.translate(eye.getNegate().toVector3f(), result, result);
 
 		return result;
 	}
@@ -128,18 +126,18 @@ public final class MatrixUtil {
 	 * @param position Position of the eye (camera)
 	 * @param viewAngle Angle of the eye(camera)
 	 */
-	public static Matrix4f setView(Vector3f position, EAngle viewAngle) {
+	public static Matrix4f setView(Vector3 position, EAngle viewAngle) {
 		// Make the view matrix an identity.
 		Matrix4f view = createIdentityMatrix();
 
 		// Rotate the view
-		Matrix4f.rotate((float) Math.toRadians(viewAngle.pitch), X_AXIS, view, view);
-		Matrix4f.rotate((float) Math.toRadians(viewAngle.yaw), Y_AXIS, view, view);
-		Matrix4f.rotate((float) Math.toRadians(viewAngle.roll), Z_AXIS, view, view);
+		Matrix4f.rotate((float) Math.toRadians(viewAngle.pitch), X_AXIS.toVector3f(), view, view);
+		Matrix4f.rotate((float) Math.toRadians(viewAngle.yaw), Y_AXIS.toVector3f(), view, view);
+		Matrix4f.rotate((float) Math.toRadians(viewAngle.roll), Z_AXIS.toVector3f(), view, view);
 
 		// Move the camera
-		Vector3f newPos = new Vector3f(position.negate(null));
-		Matrix4f.translate(newPos, view, view);
+		Vector3 newPos = position.getNegate();
+		Matrix4f.translate(newPos.toVector3f(), view, view);
 
 		return view;
 	}

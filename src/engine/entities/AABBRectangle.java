@@ -1,21 +1,21 @@
 package engine.entities;
 
-import org.lwjgl.util.vector.Vector3f;
+import engine.util.Vector3;
 
 public class AABBRectangle {
 
-	protected Vector3f position;
-	protected Vector3f scale;
+	protected Vector3 position;
+	protected Vector3 scale;
 
 	public AABBRectangle(Entity a) {
 		this(a.position, a.scale);
 	}
 
-	public AABBRectangle(Vector3f position) {
-		this(position, new Vector3f(1f, 1f, 1f));
+	public AABBRectangle(Vector3 position) {
+		this(position, new Vector3(1f, 1f, 1f));
 	}
 
-	public AABBRectangle(Vector3f position, Vector3f scale) {
+	public AABBRectangle(Vector3 position, Vector3 scale) {
 		super();
 		this.position = position;
 		this.scale = scale;
@@ -23,47 +23,47 @@ public class AABBRectangle {
 
 	public boolean collide(AABBRectangle b) {
 		// X
-		float size = 0.5f * scale.x;
-		float b_size = 0.5f * b.scale.x;
+		float size = 0.5f * scale.getX();
+		float b_size = 0.5f * b.scale.getX();
 
-		if(position.x - size > b.position.x + b_size)
+		if(position.getX() - size > b.position.getX() + b_size)
 			return false;
 
-		if(position.x + size < b.position.x-+ b_size)
+		if(position.getX() + size < b.position.getX() - b_size)
 			return false;
 
 		// Y
-		size = 0.5f * scale.y;
-		b_size = 0.5f * b.scale.y;
+		size = 0.5f * scale.getY();
+		b_size = 0.5f * b.scale.getY();
 
-		if(position.y - size > b.position.y + b_size)
+		if(position.getY() - size > b.position.getY() + b_size)
 			return false;
 
-		if(position.y + size < b.position.y-+ b_size)
+		if(position.getY() + size < b.position.getY() - b_size)
 			return false;
 
 		// Z
-		size = 0.5f * scale.z;
-		b_size = 0.5f * b.scale.z;
+		size = 0.5f * scale.getZ();
+		b_size = 0.5f * b.scale.getZ();
 
-		if(position.z - size > b.position.z + b_size)
+		if(position.getZ() - size > b.position.getZ() + b_size)
 			return false;
 
-		if(position.z + size < b.position.z-+ b_size)
+		if(position.getZ() + size < b.position.getZ() - b_size)
 			return false;
 
 		return true;
 	}
 
-	public Vector3f resolveCollision(AABBRectangle b) {
+	public Vector3 resolveCollision(AABBRectangle b) {
 		float size = .5f;
 
-		float leftOverlap = 	(position.x		+ size * scale.x) - (b.position.x	- size * b.scale.x);
-		float rightOverlap = 	(b.position.x	+ size * scale.x) - (position.x		- size * b.scale.x);
-		float frontOverlap = 	(position.z		+ size * scale.z) - (b.position.z	- size * b.scale.z);
-		float backOverlap = 	(b.position.z	+ size * scale.z) - (position.z		- size * b.scale.z);
-		float topOverlap = 		(position.y		+ size * scale.y) - (b.position.y	- size * b.scale.y);
-		float botOverlap = 		(b.position.y	+ size * scale.y) - (position.y		- size * b.scale.y);
+		float leftOverlap = 	(position.getX()	+ size * scale.getX()) - (b.position.getX()	- size * b.scale.getX());
+		float rightOverlap = 	(b.position.getX()	+ size * scale.getX()) - (position.getX()	- size * b.scale.getX());
+		float frontOverlap = 	(position.getZ()	+ size * scale.getZ()) - (b.position.getZ()	- size * b.scale.getZ());
+		float backOverlap = 	(b.position.getZ()	+ size * scale.getZ()) - (position.getZ()	- size * b.scale.getZ());
+		float topOverlap = 		(position.getY()	+ size * scale.getY()) - (b.position.getY()	- size * b.scale.getY());
+		float botOverlap = 		(b.position.getY()	+ size * scale.getY()) - (position.getY()	- size * b.scale.getY());
 
 		float smallestOverlap = Float.MAX_VALUE;
 		float shiftX = 0;
@@ -112,7 +112,7 @@ public class AABBRectangle {
 			shiftY = botOverlap;
 		}
 
-		Vector3f ret = new Vector3f(shiftX, shiftY, shiftZ);
+		Vector3 ret = new Vector3(shiftX, shiftY, shiftZ);
 
 		return ret;
 	}

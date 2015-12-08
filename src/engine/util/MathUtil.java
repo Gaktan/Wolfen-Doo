@@ -3,8 +3,6 @@ package engine.util;
 import java.math.BigDecimal;
 import java.util.Random;
 
-import org.lwjgl.util.vector.Vector3f;
-
 /**
  * Class used to hold static functions related to math in general that are
  * missing from Java's default Math class
@@ -16,13 +14,6 @@ public final class MathUtil {
 	private static Random random = new Random();
 
 	/**
-	 * Distance between point A and point B
-	 */
-	public static float distance(Vector3f a, Vector3f b) {
-		return Vector3f.sub(a, b, new Vector3f()).length();
-	}
-
-	/**
 	 * Approaches a velocity to its goal
 	 * 
 	 * @param goal Goal to approach
@@ -30,12 +21,12 @@ public final class MathUtil {
 	 * @param dt Delta time
 	 * @return Approached velocity
 	 */
-	public static Vector3f approach(Vector3f goal, Vector3f velocity, float dt) {
-		Vector3f v = new Vector3f();
+	public static Vector3 approach(Vector3 goal, Vector3 velocity, float dt) {
+		Vector3 v = new Vector3();
 
-		v.x = approach(goal.x, velocity.x, dt);
-		v.y = approach(goal.y, velocity.y, dt);
-		v.z = approach(goal.z, velocity.z, dt);
+		v.setX(approach(goal.getX(), velocity.getX(), dt));
+		v.setY(approach(goal.getY(), velocity.getY(), dt));
+		v.setZ(approach(goal.getZ(), velocity.getZ(), dt));
 
 		return v;
 	}
@@ -65,12 +56,12 @@ public final class MathUtil {
 	 * @param min Minimum values of (x, y, z)
 	 * @param max Maximum values of (x, y, z)
 	 */
-	public static Vector3f randomCoord(Vector3f min, Vector3f max) {
-		Vector3f v = new Vector3f();
+	public static Vector3 randomCoord(Vector3 min, Vector3 max) {
+		Vector3 v = new Vector3();
 
-		v.x = random(min.x, max.x);
-		v.y = random(min.y, max.y);
-		v.z = random(min.z, max.z);
+		v.setX(random(min.getX(), max.getX()));
+		v.setY(random(min.getY(), max.getY()));
+		v.setZ(random(min.getZ(), max.getZ()));
 
 		return v;
 	}
@@ -137,14 +128,6 @@ public final class MathUtil {
 		}
 
 		return 0.f;
-	}
-
-	/**
-	 * Checks if two vectors are equals
-	 * @return true if all x, y, z values are the same.
-	 */
-	public static boolean vectorEquals(Vector3f left, Vector3f right) {
-		return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
 	}
 
 	public static float clamp(float f, float min, float max) {

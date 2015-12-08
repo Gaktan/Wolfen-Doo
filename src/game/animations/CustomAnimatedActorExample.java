@@ -1,18 +1,17 @@
 package game.animations;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import engine.animations.AnimatedActor;
 import engine.entities.EntityLine;
 import engine.game.GameWolfen;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
+import engine.util.Vector3;
 
 public class CustomAnimatedActorExample extends AnimatedActor {
 
-	protected Vector3f lookingPoint;
-	protected Vector3f lookingDirection;
+	protected Vector3 lookingPoint;
+	protected Vector3 lookingDirection;
 	protected EntityLine dirLine;
 
 	protected int orientation;
@@ -22,10 +21,10 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 	public CustomAnimatedActorExample(ShapeSprite shape, String file, String currentAnimation) {
 		super(shape, file, currentAnimation);
 
-		lookingDirection = MathUtil.randomCoord(new Vector3f(-1, 0, -1), new Vector3f(1, 0, 1));
-		lookingDirection.normalise();
+		lookingDirection = MathUtil.randomCoord(new Vector3(-1, 0, -1), new Vector3(1, 0, 1));
+		lookingDirection.normalize();
 
-		lookingPoint = new Vector3f();
+		lookingPoint = new Vector3();
 		dirLine = new EntityLine(position, lookingPoint);
 	}
 
@@ -35,11 +34,12 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		boolean result = super.update(dt);
 
 		dirLine.update(dt);
-		Vector3f.add(position, lookingDirection, lookingPoint);
+		lookingPoint.set(position.getAdd(lookingDirection));
 
-		Vector3f vec1 = GameWolfen.getInstance().camera.getViewAngle().toVector();
+		Vector3 vec1 = GameWolfen.getInstance().camera.getViewAngle().toVector();
 
-		float angle = (float) (Math.atan2(lookingDirection.z, lookingDirection.x) - Math.atan2(vec1.z, vec1.x)) + PI_OVER_2 / 2f;
+		float angle = (float) (Math.atan2(lookingDirection.getZ(), lookingDirection.getX())
+				- Math.atan2(vec1.getZ(), vec1.getX())) + PI_OVER_2 / 2f;
 
 		if (angle < 0) angle += 2 * Math.PI;
 

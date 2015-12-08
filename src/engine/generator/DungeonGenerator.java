@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import engine.entities.EntityActor;
 import engine.game.ShaderProgram;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeInsideOutCubeColor;
+import engine.util.Vector3;
 
 public class DungeonGenerator extends Generator {
 
@@ -30,7 +29,7 @@ public class DungeonGenerator extends Generator {
 	protected Random random;
 	protected boolean noIntersection;
 
-	protected Vector3f startingPoint;
+	protected Vector3 startingPoint;
 
 	protected ArrayList<Pair> map;
 
@@ -45,7 +44,7 @@ public class DungeonGenerator extends Generator {
 	public DungeonGenerator(int sizeX, int sizeY, long seed, int roomSize, boolean noIntersection) {
 		super(sizeX, sizeY);
 
-		startingPoint = new Vector3f();
+		startingPoint = new Vector3();
 
 		this.roomSize = roomSize;
 		this.seed = seed;
@@ -79,8 +78,8 @@ public class DungeonGenerator extends Generator {
 
 		map.newWall(WALL, "wall.png", true);
 		map.newWall(PORTRAIT, "wall_portrait.png", true);
-		map.newDoor(DOOR_EAST, "door.png", new Vector3f(-0.95f, 0, 0), Orientation.EAST, 800f);
-		map.newDoor(DOOR_NORTH, "door.png", new Vector3f(0, 0, 0.95f), Orientation.NORTH, 800f);
+		map.newDoor(DOOR_EAST, "door.png", new Vector3(-0.95f, 0, 0), Orientation.EAST, 800f);
+		map.newDoor(DOOR_NORTH, "door.png", new Vector3(0, 0, 0.95f), Orientation.NORTH, 800f);
 
 		StringBuilder sb = new StringBuilder();
 
@@ -88,8 +87,8 @@ public class DungeonGenerator extends Generator {
 			sb.append(cc);
 		}
 
-		Vector3f downColor = new Vector3f(0f, 1f, 0f);
-		Vector3f upColor = new Vector3f(1f, 0f, 0f);
+		Vector3 downColor = new Vector3(0f, 1f, 0f);
+		Vector3 upColor = new Vector3(1f, 0f, 0f);
 		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
 		EntityActor sky = new EntityActor(skyShape);
 		map.setSky(sky);
@@ -212,17 +211,18 @@ public class DungeonGenerator extends Generator {
 			int y = p.y * roomSize;
 
 			if (p.c == START) {
-				startingPoint.set((width-1) - (x + (roomSize * 0.5f)), 1, y + (roomSize*0.5f));
+				startingPoint.set((width-1) - (x + (roomSize * 0.5f)), 0f, y + (roomSize*0.5f));
 			}
 
 			for (int i = 0; i <= roomSize; i++) {
 				for (int j = 0; j <= roomSize; j++) {
-					if (!(i > 0 && i < roomSize) || !(j > 0 && j < roomSize)) {
-
-						int wall = random(0, 40);
-
-						newMap[x+j][y+i] = (wall < 37) ? WALL : PORTRAIT;
+					if (!(i > 0 && i < roomSize) && !(j > 0 && j < roomSize)) {
+						newMap[x+j][y+i] = VOID;
 					}
+					else if (!(i > 0 && i < roomSize) || !(j > 0 && j < roomSize)) {
+						newMap[x+j][y+i] = WALL;
+					}
+
 				} // for j
 			} // for i
 
@@ -240,9 +240,36 @@ public class DungeonGenerator extends Generator {
 					newMap[medX][medY] = DOOR_EAST;
 				}
 			} // for f
+
+			int medX = (x + roomSize / 2);
+			int medY = (y + roomSize / 2);
+
+			replaceCharRandom(PORTRAIT, WALL, x, medY, newMap, 10);
+			replaceCharRandom(PORTRAIT, WALL, medX, y, newMap, 10);
+			replaceCharRandom(PORTRAIT, WALL, medX, y + roomSize, newMap, 10);
+			replaceCharRandom(PORTRAIT, WALL, x + roomSize, medY, newMap, 10);
+
 		} // for p
 
 		return newMap;
+	}
+
+	public void replaceCharRandom(char replace, char find, int x, int y, char[][] map, int probability) {
+		int r = random(0, 100);
+
+		if (r < probability) {
+			replaceChar(replace, find, x, y, map);
+		}
+	}
+
+	public void replaceChar(char replace, char find, int x, int y, char[][] map) {
+		if (map[x][y] == find) {
+			setChar(replace, x, y, map);
+		}
+	}
+
+	public void setChar(char c, int x, int y, char[][] map) {
+		map[x][y] = c;
 	}
 
 	public Pair get(int x, int y) {

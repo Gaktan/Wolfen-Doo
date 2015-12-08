@@ -5,11 +5,11 @@ import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.shapes.ShapeInstancedSprite;
 import engine.util.MatrixUtil;
+import engine.util.Vector3;
 
 /**
  * Used to render text
@@ -18,7 +18,7 @@ import engine.util.MatrixUtil;
 public class DisplayableText implements Displayable {
 
 	protected String text;
-	protected Vector3f position;
+	protected Vector3 position;
 	protected BitMapFont font;
 	protected float textSize;
 	protected ShapeInstancedSprite shape;
@@ -39,7 +39,7 @@ public class DisplayableText implements Displayable {
 		RIGHT
 	}
 
-	public DisplayableText(Vector3f position, String text, BitMapFont font, float textSize, Color color, TextPosition textPosition, boolean hasDepth) {
+	public DisplayableText(Vector3 position, String text, BitMapFont font, float textSize, Color color, TextPosition textPosition, boolean hasDepth) {
 		this.position = position;
 		this.text = text;
 		this.font = font;
@@ -60,17 +60,17 @@ public class DisplayableText implements Displayable {
 
 		FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * (3 + 16 + 1));
 
-		Vector3f newPosition = new Vector3f();
-		Vector3f halfDir = new Vector3f(0.08f * textSize, 0, 0);
-		Vector3f startingPosition = new Vector3f(position);
+		Vector3 newPosition = new Vector3();
+		Vector3 halfDir = new Vector3(0.08f * textSize, 0, 0);
+		Vector3 startingPosition = new Vector3(position);
 
 		if (textPosition == TextPosition.RIGHT) {
-			startingPosition.x -= text.length() * 0.085f * textSize;
-			startingPosition.y += (0.09f * textSize);
+			startingPosition.addX(-text.length() * 0.085f * textSize);
+			startingPosition.addY(0.09f * textSize);
 		}
 		else if (textPosition == TextPosition.CENTER){
-			startingPosition.x -= (text.length() * 0.08f * textSize) * 0.5f;
-			startingPosition.y += (0.08f * textSize) * 0.5f;
+			startingPosition.addX((-text.length() * 0.08f * textSize) * 0.5f);
+			startingPosition.addY((0.08f * textSize) * 0.5f);
 		}
 
 		charCount = 0;
@@ -78,16 +78,16 @@ public class DisplayableText implements Displayable {
 		for (char c : text.toCharArray()) {
 			if (c == '\n') {
 				newPosition.set(0f, 0f, 0f);
-				startingPosition.y -= (0.09f * textSize);
+				startingPosition.addY(-0.09f * textSize);
 				continue;
 			}
 
 			if (c != ' ') {
-				Vector3f pos = new Vector3f(startingPosition);
+				Vector3 pos = new Vector3(startingPosition);
 
-				pos.x += (0.1f * textSize) * 0.5f + newPosition.x;
-				pos.y -= (0.1f * textSize) * 0.5f + newPosition.y;
-				pos.z += (0.1f * textSize) * 0.5f + newPosition.z;
+				pos.addX((0.1f * textSize) * 0.5f + newPosition.getX());
+				pos.addY((-0.1f * textSize) * 0.5f + newPosition.getY());
+				pos.addZ((0.1f * textSize) * 0.5f + newPosition.getZ());
 
 				float[] array = new float[3];
 				array[0] = color.r;
@@ -98,17 +98,23 @@ public class DisplayableText implements Displayable {
 				Matrix4f model = MatrixUtil.createIdentityMatrix();
 
 				if (rotation != 0) {
+					/*
 					model.translate(position);
 					model.rotate(rotation, MatrixUtil.Y_AXIS);
-					model.translate(position.negate(null));
+					model.translate(position.getNegate());
 					model.translate(pos);
+					*/
+					model.translate(position.toVector3f());
+					model.rotate(rotation, MatrixUtil.Y_AXIS.toVector3f());
+					model.translate(position.getNegate().toVector3f());
+					model.translate(pos.toVector3f());
 				}
 				else {
-					model.m30 = pos.x;
-					model.m31 = pos.y;
-					model.m32 = pos.z;
+					model.m30 = pos.getX();
+					model.m31 = pos.getY();
+					model.m32 = pos.getZ();
 				}
-				model = model.scale(new Vector3f(0.1f * textSize, 0.1f * textSize, 0.1f * textSize));
+				model = model.scale(new Vector3(0.1f * textSize).toVector3f());
 				model.store(fb);
 
 				fb.put(c);
@@ -116,7 +122,7 @@ public class DisplayableText implements Displayable {
 				charCount++;
 			}
 
-			Vector3f.add(newPosition, halfDir, newPosition);
+			newPosition.add(halfDir);
 		}
 
 		fb.flip();

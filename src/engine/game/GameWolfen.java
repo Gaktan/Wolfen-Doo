@@ -1,11 +1,11 @@
 package engine.game;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.*;
@@ -18,6 +18,7 @@ import engine.shapes.*;
 import engine.util.MathUtil;
 import engine.util.MatrixUtil;
 import engine.util.TextureUtil;
+import engine.util.Vector3;
 import engine.weapons.*;
 import game.animations.*;
 import game.entities.*;
@@ -88,7 +89,7 @@ public class GameWolfen extends Game {
 		FrameBuffer.getInstance().init();
 
 		camera = new Player(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
-		//camera.setPosition(new Vector3f(2, 0, 2));
+		//camera.setPosition(new Vector3(2, 0, 2));
 		setZfar(camera.getzFar());
 
 		ac = new DisplayableList();
@@ -98,7 +99,7 @@ public class GameWolfen extends Game {
 
 		map = new DungeonGenerator(30, 4, 8, 4, false).generate();
 		camera.setPosition(map.getStartingPoint());
-		
+
 		//MapReader mr = new MapReader();
 		//map = mr.createMap("01.map");
 		ac.add(map);
@@ -109,10 +110,10 @@ public class GameWolfen extends Game {
 
 		bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "char.png", 256, 256, 16, 16));
 
-		textPos = bmf.createString(new Vector3f(-1f, 1f, 0), "", 0.85f);
-		textFps = bmf.createString(new Vector3f(-1f, .9f, 0), "", 0.85f);
-		textEntities = bmf.createString(new Vector3f(-1f, .8f, 0), "", 0.85f);
-		textMemory = bmf.createString(new Vector3f(-1f, 0.7f, 0), "", 0.6f, new Color(0f, 0f, 0f));
+		textPos = bmf.createString(new Vector3(-1f, 1f, 0), "", 0.85f);
+		textFps = bmf.createString(new Vector3(-1f, .9f, 0), "", 0.85f);
+		textEntities = bmf.createString(new Vector3(-1f, .8f, 0), "", 0.85f);
+		textMemory = bmf.createString(new Vector3(-1f, 0.7f, 0), "", 0.6f, new Color(0f, 0f, 0f));
 
 		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "char.png",
 				256, 256, 16, 16));
@@ -124,17 +125,21 @@ public class GameWolfen extends Game {
 
 		String rotatedText = "Woah ! You can even rotate text !";
 
-		DisplayableText worldText = worldFont.createString(new Vector3f(0.5f, 0.4f, 2f), rotatedText, 0.45f, 
+		Vector3 worldTextPos = map.getStartingPoint().getAdd(new Vector3(-1.5f, 0.4f, 0f));
+
+		DisplayableText worldText = worldFont.createString(worldTextPos, rotatedText, 0.45f, 
 				new Color(0f, 0f, 0f), true);
 		worldText.setRotation(90f);
 		worldText.updateText();
 		ac.add(worldText);
 
-		worldText = worldFont.createString(new Vector3f(0.5f, 0.4f, 0.5f), welcomeText, 0.45f, 
+		worldTextPos = map.getStartingPoint().getAdd(new Vector3(-1.5f, 0.4f, -1.5f));
+
+		worldText = worldFont.createString(worldTextPos, welcomeText, 0.45f, 
 				new Color(0f, 0f, 0f), true);
 		ac.add(worldText);
 
-		RotatingText rotatingText = new RotatingText(new Vector3f(9, 0.25f, 3), "WELCOME !", worldFont,
+		RotatingText rotatingText = new RotatingText(new Vector3(9, 0.25f, 3), "WELCOME !", worldFont,
 				1f, new Color(1f, 0f, 1f), TextPosition.CENTER, true);
 		ac.add(rotatingText);
 
@@ -153,10 +158,10 @@ public class GameWolfen extends Game {
 
 		fps = new Fps();
 
-		//ParticleSystem ps = new ParticleSystemBlood(new Vector3f(4, 0, 4), 16000);
+		//ParticleSystem ps = new ParticleSystemBlood(new Vector3(4, 0, 4), 16000);
 		//ac.add(ps);
 
-		ParticleSystem psTest = new AnimatedParticleSystemTest(new Vector3f(4, 0, 4), 16000, shapeExplosion);
+		ParticleSystem psTest = new AnimatedParticleSystemTest(new Vector3(4, 0, 4), 16000, shapeExplosion);
 		ac.add(psTest);
 
 		currentWeapon = new WeaponRevolver(camera);
@@ -183,9 +188,9 @@ public class GameWolfen extends Game {
 
 		ac.update(elapsedTime);
 
-		textPos.setText(Math.round(camera.position.x) + ", " + Math.round(camera.position.z));
+		textPos.setText(Math.round(camera.position.getX()) + ", " + Math.round(camera.position.getZ()));
 		textFps.setText("fps : " + l_fps);
-		textEntities.setText("Entities : " + ac.size());
+		textEntities.setText("Displaying : " + ac.size());
 
 		int mb = 1024 * 1024;
 

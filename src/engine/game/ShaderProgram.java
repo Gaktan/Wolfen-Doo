@@ -8,11 +8,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import engine.util.FileUtil;
 import engine.util.MatrixUtil;
+import engine.util.Vector3;
 
 /**
  * ShaderProgram Class. Used to load and use Vertex and Fragment shaders easily.
@@ -187,8 +187,8 @@ public class ShaderProgram {
 	 * @param name The name of the uniform
 	 * @param v The value of the vector
 	 */
-	public void setUniform(String name, Vector3f v) {
-		glUniform3f(glGetUniformLocation(programID, name), v.x, v.y, v.z);
+	public void setUniform(String name, Vector3 v) {
+		glUniform3f(glGetUniformLocation(programID, name), v.getX(), v.getY(), v.getZ());
 	}
 	
 	/**

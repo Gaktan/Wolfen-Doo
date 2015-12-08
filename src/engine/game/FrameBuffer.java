@@ -5,10 +5,10 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.shapes.ShapeQuadTexture;
 import engine.util.MatrixUtil;
+import engine.util.Vector3;
 
 public class FrameBuffer {
 
@@ -92,9 +92,9 @@ public class FrameBuffer {
 
 		screenShape.preRender();
 
-		screenShape.getShaderProgram().setUniform("u_color", new Vector3f(1f, 1f, 1f));
+		screenShape.getShaderProgram().setUniform("u_color", new Vector3(1f));
 		Matrix4f model = MatrixUtil.createIdentityMatrix();
-		model = model.scale(new Vector3f(2f, 2f, 2f));
+		model = model.scale(new Vector3(2f).toVector3f());
 		screenShape.getShaderProgram().setUniform("u_model", model);
 		screenShape.getShaderProgram().setUniform("u_spriteNumber", -1f);
 

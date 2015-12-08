@@ -1,7 +1,6 @@
 package engine.weapons;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.DisplayableText;
@@ -10,6 +9,7 @@ import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.game.GameWolfen;
 import engine.util.MathUtil;
+import engine.util.Vector3;
 
 public abstract class Weapon implements Displayable{
 
@@ -33,23 +33,23 @@ public abstract class Weapon implements Displayable{
 	protected DisplayableText ammoText;
 
 	// BOBBING --
-	protected static Vector3f POSITION_CENTER;
-	protected static Vector3f POSITION_LEFT;
-	protected static Vector3f POSITION_RIGHT;
+	protected static Vector3 POSITION_CENTER;
+	protected static Vector3 POSITION_LEFT;
+	protected static Vector3 POSITION_RIGHT;
 
 	protected BobbingState bobbingState;
 	protected float timeStamp;
 	protected float bobbingTime;
 	
-	protected Vector3f bendingCurve;
-	protected Vector3f lastKnownPosition;
+	protected Vector3 bendingCurve;
+	protected Vector3 lastKnownPosition;
 
 	// 0f, -.25f
 	// TODO: change this
 	static {
-		POSITION_CENTER = new Vector3f(0f, -.575f, 0f);
-		POSITION_LEFT = new Vector3f(-0.2f, -.575f, 0f);
-		POSITION_RIGHT = new Vector3f(0.2f, -.575f, 0f);
+		POSITION_CENTER = new Vector3(0f, -.575f, 0f);
+		POSITION_LEFT = new Vector3(-0.2f, -.575f, 0f);
+		POSITION_RIGHT = new Vector3(0.2f, -.575f, 0f);
 	}
 
 	enum BobbingState {
@@ -81,13 +81,13 @@ public abstract class Weapon implements Displayable{
 		shotsLeft = shotsCapacity;
 		currentReloading = reloadingTime;
 
-		reloadingText = GameWolfen.getInstance().bmf.createString(new Vector3f(0, 0, 0), "", 1f, TextPosition.CENTER);
-		ammoText = GameWolfen.getInstance().bmf.createString(new Vector3f(1f, -1f, 0), "", 1f, TextPosition.RIGHT);
+		reloadingText = GameWolfen.getInstance().bmf.createString(new Vector3(0, 0, 0), "", 1f, TextPosition.CENTER);
+		ammoText = GameWolfen.getInstance().bmf.createString(new Vector3(1f, -1f, 0), "", 1f, TextPosition.RIGHT);
 		updateAmmoText();
 
 		bobbingState = BobbingState.IDLE;
 		lastKnownPosition = POSITION_CENTER;
-		bendingCurve = new Vector3f(0, -0.2f, 0);
+		bendingCurve = new Vector3(0, -0.2f, 0);
 		timeStamp = 0f;
 		moving = false;
 	}
@@ -205,7 +205,7 @@ public abstract class Weapon implements Displayable{
 		
 		this.moving = moving;
 		
-		lastKnownPosition = new Vector3f(weaponSprite.position);
+		lastKnownPosition = new Vector3(weaponSprite.position);
 		timeStamp = 0f;
 
 		if (moving)
@@ -215,19 +215,19 @@ public abstract class Weapon implements Displayable{
 
 	}
 
-	protected void moveToPosition(Vector3f start, Vector3f goal) {
-		Vector3f vDiff = new Vector3f();
-		Vector3f.sub(goal, start, vDiff);
+	protected void moveToPosition(Vector3 start, Vector3 goal) {
+		Vector3 vDiff = goal.getSub(start);
+		//Vector3.sub(goal, start, vDiff);
 		float diff = vDiff.length();
 
-		Vector3f currentPos = MathUtil.approach(goal, start, (timeStamp / bobbingTime) * diff);
+		Vector3 currentPos = MathUtil.approach(goal, start, (timeStamp / bobbingTime) * diff);
 
-		Vector3f bending = new Vector3f(bendingCurve);
+		Vector3 bending = new Vector3(bendingCurve);
 		bending.scale(diff);
 
-		currentPos.x += bending.x * Math.sin((timeStamp / bobbingTime) * Math.PI);
-		currentPos.y += bending.y * Math.sin((timeStamp / bobbingTime) * Math.PI);
-		currentPos.z += bending.z * Math.sin((timeStamp / bobbingTime) * Math.PI);
+		currentPos.addX((float) (bending.getX() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
+		currentPos.addY((float) (bending.getY() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
+		currentPos.addZ((float) (bending.getZ() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
 
 		weaponSprite.position.set(currentPos);
 	}

@@ -1,14 +1,14 @@
 package game.entities;
 
-import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.BitMapFont;
 import engine.DisplayableText;
+import engine.util.Vector3;
 
 public class RotatingText extends DisplayableText {
 
-	public RotatingText(Vector3f position, String text, BitMapFont font,
+	public RotatingText(Vector3 position, String text, BitMapFont font,
 			float textSize, Color color, TextPosition textPosition,
 			boolean hasDepth) {
 		

@@ -12,17 +12,17 @@ But ultimately I wanted to make a real game out of this, in the spirit of (and y
  * Particle system
  * Doors
  * Weapons (Revolver only for now)
+ * Basic random Dungeon generator
 
 # What's left :
  * Level transitions
- * Dungeon generator
- * Customizable particles
+ * Advanced Dungeon generator
  * Prototype for A.I.
  * Scooby-doo and confettis
  * ...
 
 # How to play ?
 Download the whole repo and double click 'start.bat' (Java is required by the way) (Windows only ATM).
-Controls are ZQSD to move around (sorry qwerty folks), left click shoots and middle click frees the cursor.
+Controls are WASD to move around, left click shoots and middle click frees the cursor.
 E open doors and R reloads.
 1-2 Changes the value of Zfar, try it !

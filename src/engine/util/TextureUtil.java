@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
@@ -72,10 +71,10 @@ public final class TextureUtil {
 	}
 
 	/**
-	 * Turns a Color into a Vector3f
+	 * Turns a Color into a Vector3
 	 */
-	public static Vector3f colorToVector3f(Color color) {
-		return new Vector3f(color.r, color.g, color.b);
+	public static Vector3 colorToVector3(Color color) {
+		return new Vector3(color.r, color.g, color.b);
 	}
 	
 	/**

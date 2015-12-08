@@ -1,6 +1,5 @@
 package game.particles;
 
-import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 import engine.game.ShaderProgram;
@@ -8,17 +7,18 @@ import engine.particles.Particle;
 import engine.particles.ParticleSystem;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.util.MathUtil;
+import engine.util.Vector3;
 
 public class ParticleSystemImpact extends ParticleSystem {
 
-	private Vector3f direction;
-	private Vector3f impactNormal;
+	private Vector3 direction;
+	private Vector3 impactNormal;
 
-	public ParticleSystemImpact(Vector3f position, Vector3f direction, Vector3f impactNormal) {
+	public ParticleSystemImpact(Vector3 position, Vector3 direction, Vector3 impactNormal) {
 		super(position, 1);
 
 		this.direction = direction;
-		direction.normalise();
+		direction.normalize();
 		this.impactNormal = impactNormal;
 
 		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"), "particle.png");
@@ -30,38 +30,39 @@ public class ParticleSystemImpact extends ParticleSystem {
 
 	@Override
 	protected Particle newParticle(float maxLife) {
-		Particle p = new Particle(maxLife, new Vector3f(position), 0.025f);
+		Particle p = new Particle(maxLife, new Vector3(position), 0.025f);
 
-		p.velocity = new Vector3f(direction);
+		p.velocity = new Vector3(direction);
 
-		if (impactNormal.x != 0) {
-			p.velocity.x = -direction.x;
+		if (impactNormal.getX() != 0) {
+			p.velocity.setX(-direction.getX());
 
-			p.velocity.y = MathUtil.random(0.1f, 1.1f);
-			p.velocity.x *= MathUtil.randomNegative(-.2f, 2.f);
-			p.velocity.z *= MathUtil.randomNegative(-.2f, 2.f);
+			p.velocity.setY(MathUtil.random(0.1f, 1.1f));
+			//p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f, 2.f));
+			p.velocity.setZ(p.velocity.getZ() * MathUtil.randomNegative(-.2f, 1.f));
 		}
 
-		else if (impactNormal.z != 0) {
-			p.velocity.z = -direction.z;
+		else if (impactNormal.getZ() != 0) {
+			p.velocity.setZ(-direction.getZ());
 
-			p.velocity.y = MathUtil.random(0.1f, 1.1f);
-			p.velocity.x *= MathUtil.randomNegative(-.2f, 1.f);
+			p.velocity.setY(MathUtil.random(0.1f, 1.1f));
+			p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f, 1.f));
 		}
 
-		else if (impactNormal.y != 0) {
-			p.velocity.y = -direction.y;
+		else if (impactNormal.getY() != 0) {
+			p.velocity.setY(-direction.getY());
 
-			p.velocity.x *= MathUtil.randomNegative(-.2f, 1f);
-			p.velocity.z *= MathUtil.randomNegative(-.2f, 1f);
+			p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f, 1.f));
+			p.velocity.setZ(p.velocity.getZ() * MathUtil.randomNegative(-.2f, 1.f));
 		}
 
-		if (impactNormal.y > 0) {
-			p.position.y += 0.1f;
-			p.velocity.y *= 3f;
+		if (impactNormal.getY() > 0) {
+			p.position.addY(0.1f);
+			p.velocity.scale(1f, 3f, 1f);
+			//p.velocity.y *= 3f;
 		}
 
-		p.velocity.normalise();
+		p.velocity.normalize();
 		p.velocity.scale(0.8f);
 
 		float green = MathUtil.random(0.5f, 1.f);

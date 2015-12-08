@@ -1,13 +1,12 @@
 package engine.generator;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import engine.entities.EntityActor;
 import engine.game.ShaderProgram;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.FileUtil;
 import engine.util.MathUtil;
+import engine.util.Vector3;
 
 /**
  * NewMapReader class is used to read a map from a .map file
@@ -145,7 +144,7 @@ public class MapReader {
 
 		else if (command.equals(COMMAND_DOOR)) {
 
-			Vector3f openingPosition = readVector3f(values[2]);
+			Vector3 openingPosition = readVector3(values[2]);
 			int orientation = ((MathUtil.parseInt(values[3]) == 1) ? Orientation.NORTH : Orientation.WEST);
 			float openingTime = MathUtil.parseFloat(values[4]);
 
@@ -155,8 +154,8 @@ public class MapReader {
 
 	protected void setSky(String value) {
 		String[] values = value.split(", ");
-		Vector3f downColor = readVector3f(values[0]);
-		Vector3f upColor = readVector3f(values[1]);
+		Vector3 downColor = readVector3(values[0]);
+		Vector3 upColor = readVector3(values[1]);
 
 		downColor.scale(1.0f / 256);
 		upColor.scale(1.0f / 256);
@@ -166,13 +165,13 @@ public class MapReader {
 		sky = new EntityActor(skyShape);
 	}
 
-	protected Vector3f readVector3f(String value) {
+	protected Vector3 readVector3(String value) {
 		String[] v = value.split(" ");
 
 		float x = MathUtil.parseFloat(v[0]);
 		float y = MathUtil.parseFloat(v[1]);
 		float z = MathUtil.parseFloat(v[2]);
 
-		return new Vector3f(x, y, z);
+		return new Vector3(x, y, z);
 	}
 }

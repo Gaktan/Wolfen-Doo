@@ -59,14 +59,14 @@ public class DisplayableInstancedList extends DisplayableList {
 
 				Matrix4f model = MatrixUtil.createIdentityMatrix();
 				
-				model.rotate(a.rotation.x, MatrixUtil.X_AXIS);
-				model.rotate(a.rotation.y, MatrixUtil.Y_AXIS);
-				model.rotate(a.rotation.z, MatrixUtil.Z_AXIS);
+				model.rotate(a.rotation.getX(), MatrixUtil.X_AXIS.toVector3f());
+				model.rotate(a.rotation.getY(), MatrixUtil.Y_AXIS.toVector3f());
+				model.rotate(a.rotation.getZ(), MatrixUtil.Z_AXIS.toVector3f());
 				
-				model.m30 = a.position.x;
-				model.m31 = a.position.y;
-				model.m32 = a.position.z;
-				model = model.scale(a.scale);
+				model.m30 = a.position.getX();
+				model.m31 = a.position.getY();
+				model.m32 = a.position.getZ();
+				model = model.scale(a.scale.toVector3f());
 				model.store(fb1);
 				
 				fb1.put(-1f);

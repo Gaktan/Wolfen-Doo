@@ -8,16 +8,16 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.game.ShaderProgram;
+import engine.util.Vector3;
 
 public class ShapeInsideOutCubeColor extends Shape {
 
-	protected Vector3f upColor;
-	protected Vector3f downColor;
+	protected Vector3 upColor;
+	protected Vector3 downColor;
 
-	public ShapeInsideOutCubeColor(ShaderProgram shaderProgram, Vector3f upColor, Vector3f downColor) {
+	public ShapeInsideOutCubeColor(ShaderProgram shaderProgram, Vector3 upColor, Vector3 downColor) {
 		this.shaderProgram = shaderProgram;
 		this.upColor = upColor;
 		this.downColor = downColor;
@@ -30,15 +30,15 @@ public class ShapeInsideOutCubeColor extends Shape {
 		FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * 6);
 		vertices.put(new float[] {
 				// up
-				-0.5f, 0.5f,  -0.5f, upColor.x, upColor.y, upColor.z,
-				-0.5f, 0.5f,   0.5f, upColor.x, upColor.y, upColor.z,
-				0.5f,  0.5f,   0.5f, upColor.x, upColor.y, upColor.z,
-				0.5f,  0.5f,  -0.5f, upColor.x, upColor.y, upColor.z,
+				-0.5f, 0.5f,  -0.5f, upColor.getX(), upColor.getY(), upColor.getZ(),
+				-0.5f, 0.5f,   0.5f, upColor.getX(), upColor.getY(), upColor.getZ(),
+				0.5f,  0.5f,   0.5f, upColor.getX(), upColor.getY(), upColor.getZ(),
+				0.5f,  0.5f,  -0.5f, upColor.getX(), upColor.getY(), upColor.getZ(),
 				// bottom
-				-0.5f, -0.5f,  -0.5f, downColor.x, downColor.y, downColor.z,
-				-0.5f, -0.5f,   0.5f, downColor.x, downColor.y, downColor.z,
-				0.5f,  -0.5f,   0.5f, downColor.x, downColor.y, downColor.z,
-				0.5f,  -0.5f,  -0.5f, downColor.x, downColor.y, downColor.z,
+				-0.5f, -0.5f,  -0.5f, downColor.getX(), downColor.getY(), downColor.getZ(),
+				-0.5f, -0.5f,   0.5f, downColor.getX(), downColor.getY(), downColor.getZ(),
+				0.5f,  -0.5f,   0.5f, downColor.getX(), downColor.getY(), downColor.getZ(),
+				0.5f,  -0.5f,  -0.5f, downColor.getX(), downColor.getY(), downColor.getZ(),
 		});
 		vertices.flip();
 

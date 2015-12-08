@@ -1,11 +1,11 @@
 package engine.entities;
 
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.MatrixUtil;
+import engine.util.Vector3;
 
 /**
  * Camera class
@@ -15,8 +15,8 @@ public class Camera extends Entity {
 
 	protected Matrix4f projection;
 	protected Matrix4f view;
-	protected Vector3f movementGoal;
-	protected Vector3f movement;
+	protected Vector3 movementGoal;
+	protected Vector3 movement;
 
 	protected Matrix4f projectionXview;
 
@@ -41,8 +41,8 @@ public class Camera extends Entity {
 		view = MatrixUtil.createIdentityMatrix();
 		projectionXview = new Matrix4f();
 
-		movementGoal = new Vector3f();
-		movement = new Vector3f();
+		movementGoal = new Vector3();
+		movement = new Vector3();
 
 		viewAngle = new EAngle();
 	}
@@ -62,20 +62,19 @@ public class Camera extends Entity {
 
 		movement = MathUtil.approach(movementGoal, movement, dt);
 
-		Vector3f forward = viewAngle.toVector();
+		Vector3 forward = viewAngle.toVector();
 
-		forward.y = 0;
-		forward.normalise();
+		forward.setY(0f);
+		forward.normalize();
 
-		Vector3f right = new Vector3f();
-		Vector3f.cross(MatrixUtil.Y_AXIS, forward, right);
+		Vector3 right = MatrixUtil.Y_AXIS.getCross(forward);
 
-		forward.scale(movement.x);
-		right.scale(movement.z);
+		forward.scale(movement.getX());
+		right.scale(movement.getZ());
 
-		velocity.x = forward.x + right.x;
-		velocity.z = forward.z + right.z;
-		//Vector3f.add(forward, right, velocity);
+		float y = velocity.getY();
+		velocity = forward.getAdd(right);
+		velocity.setY(y);
 
 		Matrix4f.mul(projection, view, projectionXview);
 
@@ -98,12 +97,12 @@ public class Camera extends Entity {
 		return view;
 	}
 
-	public Vector3f getPosition() {
+	public Vector3 getPosition() {
 		return position;
 	}
 
-	public void setPosition(Vector3f pos) {
-		this.position = pos;
+	public void setPosition(Vector3 pos) {
+		position.set(pos);
 		setProjection();
 	}
 

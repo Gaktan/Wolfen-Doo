@@ -1,8 +1,7 @@
 package engine.entities;
 
-import org.lwjgl.util.vector.Vector3f;
-
 import engine.Displayable;
+import engine.util.Vector3;
 
 /**
  * Object used to store a position and a velocity. (a moving object)
@@ -10,16 +9,16 @@ import engine.Displayable;
  */
 public abstract class Entity implements Displayable {
 
-	public Vector3f position;
-	public Vector3f velocity;
-	public Vector3f scale;
+	public Vector3 position;
+	public Vector3 velocity;
+	public Vector3 scale;
 	private boolean solid;
 	private boolean delete;
 
 	public Entity() {
-		position = new Vector3f();
-		velocity = new Vector3f();
-		scale = new Vector3f(1.f, 1.f, 1.f);
+		position = new Vector3();
+		velocity = new Vector3();
+		scale = new Vector3(1f);
 	}
 
 	@Override
@@ -29,9 +28,9 @@ public abstract class Entity implements Displayable {
 
 	@Override
 	public boolean update(float dt) {
-		this.position.x += (velocity.getX() * (dt / 100.0f));
-		this.position.y += (velocity.getY() * (dt / 100.0f));
-		this.position.z += (velocity.getZ() * (dt / 100.0f));
+		position.addX(velocity.getX() * (dt / 100.0f));
+		position.addY(velocity.getY() * (dt / 100.0f));
+		position.addZ(velocity.getZ() * (dt / 100.0f));
 
 		return !delete;
 	}

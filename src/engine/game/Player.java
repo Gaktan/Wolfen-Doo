@@ -97,10 +97,10 @@ public class Player extends Camera implements ControlsListener, MouseListener {
 			movingKeyPressed++;
 		}
 		else if (key == KEY_SPACE) {
-			velocity.y = UPDOWN_SPEED;
+			velocity.setY(UPDOWN_SPEED);
 		}
 		else if (key == KEY_LCONTROL) {
-			velocity.y = -UPDOWN_SPEED;
+			velocity.setY(-UPDOWN_SPEED);
 		}
 	}
 
@@ -124,10 +124,10 @@ public class Player extends Camera implements ControlsListener, MouseListener {
 			movingKeyPressed--;
 		}
 		else if (key == KEY_SPACE) {
-			velocity.y = 0;
+			velocity.setY(0);
 		}
 		else if (key == KEY_LCONTROL) {
-			velocity.y = 0;
+			velocity.setY(0);
 		}
 		else if (key == KEY_R) {
 			GameWolfen.getInstance().currentWeapon.forceReload();

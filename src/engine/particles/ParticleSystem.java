@@ -4,10 +4,10 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Vector3f;
 
 import engine.Displayable;
 import engine.shapes.ShapeInstancedQuadTexture;
+import engine.util.Vector3;
 
 /**
  * Object used to generate particles
@@ -16,7 +16,7 @@ import engine.shapes.ShapeInstancedQuadTexture;
 public abstract class ParticleSystem implements Displayable {
 
 	protected ArrayList<Particle> list;
-	protected Vector3f position;
+	protected Vector3 position;
 	protected float life;
 
 	protected int newParticlesPerFrame;
@@ -25,7 +25,7 @@ public abstract class ParticleSystem implements Displayable {
 
 	protected ShapeInstancedQuadTexture particleShape;
 
-	public ParticleSystem(Vector3f position, int life) {
+	public ParticleSystem(Vector3 position, int life) {
 		list = new ArrayList<Particle>();
 
 		this.position = position;
