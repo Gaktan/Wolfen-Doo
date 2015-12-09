@@ -16,18 +16,13 @@ import game.particles.ParticleSystemImpact;
 
 /**
  * Line that flows through the map and bounces (optionnal)
+ * 
  * @author Gaktan
  */
 public class EntityProjctile extends EntityLine {
 
-	protected Map map;
-	protected int bounces;
-
-	protected static final float SPEED;
-
-	static {
-		SPEED = 2.2f;
-	}
+	protected Map	map;
+	protected int	bounces;
 
 	public EntityProjctile(Vector3 position, Vector3 direction, Map map) {
 		super(position, new Vector3(), new Color(0xffff4c), new Color(0xffde4c));
@@ -49,10 +44,10 @@ public class EntityProjctile extends EntityLine {
 		boolean result = super.update(dt);
 
 		positionB = position.getAdd(velocity);
-		//Vector3.add(position, velocity, positionB);
+		// Vector3.add(position, velocity, positionB);
 
-		if (position.getX() < 0 || position.getZ() < 0 
-				|| position.getX() > map.getSizeX() || position.getZ() > map.getSizeY()) {
+		if (position.getX() < 0 || position.getZ() < 0 || position.getX() > map.getSizeX()
+				|| position.getZ() > map.getSizeY()) {
 			return false;
 		}
 
@@ -119,8 +114,7 @@ public class EntityProjctile extends EntityLine {
 					normal.setZ(0f);
 					normal.setX(-normal.getX());
 					impactPosition.setX((int) impactPosition.getX() + 0.5f);
-				}
-				else {
+				} else {
 					normal.setX(0f);
 					normal.setZ(-normal.getZ());
 					impactPosition.setZ((int) impactPosition.getZ() + 0.5f);
@@ -136,18 +130,18 @@ public class EntityProjctile extends EntityLine {
 				normal.normalize();
 
 			if (bounces != 0) {
-				if (normal.getX() != 0)  {
+				if (normal.getX() != 0) {
 					velocity.setX(-velocity.getX());
 				}
 
-				else if (normal.getZ() != 0)  {
+				else if (normal.getZ() != 0) {
 					velocity.setZ(-velocity.getZ());
 				}
 
 				else if (normal.getY() != 0) {
 					velocity.setY(-velocity.getY());
 				}
-				
+
 				position.set(impactPosition);
 
 				bounces--;
@@ -173,12 +167,12 @@ public class EntityProjctile extends EntityLine {
 
 		float pi2 = (float) (Math.PI / 2);
 
-		if (normal.getX() != 0)  {
+		if (normal.getX() != 0) {
 			newRot.setY(pi2 * normal.getX());
 			newPos.setX(impactPosition.getX() + normal.getX() * 0.01f);
 		}
 
-		else if (normal.getZ() != 0)  {
+		else if (normal.getZ() != 0) {
 			newRot.setY(pi2 - pi2 * normal.getZ());
 			newPos.setZ(impactPosition.getZ() + normal.getZ() * 0.01f);
 		}
@@ -194,8 +188,14 @@ public class EntityProjctile extends EntityLine {
 
 		GameWolfen.getInstance().bulletHoles.add(e);
 
-		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3(newPos),
-				new Vector3(velocity), new Vector3(normal));
+		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3(newPos), new Vector3(velocity),
+				new Vector3(normal));
 		GameWolfen.getInstance().ac.add(particles);
+	}
+
+	protected static final float	SPEED;
+
+	static {
+		SPEED = 2.2f;
 	}
 }

@@ -3,17 +3,16 @@ package engine;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Matrix4f;
 
 import engine.entities.EntityActor;
 import engine.shapes.InstancedTexturedShape;
-import engine.util.MatrixUtil;
+import engine.util.Matrix4;
 
 public class DisplayableInstancedList extends DisplayableList {
 
-	protected InstancedTexturedShape shape;
-	protected boolean doUpdate;
-	protected boolean updatedList;
+	protected InstancedTexturedShape	shape;
+	protected boolean					doUpdate;
+	protected boolean					updatedList;
 
 	public DisplayableInstancedList(InstancedTexturedShape shape, boolean doUpdate) {
 		this.shape = shape;
@@ -27,7 +26,7 @@ public class DisplayableInstancedList extends DisplayableList {
 			updatedList = true;
 		}
 	}
-	
+
 	@Override
 	public void remove(Displayable d) {
 		super.remove(d);
@@ -35,17 +34,24 @@ public class DisplayableInstancedList extends DisplayableList {
 	}
 
 	@Override
+	public void render() {
+		shape.preRender();
+		shape.render(list.size());
+		shape.postRender();
+	}
+
+	@Override
 	public boolean update(float dt) {
 		boolean result = super.update(dt);
 
 		if (doUpdate || updatedList) {
-			
+
 			updatedList = false;
 
 			FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
 
 			for (Displayable d : list) {
-				
+
 				if (doUpdate)
 					d.update(dt);
 
@@ -57,18 +63,9 @@ public class DisplayableInstancedList extends DisplayableList {
 				array[2] = a.color.b;
 				fb1.put(array);
 
-				Matrix4f model = MatrixUtil.createIdentityMatrix();
-				
-				model.rotate(a.rotation.getX(), MatrixUtil.X_AXIS.toVector3f());
-				model.rotate(a.rotation.getY(), MatrixUtil.Y_AXIS.toVector3f());
-				model.rotate(a.rotation.getZ(), MatrixUtil.Z_AXIS.toVector3f());
-				
-				model.m30 = a.position.getX();
-				model.m31 = a.position.getY();
-				model.m32 = a.position.getZ();
-				model = model.scale(a.scale.toVector3f());
+				Matrix4 model = Matrix4.createInstancingMatrix(a.position, a.rotation, a.scale);
 				model.store(fb1);
-				
+
 				fb1.put(-1f);
 			}
 
@@ -78,12 +75,5 @@ public class DisplayableInstancedList extends DisplayableList {
 		}
 
 		return result;
-	}
-
-	@Override
-	public void render() {
-		shape.preRender();
-		shape.render(list.size());
-		shape.postRender();
 	}
 }

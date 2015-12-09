@@ -4,36 +4,36 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
 import engine.game.GameWolfen;
-import engine.util.MatrixUtil;
 import engine.util.Vector3;
 
 /**
  * Draws a line
+ * 
  * @author Gaktan
  */
 public class EntityLine extends Entity {
 
-	public Vector3 positionB;
-	protected Color colorA;
-	protected Color colorB;
-	
-	public EntityLine(Vector3 position, Vector3 positionB, Color colorA, Color colorB) {
-		this.position = position;
-		this.positionB = positionB;
-		
-		this.colorA = colorA;
-		this.colorB = colorB;
-	}
+	public Vector3	positionB;
+	protected Color	colorA;
+	protected Color	colorB;
 
 	public EntityLine(Vector3 position, Vector3 positionB) {
 		this(position, positionB, new Color(0xff0000), new Color(0xff));
+	}
+
+	public EntityLine(Vector3 position, Vector3 positionB, Color colorA, Color colorB) {
+		this.position = position;
+		this.positionB = positionB;
+
+		this.colorA = colorA;
+		this.colorB = colorB;
 	}
 
 	@Override
 	public void render() {
 		GL11.glPushMatrix();
 
-		GL11.glLoadMatrix(MatrixUtil.toFloatBuffer(GameWolfen.getInstance().camera.getProjectionXview()));
+		GL11.glLoadMatrix(GameWolfen.getInstance().camera.getProjectionXview().toFloatBuffer());
 
 		GL11.glLineWidth(2.5f);
 		GL11.glColor3f(colorA.r, colorA.g, colorA.b);

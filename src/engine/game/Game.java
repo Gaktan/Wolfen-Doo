@@ -5,25 +5,21 @@ import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-public abstract class Game {    
+public abstract class Game {
 
-	protected static Game instance;
-
-	/**  
-	 * limit the fps
-	 * <= 0 for no limit
+	/**
+	 * limit the fps <= 0 for no limit
 	 */
-	private int limitFPS = -1;
+	private int	limitFPS	= -1;
 
-	public Game(){
+	public Game() {
 		this(800, 600);
 	}
 
 	/**
 	 * A basic game.
 	 */
-	public Game(int width, int height)
-	{
+	public Game(int width, int height) {
 		try {
 			instance = this;
 			Display.create();
@@ -38,12 +34,47 @@ public abstract class Game {
 				Display.setVSyncEnabled(true);
 
 			gameLoop();
-		}
-		catch (LWJGLException e) {
+		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
+
+	/**
+	 * Dispose created resources.
+	 */
+	public abstract void dispose();
+
+	public int getHeight() {
+		return Display.getHeight();
+	}
+
+	public int getWidth() {
+		return Display.getWidth();
+	}
+
+	/**
+	 * Load any resources here.
+	 */
+	public abstract void init();
+
+	/**
+	 * Render to screen.
+	 */
+	public abstract void render();
+
+	/**
+	 * Display is resized
+	 */
+	public abstract void resized();
+
+	/**
+	 * Update the logic of the game.
+	 * 
+	 * @param f
+	 *            Time elapsed since last frame.
+	 */
+	public abstract void update(float f);
 
 	private void gameLoop() {
 		float lastFrame = getCurrentTime();
@@ -51,7 +82,7 @@ public abstract class Game {
 
 		init();
 
-		while (!Display.isCloseRequested()){
+		while (!Display.isCloseRequested()) {
 			thisFrame = getCurrentTime();
 
 			update(thisFrame - lastFrame);
@@ -59,11 +90,11 @@ public abstract class Game {
 
 			Display.update();
 
-			if (Display.wasResized()){
+			if (Display.wasResized()) {
 				resized();
 			}
 
-			if(limitFPS > 0)
+			if (limitFPS > 0)
 				Display.sync(limitFPS);
 
 			lastFrame = thisFrame;
@@ -72,27 +103,27 @@ public abstract class Game {
 		end();
 	}
 
+	protected static Game	instance;
+
 	/**
-	 * Switch the fullscreen state.
+	 * Properly terminate the game.
 	 */
-	public static void switchFullscreen() {
-		setFullscreen(!Display.isFullscreen());
+	public static void end() {
+		instance.dispose();
+		instance = null;
+		Display.destroy();
+		System.exit(0);
 	}
 
 	/**
-	 * Sets the fullscreen state.
+	 * @return Current time in milliseconds.
 	 */
-	public static void setFullscreen(boolean fullscreen) {
-		setDisplayMode(Display.getDisplayMode(), fullscreen);
+	public static float getCurrentTime() {
+		return (float) Sys.getTime() * 1000 / Sys.getTimerResolution();
 	}
 
-	/**
-	 * Sets a DisplayMode.
-	 * @param mode The DisplayMode.
-	 * @param fullscreen The fullscreen state.
-	 */
-	public static boolean setDisplayMode(DisplayMode mode, boolean fullscreen) {
-		return setDisplayMode(mode.getWidth(), mode.getHeight(), fullscreen);
+	public static Game getInstance() {
+		return instance;
 	}
 
 	/**
@@ -103,9 +134,24 @@ public abstract class Game {
 	}
 
 	/**
+	 * Sets a DisplayMode.
+	 * 
+	 * @param mode
+	 *            The DisplayMode.
+	 * @param fullscreen
+	 *            The fullscreen state.
+	 */
+	public static boolean setDisplayMode(DisplayMode mode, boolean fullscreen) {
+		return setDisplayMode(mode.getWidth(), mode.getHeight(), fullscreen);
+	}
+
+	/**
 	 * Sets a windowed DisplayMode.
-	 * @param width The width of the display.
-	 * @param height The height of the display.
+	 * 
+	 * @param width
+	 *            The width of the display.
+	 * @param height
+	 *            The height of the display.
 	 */
 	public static boolean setDisplayMode(int width, int height) {
 		return setDisplayMode(width, height, false);
@@ -113,17 +159,20 @@ public abstract class Game {
 
 	/**
 	 * Sets a DisplayMode after selecting for a better one.
-	 * @param width The width of the display.
-	 * @param height The height of the display.
-	 * @param fullscreen The fullscreen mode.
+	 * 
+	 * @param width
+	 *            The width of the display.
+	 * @param height
+	 *            The height of the display.
+	 * @param fullscreen
+	 *            The fullscreen mode.
 	 * 
 	 * @return True if switching is successful. Else false.
 	 */
-	public static boolean setDisplayMode(int width, int height, boolean fullscreen) {        
+	public static boolean setDisplayMode(int width, int height, boolean fullscreen) {
 		// return if requested DisplayMode is already set
-		if ((Display.getDisplayMode().getWidth() == width) && 
-				(Display.getDisplayMode().getHeight() == height) && 
-				(Display.isFullscreen() == fullscreen))
+		if ((Display.getDisplayMode().getWidth() == width) && (Display.getDisplayMode().getHeight() == height)
+				&& (Display.isFullscreen() == fullscreen))
 			return true;
 
 		try {
@@ -142,27 +191,28 @@ public abstract class Game {
 						// Select the one with greater frequency
 						if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
 							// Select the one with greater bits per pixel
-							if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())){
+							if ((targetDisplayMode == null)
+									|| (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
 								targetDisplayMode = current;
 								freq = targetDisplayMode.getFrequency();
 							}
 						}
 
-						// if we've found a match for bpp and frequency against the 
-						// original display mode then it's probably best to go for this one
+						// if we've found a match for bpp and frequency against
+						// the
+						// original display mode then it's probably best to go
+						// for this one
 						// since it's most likely compatible with the monitor
-						if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel()) &&
-								(current.getFrequency() == Display.getDesktopDisplayMode().getFrequency()))
-						{
+						if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel())
+								&& (current.getFrequency() == Display.getDesktopDisplayMode().getFrequency())) {
 							targetDisplayMode = current;
 							break;
 						}
 					}
 				}
-			} 
-			else {
+			} else {
 				// No need to query for windowed mode
-				targetDisplayMode = new DisplayMode(width,height);
+				targetDisplayMode = new DisplayMode(width, height);
 			}
 
 			if (targetDisplayMode == null) {
@@ -180,8 +230,7 @@ public abstract class Game {
 			instance.resized();
 
 			return true;
-		}
-		catch (LWJGLException e) {
+		} catch (LWJGLException e) {
 			System.out.println("Unable to setup mode " + width + "x" + height + " fullscreen=" + fullscreen + e);
 		}
 
@@ -189,57 +238,16 @@ public abstract class Game {
 	}
 
 	/**
-	 * @return Current time in milliseconds.
+	 * Sets the fullscreen state.
 	 */
-	public static float getCurrentTime() {
-		return (float) Sys.getTime() * 1000 / Sys.getTimerResolution();
+	public static void setFullscreen(boolean fullscreen) {
+		setDisplayMode(Display.getDisplayMode(), fullscreen);
 	}
 
 	/**
-	 * Properly terminate the game.
+	 * Switch the fullscreen state.
 	 */
-	public static void end() {
-		instance.dispose();
-		instance = null;
-		Display.destroy();
-		System.exit(0);
-	}
-
-	/**
-	 * Load any resources here.
-	 */
-	public abstract void init();
-
-	/**
-	 * Update the logic of the game.
-	 * @param f Time elapsed since last frame.
-	 */
-	public abstract void update(float f);
-
-	/**
-	 * Render to screen.
-	 */
-	public abstract void render();
-
-	/**
-	 * Display is resized
-	 */
-	public abstract void resized();
-
-	/**
-	 * Dispose created resources.
-	 */
-	public abstract void dispose();
-
-	public int getWidth() {
-		return Display.getWidth();
-	}
-
-	public int getHeight() {
-		return Display.getHeight();
-	}
-
-	public static Game getInstance() {
-		return instance;
+	public static void switchFullscreen() {
+		setFullscreen(!Display.isFullscreen());
 	}
 }

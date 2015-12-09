@@ -27,9 +27,9 @@ public class AnimatedParticleSystemTest extends ParticleSystem {
 		p = new AnimatedParticle(MathUtil.random(500, maxLife / 2), new Vector3(position), scale);
 		p.velocity = new Vector3(MathUtil.random(-1f, 1f), MathUtil.random(-0.3f, 0.3f), MathUtil.random(-1f, 1f));
 
-		//p.position.x += p.velocity.x;
-		//p.position.y += p.velocity.y;
-		//p.position.z += p.velocity.z;
+		// p.position.x += p.velocity.x;
+		// p.position.y += p.velocity.y;
+		// p.position.z += p.velocity.z;
 		p.position.add(p.velocity);
 
 		p.setPaused(true);

@@ -4,17 +4,18 @@ import java.util.Arrays;
 
 /**
  * Single animation
+ * 
  * @author Gaktan
  */
 public class Animation {
-	private int[] frames;
+	private int[]	frames;
 
-	private float[] delays;
+	private float[]	delays;
 
-	private int currentIndex;
-	private float currentDelay;
+	private int		currentIndex;
+	private float	currentDelay;
 
-	private boolean pause;
+	private boolean	pause;
 
 	public Animation() {
 		currentDelay = 0;
@@ -29,26 +30,8 @@ public class Animation {
 		currentIndex = 0;
 	}
 
-	public void setDelay(float delay){
-		if (delays == null) {
-			delays = new float[frames.length];
-		}
-		Arrays.fill(this.delays, delay);
-	}
-
-	public void setDelays(float[] delays){
-		this.delays = delays;
-	}
-
-	public void updateFrame(float dt){
-		if (pause)
-			return;
-
-		currentDelay += dt;
-
-		if (currentDelay >= delays[currentIndex]) {
-			nextFrame();
-		}
+	public int getCurrentFrame() {
+		return frames[currentIndex];
 	}
 
 	/**
@@ -63,10 +46,6 @@ public class Animation {
 		}
 	}
 
-	public int getCurrentFrame() {
-		return frames[currentIndex];
-	}
-
 	public void pause() {
 		pause = true;
 	}
@@ -75,13 +54,35 @@ public class Animation {
 		pause = false;
 	}
 
+	public void setDelay(float delay) {
+		if (delays == null) {
+			delays = new float[frames.length];
+		}
+		Arrays.fill(this.delays, delay);
+	}
+
+	public void setDelays(float[] delays) {
+		this.delays = delays;
+	}
+
+	public void setFrames(int[] frames) {
+		this.frames = frames;
+	}
+
 	public void stop() {
 		pause();
 		currentDelay = 0;
 		currentIndex = 0;
 	}
 
-	public void setFrames(int[] frames) {
-		this.frames = frames;
+	public void updateFrame(float dt) {
+		if (pause)
+			return;
+
+		currentDelay += dt;
+
+		if (currentDelay >= delays[currentIndex]) {
+			nextFrame();
+		}
 	}
 }

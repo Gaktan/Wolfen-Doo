@@ -11,8 +11,8 @@ import engine.util.Vector3;
 
 public class ParticleSystemImpact extends ParticleSystem {
 
-	private Vector3 direction;
-	private Vector3 impactNormal;
+	private Vector3	direction;
+	private Vector3	impactNormal;
 
 	public ParticleSystemImpact(Vector3 position, Vector3 direction, Vector3 impactNormal) {
 		super(position, 1);
@@ -21,7 +21,8 @@ public class ParticleSystemImpact extends ParticleSystem {
 		direction.normalize();
 		this.impactNormal = impactNormal;
 
-		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"), "particle.png");
+		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"),
+				"particle.png");
 
 		newParticlesPerFrame = 10;
 		maxParticles = 10;
@@ -38,7 +39,8 @@ public class ParticleSystemImpact extends ParticleSystem {
 			p.velocity.setX(-direction.getX());
 
 			p.velocity.setY(MathUtil.random(0.1f, 1.1f));
-			//p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f, 2.f));
+			// p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f,
+			// 2.f));
 			p.velocity.setZ(p.velocity.getZ() * MathUtil.randomNegative(-.2f, 1.f));
 		}
 
@@ -59,7 +61,7 @@ public class ParticleSystemImpact extends ParticleSystem {
 		if (impactNormal.getY() > 0) {
 			p.position.addY(0.1f);
 			p.velocity.scale(1f, 3f, 1f);
-			//p.velocity.y *= 3f;
+			// p.velocity.y *= 3f;
 		}
 
 		p.velocity.normalize();

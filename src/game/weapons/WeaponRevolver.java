@@ -18,12 +18,13 @@ public class WeaponRevolver extends Weapon {
 
 		updateAmmoText();
 
-		ShapeSprite revolverShape = new ShapeSprite(ShaderProgram.getProgram("texture_camera"), "revolver.png", 256, 32, 32, 32);
+		ShapeSprite revolverShape = new ShapeSprite(ShaderProgram.getProgram("texture_camera"), "revolver.png", 256,
+				32, 32, 32);
 
 		weaponSprite = new AnimatedActor(revolverShape, "revolver", "a_idle");
 		weaponSprite.position.set(POSITION_CENTER);
 		weaponSprite.scale.set(.85f);
-		
+
 		bendingCurve.scale(2f);
 	}
 
@@ -32,7 +33,7 @@ public class WeaponRevolver extends Weapon {
 
 		if (!canFire())
 			return;
-		
+
 		Vector3 linePosition = new Vector3(camera.getPosition());
 
 		linePosition.addY(MathUtil.random(-0.1f, 0));

@@ -5,15 +5,16 @@ import engine.util.Vector3;
 
 /**
  * Object used to store a position and a velocity. (a moving object)
+ * 
  * @author Gaktan
  */
 public abstract class Entity implements Displayable {
 
-	public Vector3 position;
-	public Vector3 velocity;
-	public Vector3 scale;
-	private boolean solid;
-	private boolean delete;
+	public Vector3	position;
+	public Vector3	velocity;
+	public Vector3	scale;
+	private boolean	solid;
+	private boolean	delete;
 
 	public Entity() {
 		position = new Vector3();
@@ -26,21 +27,12 @@ public abstract class Entity implements Displayable {
 		delete = true;
 	}
 
-	@Override
-	public boolean update(float dt) {
-		position.addX(velocity.getX() * (dt / 100.0f));
-		position.addY(velocity.getY() * (dt / 100.0f));
-		position.addZ(velocity.getZ() * (dt / 100.0f));
-
-		return !delete;
+	public boolean isSolid() {
+		return solid;
 	}
 
 	@Override
 	public abstract void render();
-
-	public boolean isSolid() {
-		return solid;
-	}
 
 	public void setSolid(boolean solid) {
 		this.solid = solid;
@@ -48,5 +40,14 @@ public abstract class Entity implements Displayable {
 
 	public int size() {
 		return 1;
+	}
+
+	@Override
+	public boolean update(float dt) {
+		position.addX(velocity.getX() * (dt / 100.0f));
+		position.addY(velocity.getY() * (dt / 100.0f));
+		position.addZ(velocity.getZ() * (dt / 100.0f));
+
+		return !delete;
 	}
 }

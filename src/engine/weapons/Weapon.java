@@ -11,64 +11,47 @@ import engine.game.GameWolfen;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 
-public abstract class Weapon implements Displayable{
-
-	protected Camera camera;
-
-	// SHOOTING --
-
-	protected float cooldownTime;
-	protected float currentCooldown;
-
-	protected int shotsLeft;
-	protected int shotsCapacity;
-	protected int totalAmmo;
-
-	// RELOADING --
-
-	protected float reloadingTime;
-	protected float currentReloading;
-
-	protected DisplayableText reloadingText;
-	protected DisplayableText ammoText;
-
-	// BOBBING --
-	protected static Vector3 POSITION_CENTER;
-	protected static Vector3 POSITION_LEFT;
-	protected static Vector3 POSITION_RIGHT;
-
-	protected BobbingState bobbingState;
-	protected float timeStamp;
-	protected float bobbingTime;
-	
-	protected Vector3 bendingCurve;
-	protected Vector3 lastKnownPosition;
-
-	// 0f, -.25f
-	// TODO: change this
-	static {
-		POSITION_CENTER = new Vector3(0f, -.575f, 0f);
-		POSITION_LEFT = new Vector3(-0.2f, -.575f, 0f);
-		POSITION_RIGHT = new Vector3(0.2f, -.575f, 0f);
-	}
+public abstract class Weapon implements Displayable {
 
 	enum BobbingState {
-		TO_LEFT,
-		TO_RIGHT,
-		TO_CENTER,
-		IDLE;
-		
+		TO_LEFT, TO_RIGHT, TO_CENTER, IDLE;
+
 		static BobbingState randomDir() {
-			return ((int) (Math.random()+0.5) == 1) ? TO_RIGHT : TO_LEFT;
+			return ((int) (Math.random() + 0.5) == 1) ? TO_RIGHT : TO_LEFT;
 		}
 	}
 
-	protected boolean moving;
+	// SHOOTING --
 
+	protected Camera			camera;
+	protected float				cooldownTime;
+
+	protected float				currentCooldown;
+	protected int				shotsLeft;
+	protected int				shotsCapacity;
+
+	// RELOADING --
+
+	protected int				totalAmmo;
+	protected float				reloadingTime;
+
+	protected float				currentReloading;
+	protected DisplayableText	reloadingText;
+
+	protected DisplayableText	ammoText;
+	protected BobbingState		bobbingState;
+	protected float				timeStamp;
+
+	protected float				bobbingTime;
+	protected Vector3			bendingCurve;
+	protected Vector3			lastKnownPosition;
+
+	protected boolean			moving;
 	// WEAPON_SPRITE
-	protected AnimatedActor weaponSprite;
+	protected AnimatedActor		weaponSprite;
 
-	public Weapon(Camera camera, float coolDownTime, int shotsCapacity, float reloadingTime, int totalAmmo, float bobbingTime) {
+	public Weapon(Camera camera, float coolDownTime, int shotsCapacity, float reloadingTime, int totalAmmo,
+			float bobbingTime) {
 		this.camera = camera;
 
 		this.cooldownTime = coolDownTime;
@@ -92,7 +75,95 @@ public abstract class Weapon implements Displayable{
 		moving = false;
 	}
 
+	@Override
+	public void delete() {
+	}
+
 	public abstract void fire();
+
+	public void forceReload() {
+		if (shotsLeft > 0 && shotsLeft < shotsCapacity && totalAmmo > 0) {
+			totalAmmo += shotsLeft;
+			shotsLeft = 0;
+		}
+	}
+
+	@Override
+	public void render() {
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		weaponSprite.render();
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+		reloadingText.render();
+		ammoText.render();
+	}
+
+	public void setMoving(boolean moving) {
+
+		if (this.moving == moving)
+			return;
+
+		this.moving = moving;
+
+		lastKnownPosition = new Vector3(weaponSprite.position);
+		timeStamp = 0f;
+
+		if (moving)
+			bobbingState = BobbingState.randomDir();
+		else
+			bobbingState = BobbingState.TO_CENTER;
+
+	}
+
+	@Override
+	public int size() {
+		return reloadingText.size() + ammoText.size() + weaponSprite.size();
+	}
+
+	public boolean update(float dt) {
+		currentCooldown -= dt;
+
+		timeStamp += dt;
+
+		if (bobbingState == BobbingState.TO_RIGHT) {
+			moveToPosition(lastKnownPosition, POSITION_RIGHT);
+
+			if (timeStamp > bobbingTime) {
+				bobbingState = BobbingState.TO_LEFT;
+				lastKnownPosition = POSITION_RIGHT;
+				timeStamp = 0f;
+			}
+		} else if (bobbingState == BobbingState.TO_LEFT) {
+			moveToPosition(lastKnownPosition, POSITION_LEFT);
+
+			if (timeStamp > bobbingTime) {
+				bobbingState = BobbingState.TO_RIGHT;
+				lastKnownPosition = POSITION_LEFT;
+				timeStamp = 0f;
+			}
+		} else if (bobbingState == BobbingState.TO_CENTER) {
+			moveToPosition(lastKnownPosition, POSITION_CENTER);
+
+			if (timeStamp > bobbingTime) {
+				lastKnownPosition = POSITION_CENTER;
+				timeStamp = 0f;
+
+				if (!moving)
+					bobbingState = BobbingState.IDLE;
+				else
+					bobbingState = BobbingState.randomDir();
+			}
+		}
+
+		if (shotsLeft <= 0 && currentCooldown < 0) {
+			reload(dt);
+		}
+
+		weaponSprite.update(dt);
+		ammoText.update(dt);
+		reloadingText.update(dt);
+		return true;
+	}
 
 	protected boolean canFire() {
 		if (currentCooldown > 0f)
@@ -111,11 +182,21 @@ public abstract class Weapon implements Displayable{
 		return true;
 	}
 
-	public void forceReload() {
-		if (shotsLeft > 0 && shotsLeft < shotsCapacity && totalAmmo > 0) {
-			totalAmmo += shotsLeft;
-			shotsLeft = 0;
-		}
+	protected void moveToPosition(Vector3 start, Vector3 goal) {
+		Vector3 vDiff = goal.getSub(start);
+		// Vector3.sub(goal, start, vDiff);
+		float diff = vDiff.length();
+
+		Vector3 currentPos = MathUtil.approach(goal, start, (timeStamp / bobbingTime) * diff);
+
+		Vector3 bending = new Vector3(bendingCurve);
+		bending.scale(diff);
+
+		currentPos.addX((float) (bending.getX() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
+		currentPos.addY((float) (bending.getY() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
+		currentPos.addZ((float) (bending.getZ() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
+
+		weaponSprite.position.set(currentPos);
 	}
 
 	protected void reload(float dt) {
@@ -138,12 +219,11 @@ public abstract class Weapon implements Displayable{
 		if (totalAmmo < 0) {
 			shotsLeft = shotsCapacity + totalAmmo;
 			totalAmmo = 0;
-		}
-		else {
+		} else {
 			shotsLeft = shotsCapacity;
 		}
 
-		reloadingText.setText("");	
+		reloadingText.setText("");
 		updateAmmoText();
 	}
 
@@ -151,102 +231,18 @@ public abstract class Weapon implements Displayable{
 		ammoText.setText(shotsLeft + "/" + totalAmmo);
 	}
 
-	public boolean update(float dt) {
-		currentCooldown -= dt;
+	// BOBBING --
+	protected static Vector3	POSITION_CENTER;
 
-		timeStamp += dt;
+	protected static Vector3	POSITION_LEFT;
 
-		if (bobbingState == BobbingState.TO_RIGHT) {
-			moveToPosition(lastKnownPosition, POSITION_RIGHT);
+	protected static Vector3	POSITION_RIGHT;
 
-			if (timeStamp > bobbingTime) {
-				bobbingState = BobbingState.TO_LEFT;
-				lastKnownPosition = POSITION_RIGHT;
-				timeStamp = 0f;
-			}
-		}
-		else if (bobbingState == BobbingState.TO_LEFT) {
-			moveToPosition(lastKnownPosition, POSITION_LEFT);
-
-			if (timeStamp > bobbingTime) {
-				bobbingState = BobbingState.TO_RIGHT;
-				lastKnownPosition = POSITION_LEFT;
-				timeStamp = 0f;
-			}
-		}
-		else if (bobbingState == BobbingState.TO_CENTER) {
-			moveToPosition(lastKnownPosition, POSITION_CENTER);
-
-			if (timeStamp > bobbingTime) {
-				lastKnownPosition = POSITION_CENTER;
-				timeStamp = 0f;
-				
-				if (!moving)
-					bobbingState = BobbingState.IDLE;
-				else
-					bobbingState = BobbingState.randomDir();
-			}
-		}
-
-		if (shotsLeft <= 0 && currentCooldown < 0) {
-			reload(dt);
-		}
-
-		weaponSprite.update(dt);
-		ammoText.update(dt);
-		reloadingText.update(dt);
-		return true;
+	// 0f, -.25f
+	// TODO: change this
+	static {
+		POSITION_CENTER = new Vector3(0f, -.575f, 0f);
+		POSITION_LEFT = new Vector3(-0.2f, -.575f, 0f);
+		POSITION_RIGHT = new Vector3(0.2f, -.575f, 0f);
 	}
-
-	public void setMoving(boolean moving) {
-
-		if (this.moving == moving)
-			return;
-		
-		this.moving = moving;
-		
-		lastKnownPosition = new Vector3(weaponSprite.position);
-		timeStamp = 0f;
-
-		if (moving)
-			bobbingState = BobbingState.randomDir();
-		else
-			bobbingState = BobbingState.TO_CENTER;
-
-	}
-
-	protected void moveToPosition(Vector3 start, Vector3 goal) {
-		Vector3 vDiff = goal.getSub(start);
-		//Vector3.sub(goal, start, vDiff);
-		float diff = vDiff.length();
-
-		Vector3 currentPos = MathUtil.approach(goal, start, (timeStamp / bobbingTime) * diff);
-
-		Vector3 bending = new Vector3(bendingCurve);
-		bending.scale(diff);
-
-		currentPos.addX((float) (bending.getX() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
-		currentPos.addY((float) (bending.getY() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
-		currentPos.addZ((float) (bending.getZ() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
-
-		weaponSprite.position.set(currentPos);
-	}
-
-	@Override
-	public void render() {
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		weaponSprite.render();
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		
-		reloadingText.render();
-		ammoText.render();
-	}
-
-	@Override
-	public int size() {
-		return reloadingText.size() + ammoText.size() + weaponSprite.size();
-	}
-
-	@Override
-	public void delete() {}
 }

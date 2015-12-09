@@ -9,7 +9,13 @@ import engine.util.TextureUtil;
 
 public abstract class TexturedShape extends Shape {
 
-	protected int textureID;
+	protected int	textureID;
+
+	public TexturedShape(ShaderProgram shaderProgram, int textureID) {
+		super(shaderProgram);
+
+		this.textureID = textureID;
+	}
 
 	public TexturedShape(ShaderProgram shaderProgram, String texture) {
 		super(shaderProgram);
@@ -17,10 +23,17 @@ public abstract class TexturedShape extends Shape {
 		textureID = TextureUtil.loadTexture(texture);
 	}
 
-	public TexturedShape(ShaderProgram shaderProgram, int textureID) {
-		super(shaderProgram);
+	public void dispose() {
+		GL11.glDeleteTextures(textureID);
 
-		this.textureID = textureID;
+		super.dispose();
+	}
+
+	@Override
+	public void postRender() {
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		GL30.glBindVertexArray(0);
+		ShaderProgram.unbind();
 	}
 
 	@Override
@@ -31,18 +44,5 @@ public abstract class TexturedShape extends Shape {
 
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
-	}
-
-	@Override
-	public void postRender() {
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		GL30.glBindVertexArray(0);
-		ShaderProgram.unbind();
-	}
-
-	public void dispose() {
-		GL11.glDeleteTextures(textureID);
-
-		super.dispose();
 	}
 }

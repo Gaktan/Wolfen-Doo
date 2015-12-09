@@ -11,19 +11,20 @@ import engine.util.Vector3;
 
 /**
  * Object used to generate particles
+ * 
  * @author Gaktan
  */
 public abstract class ParticleSystem implements Displayable {
 
-	protected ArrayList<Particle> list;
-	protected Vector3 position;
-	protected float life;
+	protected ArrayList<Particle>		list;
+	protected Vector3					position;
+	protected float						life;
 
-	protected int newParticlesPerFrame;
-	protected int maxParticles;
-	protected float particlesLife;
+	protected int						newParticlesPerFrame;
+	protected int						maxParticles;
+	protected float						particlesLife;
 
-	protected ShapeInstancedQuadTexture particleShape;
+	protected ShapeInstancedQuadTexture	particleShape;
 
 	public ParticleSystem(Vector3 position, int life) {
 		list = new ArrayList<Particle>();
@@ -34,6 +35,22 @@ public abstract class ParticleSystem implements Displayable {
 		newParticlesPerFrame = 1;
 		maxParticles = 1;
 		particlesLife = 1.f;
+	}
+
+	@Override
+	public void delete() {
+		life = 0;
+	}
+
+	@Override
+	public void render() {
+		particleShape.preRender();
+		particleShape.render(list.size());
+		particleShape.postRender();
+	}
+
+	public int size() {
+		return list.size();
 	}
 
 	@Override
@@ -71,35 +88,19 @@ public abstract class ParticleSystem implements Displayable {
 		}
 
 		setBufferData();
-		
+
 		return true;
 	}
 
+	protected abstract Particle newParticle(float particleLife);
+
 	protected void setBufferData() {
 		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
-		
+
 		for (Particle p : list) {
 			p.setBufferData(fb1);
 		}
 		fb1.flip();
 		particleShape.setData(fb1);
-	}
-
-	@Override
-	public void render() {
-		particleShape.preRender();
-		particleShape.render(list.size());
-		particleShape.postRender();
-	}
-
-	protected abstract Particle newParticle(float particleLife);
-
-	@Override
-	public void delete() {
-		life = 0;
-	}
-
-	public int size() {
-		return list.size();
 	}
 }

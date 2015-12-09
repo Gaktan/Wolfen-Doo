@@ -17,30 +17,19 @@ import engine.util.Vector3;
  */
 public class MapReader {
 
-	// Commands
-	protected static final String COMMAND_NAME = "name";
-	protected static final String COMMAND_WIDTH = "width";
-	protected static final String COMMAND_HEIGHT = "height";
-	protected static final String COMMAND_BILLBOARD = "billboard";
-	protected static final String COMMAND_WALL = "wall";
-	protected static final String COMMAND_ANIMATION = "animation";
-	protected static final String COMMAND_DOOR = "door";
-	protected static final String COMMAND_MAP = "map";
-	protected static final String COMMAND_SKY = "sky";
+	protected String		mapData;
+	protected String		name;
+	protected int			width;
+	protected int			height;
+	protected Map			map;
+	protected EntityActor	sky;
 
-	protected String mapData;
-
-	protected String name;
-	protected int width;
-	protected int height;
-	protected Map map;
-	protected EntityActor sky;
-
-
-	public MapReader() {}
+	public MapReader() {
+	}
 
 	/**
 	 * Starts the process of reading the map
+	 * 
 	 * @return Map created from designated file
 	 */
 	public Map createMap(String path) {
@@ -48,72 +37,15 @@ public class MapReader {
 		readFile(path);
 		map.setSize(width, height);
 		map.buildMapFromString(mapData);
-		
+
 		if (sky != null)
 			map.setSky(sky);
 
 		for (int i = 0; i < height; i++) {
-			System.out.println(mapData.substring(i * height, (i+1) * height));
+			System.out.println(mapData.substring(i * height, (i + 1) * height));
 		}
 
 		return map;
-	}
-
-	protected void readFile(String path) {
-		String data = FileUtil.readFromFile("res/maps/" + path);
-
-		int start = 0;
-		int end = 0;
-
-		String command = null;
-
-		for (char ch : data.toCharArray()) 
-		{
-			if (ch == '{') {
-				command = data.substring(start, end).trim().toLowerCase();
-
-				start = end+1;
-			}
-
-			else if (ch == '}') {
-				String value;
-
-				if (!command.equals(COMMAND_MAP))
-					value = data.substring(start, end).trim().toLowerCase();
-				else
-					value = data.substring(start, end);
-
-				start = end+1;
-
-				performCommand(command, value);
-				command = null;
-			}
-
-			end++;
-		}
-	}
-
-	protected void performCommand(String command, String value) {
-
-		if (command.equals(COMMAND_WIDTH))
-			width = MathUtil.parseInt(value);
-
-		else if (command.equals(COMMAND_HEIGHT))
-			height = MathUtil.parseInt(value);
-
-		else if (command.equals(COMMAND_NAME))
-			name = value;
-
-		else if (command.equals(COMMAND_BILLBOARD) || command.equals(COMMAND_WALL)
-				|| command.equals(COMMAND_ANIMATION) || command.equals(COMMAND_DOOR))
-			createShape(command, value);
-
-		else if (command.equals(COMMAND_MAP))
-			mapData = value.replace("\n", "");
-
-		else if (command.equals(COMMAND_SKY))
-			setSky(value);
-
 	}
 
 	protected void createShape(String command, String value) {
@@ -152,17 +84,60 @@ public class MapReader {
 		}
 	}
 
-	protected void setSky(String value) {
-		String[] values = value.split(", ");
-		Vector3 downColor = readVector3(values[0]);
-		Vector3 upColor = readVector3(values[1]);
+	protected void performCommand(String command, String value) {
 
-		downColor.scale(1.0f / 256);
-		upColor.scale(1.0f / 256);
+		if (command.equals(COMMAND_WIDTH))
+			width = MathUtil.parseInt(value);
 
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
+		else if (command.equals(COMMAND_HEIGHT))
+			height = MathUtil.parseInt(value);
 
-		sky = new EntityActor(skyShape);
+		else if (command.equals(COMMAND_NAME))
+			name = value;
+
+		else if (command.equals(COMMAND_BILLBOARD) || command.equals(COMMAND_WALL) || command.equals(COMMAND_ANIMATION)
+				|| command.equals(COMMAND_DOOR))
+			createShape(command, value);
+
+		else if (command.equals(COMMAND_MAP))
+			mapData = value.replace("\n", "");
+
+		else if (command.equals(COMMAND_SKY))
+			setSky(value);
+
+	}
+
+	protected void readFile(String path) {
+		String data = FileUtil.readFromFile("res/maps/" + path);
+
+		int start = 0;
+		int end = 0;
+
+		String command = null;
+
+		for (char ch : data.toCharArray()) {
+			if (ch == '{') {
+				command = data.substring(start, end).trim().toLowerCase();
+
+				start = end + 1;
+			}
+
+			else if (ch == '}') {
+				String value;
+
+				if (!command.equals(COMMAND_MAP))
+					value = data.substring(start, end).trim().toLowerCase();
+				else
+					value = data.substring(start, end);
+
+				start = end + 1;
+
+				performCommand(command, value);
+				command = null;
+			}
+
+			end++;
+		}
 	}
 
 	protected Vector3 readVector3(String value) {
@@ -174,4 +149,36 @@ public class MapReader {
 
 		return new Vector3(x, y, z);
 	}
+
+	protected void setSky(String value) {
+		String[] values = value.split(", ");
+		Vector3 downColor = readVector3(values[0]);
+		Vector3 upColor = readVector3(values[1]);
+
+		downColor.scale(1.0f / 256);
+		upColor.scale(1.0f / 256);
+
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
+				downColor);
+
+		sky = new EntityActor(skyShape);
+	}
+
+	// Commands
+	protected static final String	COMMAND_NAME		= "name";
+	protected static final String	COMMAND_WIDTH		= "width";
+
+	protected static final String	COMMAND_HEIGHT		= "height";
+
+	protected static final String	COMMAND_BILLBOARD	= "billboard";
+
+	protected static final String	COMMAND_WALL		= "wall";
+
+	protected static final String	COMMAND_ANIMATION	= "animation";
+
+	protected static final String	COMMAND_DOOR		= "door";
+
+	protected static final String	COMMAND_MAP			= "map";
+
+	protected static final String	COMMAND_SKY			= "sky";
 }

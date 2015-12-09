@@ -8,7 +8,7 @@ import engine.game.ShaderProgram;
 
 public abstract class InstancedTexturedShape extends TexturedShape {
 
-	protected int instancedVBO;
+	protected int	instancedVBO;
 
 	public InstancedTexturedShape(ShaderProgram shaderProgram, int textureID) {
 		super(shaderProgram, textureID);
@@ -18,10 +18,6 @@ public abstract class InstancedTexturedShape extends TexturedShape {
 		super(shaderProgram, texture);
 	}
 
-	public abstract void render(int amount);
-
-	public abstract void setData(FloatBuffer data);
-	
 	@Override
 	public void dispose() {
 		GL15.glDeleteBuffers(instancedVBO);
@@ -29,5 +25,10 @@ public abstract class InstancedTexturedShape extends TexturedShape {
 	}
 
 	@Override
-	public void render() {}
+	public void render() {
+	}
+
+	public abstract void render(int amount);
+
+	public abstract void setData(FloatBuffer data);
 }

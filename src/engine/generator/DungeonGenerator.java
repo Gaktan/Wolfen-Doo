@@ -12,34 +12,61 @@ import engine.util.Vector3;
 
 public class DungeonGenerator extends Generator {
 
-	private static final char ARROW_LEFT = 0x2190;
-	private static final char ARROW_RIGHT = 0x2192;
-	private static final char ARROW_DOWN = 0x2193;
-	private static final char ARROW_UP = 0x2191;
-	private static final char START = '¤';
+	class Pair {
+		protected int				x;
+		protected int				y;
+		protected char				c;
+		protected ArrayList<Pair>	friends;
 
-	private static final char VOID = ' ';
-	private static final char WALL = '*';
-	private static final char PORTRAIT = '+';
-	private static final char DOOR_NORTH = '|';
-	private static final char DOOR_EAST = '_';
+		public Pair(int x, int y) {
+			this(x, y, VOID);
+		}
 
-	protected long seed;
-	protected int roomSize;
-	protected Random random;
-	protected boolean noIntersection;
+		public Pair(int x, int y, char c) {
+			this.x = x;
+			this.y = y;
+			this.c = c;
 
-	protected Vector3 startingPoint;
+			friends = new ArrayList<Pair>();
+		}
 
-	protected ArrayList<Pair> map;
+		@Override
+		public boolean equals(Object arg0) {
+			if (arg0 instanceof Pair) {
+				Pair pair = (Pair) arg0;
+
+				return (pair.x == x && pair.y == y);
+			}
+
+			return super.equals(arg0);
+		}
+
+		@Override
+		public String toString() {
+			return "[" + x + ", " + y + "]";
+		}
+	}
+
+	protected long				seed;
+	protected int				roomSize;
+	protected Random			random;
+	protected boolean			noIntersection;
+
+	protected Vector3			startingPoint;
+	protected ArrayList<Pair>	map;
 
 	/**
-	 * 
-	 * @param sizeX Maximum X size of the map
-	 * @param sizeY Maximum Y size of the map
-	 * @param seed Seed
-	 * @param roomSize Size of the inside of a room (counting walls)
-	 * @param noIntersection True for a straight dungeon, false for intersections
+	 *
+	 * @param sizeX
+	 *            Maximum X size of the map
+	 * @param sizeY
+	 *            Maximum Y size of the map
+	 * @param seed
+	 *            Seed
+	 * @param roomSize
+	 *            Size of the inside of a room (counting walls)
+	 * @param noIntersection
+	 *            True for a straight dungeon, false for intersections
 	 */
 	public DungeonGenerator(int sizeX, int sizeY, long seed, int roomSize, boolean noIntersection) {
 		super(sizeX, sizeY);
@@ -49,52 +76,6 @@ public class DungeonGenerator extends Generator {
 		this.roomSize = roomSize;
 		this.seed = seed;
 		this.noIntersection = noIntersection;
-	}
-
-	@Override
-	public Map generate() {
-		System.out.println("Generating map with seed : " + seed);
-		random = new Random(seed);
-
-		map = new ArrayList<Pair>(sizeX * sizeY);
-
-		for (int i = 0; i < sizeX * sizeY; i++) {
-			int x = i % sizeX;
-			int y = i / sizeX;
-
-			map.add(y * sizeX + x, new Pair(x, y));
-		}
-
-		int posX = random(0, sizeX);
-		int posY = random(0, sizeY);
-
-		buildMap(posX, posY);
-		print();
-
-		char[][] charMap = buildRealMap();
-
-		Map map = new Map(charMap.length, charMap[0].length);
-		map.setStartingPoint(startingPoint);
-
-		map.newWall(WALL, "wall.png", true);
-		map.newWall(PORTRAIT, "wall_portrait.png", true);
-		map.newDoor(DOOR_EAST, "door.png", new Vector3(-0.95f, 0, 0), Orientation.EAST, 800f);
-		map.newDoor(DOOR_NORTH, "door.png", new Vector3(0, 0, 0.95f), Orientation.NORTH, 800f);
-
-		StringBuilder sb = new StringBuilder();
-
-		for (char[] cc : charMap) {
-			sb.append(cc);
-		}
-
-		Vector3 downColor = new Vector3(0f, 1f, 0f);
-		Vector3 upColor = new Vector3(1f, 0f, 0f);
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor, downColor);
-		EntityActor sky = new EntityActor(skyShape);
-		map.setSky(sky);
-
-		map.buildMapFromString(sb.toString());
-		return map;
 	}
 
 	public void buildMap(int posX, int posY) {
@@ -126,7 +107,8 @@ public class DungeonGenerator extends Generator {
 			Collections.shuffle(neighbours, random);
 			Pair neighbour = neighbours.get(0);
 
-			if (x == posX && y == posY);
+			if (x == posX && y == posY)
+				;
 
 			else if (x < neighbour.x)
 				currentPair.c = ARROW_RIGHT;
@@ -144,12 +126,15 @@ public class DungeonGenerator extends Generator {
 			donePairs.add(neighbour);
 		}
 
-		int minX = Integer.MAX_VALUE; int minY = Integer.MAX_VALUE;
-		int maxX = 0; int maxY = 0;
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxX = 0;
+		int maxY = 0;
 
 		for (Pair p : map) {
-			if (p.c == VOID)
+			if (p.c == VOID) {
 				continue;
+			}
 
 			minX = Math.min(minX, p.x);
 			minY = Math.min(minY, p.y);
@@ -191,8 +176,8 @@ public class DungeonGenerator extends Generator {
 		if (roomSize % 2 != 0)
 			roomSize++;
 
-		int width = (sizeX+2) * roomSize - (roomSize-1);
-		int height = (sizeY+2) * roomSize - (roomSize-1);
+		int width = (sizeX + 2) * roomSize - (roomSize - 1);
+		int height = (sizeY + 2) * roomSize - (roomSize - 1);
 
 		char[][] newMap = new char[width][height];
 
@@ -211,16 +196,15 @@ public class DungeonGenerator extends Generator {
 			int y = p.y * roomSize;
 
 			if (p.c == START) {
-				startingPoint.set((width-1) - (x + (roomSize * 0.5f)), 0f, y + (roomSize*0.5f));
+				startingPoint.set((width - 1) - (x + (roomSize * 0.5f)), 0f, y + (roomSize * 0.5f));
 			}
 
 			for (int i = 0; i <= roomSize; i++) {
 				for (int j = 0; j <= roomSize; j++) {
 					if (!(i > 0 && i < roomSize) && !(j > 0 && j < roomSize)) {
-						newMap[x+j][y+i] = VOID;
-					}
-					else if (!(i > 0 && i < roomSize) || !(j > 0 && j < roomSize)) {
-						newMap[x+j][y+i] = WALL;
+						newMap[x + j][y + i] = VOID;
+					} else if (!(i > 0 && i < roomSize) || !(j > 0 && j < roomSize)) {
+						newMap[x + j][y + i] = WALL;
 					}
 
 				} // for j
@@ -235,8 +219,7 @@ public class DungeonGenerator extends Generator {
 
 				if (xf != x) {
 					newMap[medX][medY] = DOOR_NORTH;
-				}
-				else {
+				} else {
 					newMap[medX][medY] = DOOR_EAST;
 				}
 			} // for f
@@ -254,59 +237,88 @@ public class DungeonGenerator extends Generator {
 		return newMap;
 	}
 
-	public void replaceCharRandom(char replace, char find, int x, int y, char[][] map, int probability) {
-		int r = random(0, 100);
+	@Override
+	public Map generate() {
+		System.out.println("Generating map with seed : " + seed);
 
-		if (r < probability) {
-			replaceChar(replace, find, x, y, map);
+		long time_start = System.currentTimeMillis();
+
+		random = new Random(seed);
+
+		map = new ArrayList<Pair>(sizeX * sizeY);
+
+		for (int i = 0; i < sizeX * sizeY; i++) {
+			int x = i % sizeX;
+			int y = i / sizeX;
+
+			map.add(y * sizeX + x, new Pair(x, y));
 		}
-	}
 
-	public void replaceChar(char replace, char find, int x, int y, char[][] map) {
-		if (map[x][y] == find) {
-			setChar(replace, x, y, map);
+		int posX = random(0, sizeX);
+		int posY = random(0, sizeY);
+
+		buildMap(posX, posY);
+		print();
+
+		char[][] charMap = buildRealMap();
+
+		Map map = new Map(charMap.length, charMap[0].length);
+		map.setStartingPoint(startingPoint);
+
+		map.newWall(WALL, "wall.png", true);
+		map.newWall(PORTRAIT, "wall_portrait.png", true);
+		map.newDoor(DOOR_EAST, "door.png", new Vector3(-0.95f, 0, 0), Orientation.EAST, 800f);
+		map.newDoor(DOOR_NORTH, "door.png", new Vector3(0, 0, 0.95f), Orientation.NORTH, 800f);
+
+		StringBuilder sb = new StringBuilder();
+
+		for (char[] cc : charMap) {
+			sb.append(cc);
 		}
-	}
 
-	public void setChar(char c, int x, int y, char[][] map) {
-		map[x][y] = c;
+		Vector3 downColor = new Vector3(0f, 1f, 0f);
+		Vector3 upColor = new Vector3(1f, 0f, 0f);
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
+				downColor);
+		EntityActor sky = new EntityActor(skyShape);
+		map.setSky(sky);
+
+		map.buildMapFromString(sb.toString());
+
+		long time_end = System.currentTimeMillis();
+
+		System.out.println("Done.\nGeneration took : " + (time_end - time_start) + "ms.");
+
+		return map;
 	}
 
 	public Pair get(int x, int y) {
 		return map.get(y * sizeX + x);
 	}
 
-	public int random(int min, int max) {
-		return min + (int)(random.nextDouble() * (max - min));
-	}
-
-	public ArrayList<Pair> getNeighbours(Pair p, boolean foundNeighour) {
-		return getNeighbours(p.x, p.y, foundNeighour);
-	}
-
 	public ArrayList<Pair> getNeighbours(int x, int y, boolean foundNeighour) {
 		ArrayList<Pair> list = new ArrayList<Pair>();
 
 		if (x > 0) {
-			Pair p = get(x-1, y);
+			Pair p = get(x - 1, y);
 			if (!(p.c != VOID && foundNeighour))
 				list.add(p);
 		}
 
-		if (x < sizeX-1) {
-			Pair p = get(x+1, y);
+		if (x < sizeX - 1) {
+			Pair p = get(x + 1, y);
 			if (!(p.c != VOID && foundNeighour))
 				list.add(p);
 		}
 
 		if (y > 0) {
-			Pair p = get(x, y-1);
+			Pair p = get(x, y - 1);
 			if (!(p.c != VOID && foundNeighour))
 				list.add(p);
 		}
 
-		if (y < sizeY-1) {
-			Pair p = get(x, y+1);
+		if (y < sizeY - 1) {
+			Pair p = get(x, y + 1);
 			if (!(p.c != VOID && foundNeighour))
 				list.add(p);
 		}
@@ -314,8 +326,12 @@ public class DungeonGenerator extends Generator {
 		return list;
 	}
 
+	public ArrayList<Pair> getNeighbours(Pair p, boolean foundNeighour) {
+		return getNeighbours(p.x, p.y, foundNeighour);
+	}
+
 	public void print() {
-		char[][] newMap = new char[sizeX+1][sizeY+1];
+		char[][] newMap = new char[sizeX + 1][sizeY + 1];
 
 		for (Pair p : map) {
 			newMap[p.x][p.y] = p.c;
@@ -329,38 +345,45 @@ public class DungeonGenerator extends Generator {
 		}
 	}
 
-	class Pair {
-		protected int x;
-		protected int y;
-		protected char c;
-		protected ArrayList<Pair> friends;
+	public int random(int min, int max) {
+		return min + (int) (random.nextDouble() * (max - min));
+	}
 
-		public Pair(int x, int y) {
-			this(x, y, VOID);
-		}
-
-		public Pair(int x, int y, char c) {
-			this.x = x;
-			this.y = y;
-			this.c = c;
-
-			friends = new ArrayList<Pair>();
-		}
-
-		@Override
-		public boolean equals(Object arg0) {
-			if (arg0 instanceof Pair) {
-				Pair pair = (Pair) arg0;
-
-				return (pair.x == x && pair.y == y);
-			}
-
-			return super.equals(arg0);
-		}
-
-		@Override
-		public String toString() {
-			return "[" + x + ", " + y + "]";
+	public void replaceChar(char replace, char find, int x, int y, char[][] map) {
+		if (map[x][y] == find) {
+			setChar(replace, x, y, map);
 		}
 	}
+
+	public void replaceCharRandom(char replace, char find, int x, int y, char[][] map, int probability) {
+		int r = random(0, 100);
+
+		if (r < probability) {
+			replaceChar(replace, find, x, y, map);
+		}
+	}
+
+	public void setChar(char c, int x, int y, char[][] map) {
+		map[x][y] = c;
+	}
+
+	private static final char	ARROW_LEFT	= 0x2190;
+
+	private static final char	ARROW_RIGHT	= 0x2192;
+
+	private static final char	ARROW_DOWN	= 0x2193;
+
+	private static final char	ARROW_UP	= 0x2191;
+
+	private static final char	START		= '¤';
+
+	private static final char	VOID		= ' ';
+
+	private static final char	WALL		= '*';
+
+	private static final char	PORTRAIT	= '+';
+
+	private static final char	DOOR_NORTH	= '|';
+
+	private static final char	DOOR_EAST	= '_';
 }

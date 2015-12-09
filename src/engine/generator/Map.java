@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Matrix4f;
 
 import engine.Displayable;
 import engine.DisplayableList;
@@ -21,30 +20,31 @@ import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
 import engine.shapes.ShapeInstancedCubeTexture;
 import engine.shapes.ShapeInstancedQuadTexture;
-import engine.util.MatrixUtil;
+import engine.util.Matrix4;
 import engine.util.Vector3;
 
 public class Map implements Displayable {
 
-	private int sizeX;
-	private int sizeY;
+	public class DoorShapeInfo extends ShapeInfo {
 
-	protected char map[][];
+		protected Vector3	openingPosition;
+		protected int		orientation;
+		protected float		time;
 
-	protected HashMap<Character, ShapeInfo> shapeMap;
+		public DoorShapeInfo(Shape shape, boolean solid, Vector3 openingPosition, int orientation, float time) {
 
-	protected DisplayableList actorsList;
-	protected EntityActor sky;
-
-	protected boolean delete;
-
-	protected Vector3 startingPoint;
+			super(shape, solid);
+			this.openingPosition = openingPosition;
+			this.orientation = orientation;
+			this.time = time;
+		}
+	}
 
 	public class ShapeInfo {
 
-		protected Shape shape;
-		protected int amount;
-		protected boolean solid;
+		protected Shape		shape;
+		protected int		amount;
+		protected boolean	solid;
 
 		public ShapeInfo(Shape shape, boolean solid) {
 			this.shape = shape;
@@ -57,21 +57,20 @@ public class Map implements Displayable {
 		}
 	}
 
-	public class DoorShapeInfo extends ShapeInfo {
+	private int								sizeX;
 
-		protected Vector3 openingPosition;
-		protected int orientation;
-		protected float time;
+	private int								sizeY;
 
-		public DoorShapeInfo(Shape shape, boolean solid, Vector3 openingPosition, 
-				int orientation, float time) {
+	protected char							map[][];
+	protected HashMap<Character, ShapeInfo>	shapeMap;
 
-			super(shape, solid);
-			this.openingPosition = openingPosition;
-			this.orientation = orientation;
-			this.time = time;
-		}		
-	}
+	protected DisplayableList				actorsList;
+
+	protected EntityActor					sky;
+
+	protected boolean						delete;
+
+	protected Vector3						startingPoint;
 
 	public Map() {
 		this(20, 20);
@@ -86,40 +85,13 @@ public class Map implements Displayable {
 		setSize(sizeX, sizeY);
 	}
 
-	public void newWall(char c, String texture, boolean solid) {
-		ShapeInfo info = new ShapeInfo(new ShapeInstancedCubeTexture(
-				ShaderProgram.getProgram("texture_instanced"), texture), solid);
-
-		shapeMap.put(c, info);
-	}
-
-	public void newBillboard(char c, String texture, boolean solid) {
-		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(
-				ShaderProgram.getProgram("texture_billboard_instanced"), texture), solid);
-
-		shapeMap.put(c, info);
-	}
-
-	/**
-	 * @param openingPosition Relative position when opened
-	 * @param orientation See engine.shapes.Orientation Class
-	 * @param time Time to open
-	 */
-	public void newDoor(char c, String texture, Vector3 openingPosition, int orientation, float time) {
-
-		ShapeCubeTexture shape = new ShapeCubeTexture(ShaderProgram.getProgram("texture"), texture);		
-
-		DoorShapeInfo info = new DoorShapeInfo(shape, true, openingPosition, orientation, time);
-
-		shapeMap.put(c, info);
-	}
-
 	/**
 	 * Builds a map on a given string
+	 * 
 	 * @param st
 	 */
 	public void buildMapFromString(String st) {
-		
+
 		System.out.println(sizeX + ", " + sizeY);
 
 		for (int i = 0; i < sizeX * sizeY; i++) {
@@ -150,8 +122,7 @@ public class Map implements Displayable {
 				door.position = new Vector3(x, 0, y);
 				if ((doorInfo.orientation & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
 					door.scale.setX(0.1f);
-				}
-				else {
+				} else {
 					door.scale.setZ(0.1f);
 				}
 
@@ -191,10 +162,7 @@ public class Map implements Displayable {
 					color[2] = 1.0f;
 					fb.put(color);
 
-					Matrix4f model = MatrixUtil.createIdentityMatrix();
-					model.m30 = i;
-					model.m31 = 0f;
-					model.m32 = j;
+					Matrix4 model = Matrix4.createInstancingMatrix(new Vector3(i, 0f, j));
 					model.store(fb);
 
 					fb.put(-1f);
@@ -210,98 +178,8 @@ public class Map implements Displayable {
 	}
 
 	@Override
-	public boolean update(float dt) {
-
-		int x = (int) (GameWolfen.getInstance().camera.position.getX() + 0.5f);
-		int z = (int) (GameWolfen.getInstance().camera.position.getZ() + 0.5f);
-
-		for (int i = x - 1; i < x + 2; i++) {
-			for (int j = z - 1; j < z + 2; j++) {
-
-				AABBRectangle rect;
-				EntityActor e = getActor(i, j);
-
-				if (e == null) {
-					ShapeInfo info = get(i, j);
-
-					if (info == null)
-						continue;
-
-					if (!info.isSolid())
-						continue;
-
-					rect = new AABBRectangle(new Vector3(i, 0, j));
-				}
-				else {
-					rect = new AABBRectangle(e);
-				}
-
-				AABBRectangle cameraAABB = new AABBRectangle(GameWolfen.getInstance().camera);
-
-				if (cameraAABB.collide(rect)){
-					Vector3 resolution = cameraAABB.resolveCollision(rect);
-					Vector3 cameraPos = GameWolfen.getInstance().camera.position;
-
-					cameraPos.add(resolution);
-					//Vector3.add(cameraPos, resolution, cameraPos);
-				}
-			}
-		}
-
-		actorsList.update(dt);
-
-		return !delete;
-	}
-
-	@Override
-	public void render() {
-		sky.render();
-
-		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
-			ShapeInfo info = entry.getValue();
-
-			if (info.shape instanceof InstancedTexturedShape) {
-				info.shape.preRender();
-				((InstancedTexturedShape) info.shape).render(info.amount);
-				info.shape.postRender();
-			}
-		}
-
-		actorsList.render();
-	}
-
-	@Override
 	public void delete() {
 		delete = true;
-	}
-
-	@Override
-	public int size() {
-
-		int total = 0;
-
-		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
-			ShapeInfo info = entry.getValue();
-
-			total += info.amount;
-		}
-
-		total += actorsList.size();
-
-		return total;
-	}
-
-	public void setSky(EntityActor sky) {
-		sky.scale = new Vector3(sizeX - 0.5f, 1, sizeY - 0.5f);
-		sky.position = new Vector3((sizeX - 1f) / 2, 0, (sizeY - 1f) / 2f);
-
-		this.sky = sky;
-	}
-
-	public void setSize(int sizeX, int sizeY) {
-		this.setSizeX(sizeX);
-		this.setSizeY(sizeY);
-		map = new char[sizeX][sizeY];
 	}
 
 	public ShapeInfo get(int x, int y) {
@@ -321,7 +199,7 @@ public class Map implements Displayable {
 				if (actor instanceof EntityDoor) {
 					EntityDoor door = (EntityDoor) actor;
 
-					if ((int) (door.getOriginialPosition().getX() + 0.5f) == x 
+					if ((int) (door.getOriginialPosition().getX() + 0.5f) == x
 							&& (int) (door.getOriginialPosition().getZ() + 0.5f) == y) {
 						return door;
 					}
@@ -337,11 +215,66 @@ public class Map implements Displayable {
 		return null;
 	}
 
+	public int getSizeX() {
+		return sizeX;
+	}
+
+	public int getSizeY() {
+		return sizeY;
+	}
+
+	public Vector3 getStartingPoint() {
+		return startingPoint;
+	}
+
+	public boolean isSolid(int x, int y) {
+		if (!inRange(x, 0, sizeX) || !inRange(y, 0, sizeY)) {
+			return false;
+		}
+
+		return shapeMap.get(map[x][y]).solid;
+	}
+
+	public void newBillboard(char c, String texture, boolean solid) {
+		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(
+				ShaderProgram.getProgram("texture_billboard_instanced"), texture), solid);
+
+		shapeMap.put(c, info);
+	}
+
+	/**
+	 * @param openingPosition
+	 *            Relative position when opened
+	 * @param orientation
+	 *            See engine.shapes.Orientation Class
+	 * @param time
+	 *            Time to open
+	 */
+	public void newDoor(char c, String texture, Vector3 openingPosition, int orientation, float time) {
+
+		ShapeCubeTexture shape = new ShapeCubeTexture(ShaderProgram.getProgram("texture"), texture);
+
+		DoorShapeInfo info = new DoorShapeInfo(shape, true, openingPosition, orientation, time);
+
+		shapeMap.put(c, info);
+	}
+
+	public void newWall(char c, String texture, boolean solid) {
+		ShapeInfo info = new ShapeInfo(new ShapeInstancedCubeTexture(ShaderProgram.getProgram("texture_instanced"),
+				texture), solid);
+
+		shapeMap.put(c, info);
+	}
+
 	/**
 	 * Casts a ray to find the nearest entity in its direction
-	 * @param position Position to cast the ray from
-	 * @param ray Direction of the ray
-	 * @param distance Maximum distance
+	 * 
+	 * @param position
+	 *            Position to cast the ray from
+	 * @param ray
+	 *            Direction of the ray
+	 * @param distance
+	 *            Maximum distance
 	 * @return First Entity found. Null if nothing was found
 	 */
 	public Entity rayCast(Vector3 position, Vector3 ray, float distance) {
@@ -368,39 +301,108 @@ public class Map implements Displayable {
 		return null;
 	}
 
-	public boolean isSolid(int x, int y) {
-		if (!inRange(x, 0, sizeX) || !inRange(y, 0, sizeY)) {
-			return false;
+	@Override
+	public void render() {
+		sky.render();
+
+		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
+			ShapeInfo info = entry.getValue();
+
+			if (info.shape instanceof InstancedTexturedShape) {
+				info.shape.preRender();
+				((InstancedTexturedShape) info.shape).render(info.amount);
+				info.shape.postRender();
+			}
 		}
 
-		return shapeMap.get(map[x][y]).solid;
+		actorsList.render();
 	}
 
-	private boolean inRange(int n, int min, int max) {
-		return n >= min && n < max;
-	}
-
-	public int getSizeX() {
-		return sizeX;
+	public void setSize(int sizeX, int sizeY) {
+		this.setSizeX(sizeX);
+		this.setSizeY(sizeY);
+		map = new char[sizeX][sizeY];
 	}
 
 	public void setSizeX(int sizeX) {
 		this.sizeX = sizeX;
 	}
 
-	public int getSizeY() {
-		return sizeY;
-	}
-
 	public void setSizeY(int sizeY) {
 		this.sizeY = sizeY;
+	}
+
+	public void setSky(EntityActor sky) {
+		sky.scale = new Vector3(sizeX - 0.5f, 1, sizeY - 0.5f);
+		sky.position = new Vector3((sizeX - 1f) / 2, 0, (sizeY - 1f) / 2f);
+
+		this.sky = sky;
 	}
 
 	public void setStartingPoint(Vector3 coord) {
 		startingPoint.set(coord);
 	}
 
-	public Vector3 getStartingPoint() {
-		return startingPoint;
+	@Override
+	public int size() {
+
+		int total = 0;
+
+		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
+			ShapeInfo info = entry.getValue();
+
+			total += info.amount;
+		}
+
+		total += actorsList.size();
+
+		return total;
+	}
+
+	@Override
+	public boolean update(float dt) {
+
+		int x = (int) (GameWolfen.getInstance().camera.position.getX() + 0.5f);
+		int z = (int) (GameWolfen.getInstance().camera.position.getZ() + 0.5f);
+
+		for (int i = x - 1; i < x + 2; i++) {
+			for (int j = z - 1; j < z + 2; j++) {
+
+				AABBRectangle rect;
+				EntityActor e = getActor(i, j);
+
+				if (e == null) {
+					ShapeInfo info = get(i, j);
+
+					if (info == null)
+						continue;
+
+					if (!info.isSolid())
+						continue;
+
+					rect = new AABBRectangle(new Vector3(i, 0, j));
+				} else {
+					rect = new AABBRectangle(e);
+				}
+
+				AABBRectangle cameraAABB = new AABBRectangle(GameWolfen.getInstance().camera);
+
+				if (cameraAABB.collide(rect)) {
+					Vector3 resolution = cameraAABB.resolveCollision(rect);
+					Vector3 cameraPos = GameWolfen.getInstance().camera.position;
+
+					cameraPos.add(resolution);
+					// Vector3.add(cameraPos, resolution, cameraPos);
+				}
+			}
+		}
+
+		actorsList.update(dt);
+
+		return !delete;
+	}
+
+	private boolean inRange(int n, int min, int max) {
+		return n >= min && n < max;
 	}
 }

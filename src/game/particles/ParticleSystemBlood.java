@@ -12,7 +12,8 @@ public class ParticleSystemBlood extends ParticleSystem {
 	public ParticleSystemBlood(Vector3 position, int life) {
 		super(position, life);
 
-		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"), "blood.png");
+		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"),
+				"blood.png");
 
 		newParticlesPerFrame = 100;
 		maxParticles = 10000;
@@ -25,9 +26,10 @@ public class ParticleSystemBlood extends ParticleSystem {
 
 		Particle p;
 		p = new Particle(MathUtil.random(500, maxLife / 2), new Vector3(position), scale);
-		p.velocity = new Vector3(MathUtil.randomNegative(-0.5f, 0.5f), MathUtil.random(-0.1f, 0.1f), MathUtil.randomNegative(-0.5f, 0.5f));
+		p.velocity = new Vector3(MathUtil.randomNegative(-0.5f, 0.5f), MathUtil.random(-0.1f, 0.1f),
+				MathUtil.randomNegative(-0.5f, 0.5f));
 		p.velocity.normalize();
-		//p.velocity.scale(0.25f);
+		// p.velocity.scale(0.25f);
 
 		return p;
 	}

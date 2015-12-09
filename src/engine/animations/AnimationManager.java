@@ -5,16 +5,18 @@ import java.util.HashMap;
 
 /**
  * Manager used to hold all the existing animations from the "animations" folder
+ * 
  * @author Gaktan
  */
 public class AnimationManager {
 
 	/**
 	 * Holds all the animations for a specific file
+	 * 
 	 * @author Gaktan
 	 */
 	public class AnimationHolder {
-		private HashMap<String, Animation> animations;
+		private HashMap<String, Animation>	animations;
 
 		public AnimationHolder(HashMap<String, Animation> animations) {
 			this.animations = animations;
@@ -25,12 +27,7 @@ public class AnimationManager {
 		}
 	}
 
-	private HashMap<String, AnimationHolder> holders;
-	private static final AnimationManager instance;
-	
-	static {
-		instance = new AnimationManager();
-	}
+	private HashMap<String, AnimationHolder>	holders;
 
 	private AnimationManager() {
 		holders = new HashMap<String, AnimationHolder>();
@@ -38,8 +35,21 @@ public class AnimationManager {
 		readAnimations();
 	}
 
-	public static AnimationManager getInstance() {
-		return instance;
+	/**
+	 * Gets any animation from any file
+	 * 
+	 * @param file
+	 *            Animation file (without the extension)
+	 * @param animation
+	 *            Animation name
+	 * @return null if nothing was found
+	 */
+	public Animation getAnimation(String file, String animation) {
+		AnimationHolder holder = holders.get(file);
+		if (holder != null)
+			return holder.get(animation);
+
+		return null;
 	}
 
 	/**
@@ -61,17 +71,13 @@ public class AnimationManager {
 		}
 	}
 
-	/**
-	 * Gets any animation from any file
-	 * @param file Animation file (without the extension)
-	 * @param animation Animation name
-	 * @return null if nothing was found
-	 */
-	public Animation getAnimation(String file, String animation) {
-		AnimationHolder holder = holders.get(file);
-		if (holder != null)
-			return holder.get(animation);
+	private static final AnimationManager	instance;
 
-		return null;
+	static {
+		instance = new AnimationManager();
+	}
+
+	public static AnimationManager getInstance() {
+		return instance;
 	}
 }

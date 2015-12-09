@@ -7,22 +7,21 @@ package engine.generator;
  */
 public abstract class Generator {
 
-	protected int sizeX;
-	protected int sizeY;
-	
-	public static final int MIN_SIZE = 3;
-	
+	protected int	sizeX;
+	protected int	sizeY;
+
 	/**
 	 * 
-	 * @param size Size of the map (min: 3, max: unlimited)
+	 * @param size
+	 *            Size of the map (min: 3, max: unlimited)
 	 */
-	public Generator(int sizeX, int sizeY) {		
+	public Generator(int sizeX, int sizeY) {
 		this.sizeX = sizeX;
-		if(this.sizeX < MIN_SIZE)
+		if (this.sizeX < MIN_SIZE)
 			this.sizeX = MIN_SIZE;
-		
+
 		this.sizeY = sizeY;
-		if(this.sizeY < MIN_SIZE)
+		if (this.sizeY < MIN_SIZE)
 			this.sizeY = MIN_SIZE;
 	}
 
@@ -32,4 +31,6 @@ public abstract class Generator {
 	 * @return newly generated Map
 	 */
 	public abstract Map generate();
+
+	public static final int	MIN_SIZE	= 3;
 }
