@@ -20,7 +20,7 @@ import org.newdawn.slick.opengl.TextureLoader;
  */
 public final class TextureUtil {
 
-	public static final int	NO_TEXTURE	= loadTexture("noTexture.png");
+	public static final int NO_TEXTURE = loadTexture("noTexture.png");
 
 	/**
 	 * Turns a Color into a Vector3
@@ -67,7 +67,8 @@ public final class TextureUtil {
 
 			if (t.hasAlpha()) {
 				method = GL11.GL_RGBA;
-			} else {
+			}
+			else {
 				method = GL11.GL_RGB;
 			}
 

@@ -4,8 +4,8 @@ import engine.util.Vector3;
 
 public class AABBRectangle {
 
-	protected Vector3	position;
-	protected Vector3	scale;
+	protected Vector3 position;
+	protected Vector3 scale;
 
 	public AABBRectangle(Entity a) {
 		this(a.position, a.scale);

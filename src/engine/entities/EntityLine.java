@@ -8,14 +8,14 @@ import engine.util.Vector3;
 
 /**
  * Draws a line
- * 
+ *
  * @author Gaktan
  */
 public class EntityLine extends Entity {
 
-	public Vector3	positionB;
-	protected Color	colorA;
-	protected Color	colorB;
+	public Vector3 positionB;
+	protected Color colorA;
+	protected Color colorB;
 
 	public EntityLine(Vector3 position, Vector3 positionB) {
 		this(position, positionB, new Color(0xff0000), new Color(0xff));
@@ -33,7 +33,7 @@ public class EntityLine extends Entity {
 	public void render() {
 		GL11.glPushMatrix();
 
-		GL11.glLoadMatrix(GameWolfen.getInstance().camera.getProjectionXview().toFloatBuffer());
+		GL11.glLoadMatrix(GameWolfen.getInstance().current_camera.getProjectionXview().toFloatBuffer());
 
 		GL11.glLineWidth(2.5f);
 		GL11.glColor3f(colorA.r, colorA.g, colorA.b);

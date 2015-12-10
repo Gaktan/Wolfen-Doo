@@ -11,12 +11,21 @@ import engine.util.Vector3;
 
 public class FrameBuffer {
 
-	protected int				frameBuffer;
-	protected int				textureID;
+	protected static FrameBuffer instance;
+	public static final boolean ENABLED;
 
-	protected ShapeQuadTexture	screenShape;
+	static {
+		instance = new FrameBuffer("screen");
+		ENABLED = false;
+	}
 
-	protected String			shaderName;
+	protected int frameBuffer;
+
+	protected int textureID;
+
+	protected ShapeQuadTexture screenShape;
+
+	protected String shaderName;
 
 	public FrameBuffer(String shaderName) {
 		this.shaderName = shaderName;
@@ -103,15 +112,6 @@ public class FrameBuffer {
 			return;
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-	}
-
-	protected static FrameBuffer	instance;
-
-	public static final boolean		ENABLED;
-
-	static {
-		instance = new FrameBuffer("screen");
-		ENABLED = false;
 	}
 
 	public static FrameBuffer getInstance() {

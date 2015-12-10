@@ -9,7 +9,7 @@ import engine.shapes.ShapeCubeTexture;
  */
 public class EntityWall extends EntityActor {
 
-	public int	orientation;
+	public int orientation;
 
 	public EntityWall(ShapeCubeTexture shape) {
 		super(shape);

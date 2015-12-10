@@ -8,14 +8,14 @@ import java.util.Arrays;
  * @author Gaktan
  */
 public class Animation {
-	private int[]	frames;
+	private int[] frames;
 
-	private float[]	delays;
+	private float[] delays;
 
-	private int		currentIndex;
-	private float	currentDelay;
+	private int currentIndex;
+	private float currentDelay;
 
-	private boolean	pause;
+	private boolean pause;
 
 	public Animation() {
 		currentDelay = 0;

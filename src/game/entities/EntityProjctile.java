@@ -21,8 +21,14 @@ import game.particles.ParticleSystemImpact;
  */
 public class EntityProjctile extends EntityLine {
 
-	protected Map	map;
-	protected int	bounces;
+	protected static final float SPEED;
+	static {
+		SPEED = 2.2f;
+	}
+
+	protected Map map;
+
+	protected int bounces;
 
 	public EntityProjctile(Vector3 position, Vector3 direction, Map map) {
 		super(position, new Vector3(), new Color(0xffff4c), new Color(0xffde4c));
@@ -114,7 +120,8 @@ public class EntityProjctile extends EntityLine {
 					normal.setZ(0f);
 					normal.setX(-normal.getX());
 					impactPosition.setX((int) impactPosition.getX() + 0.5f);
-				} else {
+				}
+				else {
 					normal.setX(0f);
 					normal.setZ(-normal.getZ());
 					impactPosition.setZ((int) impactPosition.getZ() + 0.5f);
@@ -191,11 +198,5 @@ public class EntityProjctile extends EntityLine {
 		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3(newPos), new Vector3(velocity),
 				new Vector3(normal));
 		GameWolfen.getInstance().ac.add(particles);
-	}
-
-	protected static final float	SPEED;
-
-	static {
-		SPEED = 2.2f;
 	}
 }

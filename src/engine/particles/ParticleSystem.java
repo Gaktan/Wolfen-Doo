@@ -16,15 +16,15 @@ import engine.util.Vector3;
  */
 public abstract class ParticleSystem implements Displayable {
 
-	protected ArrayList<Particle>		list;
-	protected Vector3					position;
-	protected float						life;
+	protected ArrayList<Particle> list;
+	protected Vector3 position;
+	protected float life;
 
-	protected int						newParticlesPerFrame;
-	protected int						maxParticles;
-	protected float						particlesLife;
+	protected int newParticlesPerFrame;
+	protected int maxParticles;
+	protected float particlesLife;
 
-	protected ShapeInstancedQuadTexture	particleShape;
+	protected ShapeInstancedQuadTexture particleShape;
 
 	public ParticleSystem(Vector3 position, int life) {
 		list = new ArrayList<Particle>();

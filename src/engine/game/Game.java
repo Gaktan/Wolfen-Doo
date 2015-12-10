@@ -7,10 +7,12 @@ import org.lwjgl.opengl.DisplayMode;
 
 public abstract class Game {
 
+	protected static Game instance;
+
 	/**
 	 * limit the fps <= 0 for no limit
 	 */
-	private int	limitFPS	= -1;
+	private int limitFPS = 60;
 
 	public Game() {
 		this(800, 600);
@@ -70,7 +72,7 @@ public abstract class Game {
 
 	/**
 	 * Update the logic of the game.
-	 * 
+	 *
 	 * @param f
 	 *            Time elapsed since last frame.
 	 */
@@ -103,8 +105,6 @@ public abstract class Game {
 		end();
 	}
 
-	protected static Game	instance;
-
 	/**
 	 * Properly terminate the game.
 	 */
@@ -135,7 +135,7 @@ public abstract class Game {
 
 	/**
 	 * Sets a DisplayMode.
-	 * 
+	 *
 	 * @param mode
 	 *            The DisplayMode.
 	 * @param fullscreen
@@ -147,7 +147,7 @@ public abstract class Game {
 
 	/**
 	 * Sets a windowed DisplayMode.
-	 * 
+	 *
 	 * @param width
 	 *            The width of the display.
 	 * @param height
@@ -159,14 +159,14 @@ public abstract class Game {
 
 	/**
 	 * Sets a DisplayMode after selecting for a better one.
-	 * 
+	 *
 	 * @param width
 	 *            The width of the display.
 	 * @param height
 	 *            The height of the display.
 	 * @param fullscreen
 	 *            The fullscreen mode.
-	 * 
+	 *
 	 * @return True if switching is successful. Else false.
 	 */
 	public static boolean setDisplayMode(int width, int height, boolean fullscreen) {
@@ -210,7 +210,8 @@ public abstract class Game {
 						}
 					}
 				}
-			} else {
+			}
+			else {
 				// No need to query for windowed mode
 				targetDisplayMode = new DisplayMode(width, height);
 			}

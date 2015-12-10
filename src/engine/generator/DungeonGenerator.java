@@ -13,10 +13,10 @@ import engine.util.Vector3;
 public class DungeonGenerator extends Generator {
 
 	class Pair {
-		protected int				x;
-		protected int				y;
-		protected char				c;
-		protected ArrayList<Pair>	friends;
+		protected int x;
+		protected int y;
+		protected char c;
+		protected ArrayList<Pair> friends;
 
 		public Pair(int x, int y) {
 			this(x, y, VOID);
@@ -47,13 +47,26 @@ public class DungeonGenerator extends Generator {
 		}
 	}
 
-	protected long				seed;
-	protected int				roomSize;
-	protected Random			random;
-	protected boolean			noIntersection;
+	private static final char ARROW_LEFT = 0x2190;
+	private static final char ARROW_RIGHT = 0x2192;
+	private static final char ARROW_DOWN = 0x2193;
+	private static final char ARROW_UP = 0x2191;
+	private static final char START = '¤';
+	private static final char VOID = ' ';
+	private static final char WALL = '*';
+	private static final char PORTRAIT = '+';
+	private static final char DOOR_NORTH = '|';
+	private static final char DOOR_EAST = '_';
 
-	protected Vector3			startingPoint;
-	protected ArrayList<Pair>	map;
+	protected long seed;
+	protected int roomSize;
+	protected Random random;
+	protected boolean noIntersection;
+	protected Vector3 startingPoint;
+	protected ArrayList<Pair> map;
+
+	protected int realSizeX;
+	protected int realSizeY;
 
 	/**
 	 *
@@ -143,8 +156,8 @@ public class DungeonGenerator extends Generator {
 			maxY = Math.max(maxY, p.y);
 		}
 
-		sizeX = maxX - minX;
-		sizeY = maxY - minY;
+		realSizeX = maxX - minX;
+		realSizeY = maxY - minY;
 
 		ArrayList<Pair> removeList = new ArrayList<Pair>();
 		for (Pair p : map) {
@@ -176,8 +189,8 @@ public class DungeonGenerator extends Generator {
 		if (roomSize % 2 != 0)
 			roomSize++;
 
-		int width = (sizeX + 2) * roomSize - (roomSize - 1);
-		int height = (sizeY + 2) * roomSize - (roomSize - 1);
+		int width = (realSizeX + 2) * roomSize - (roomSize - 1);
+		int height = (realSizeY + 2) * roomSize - (roomSize - 1);
 
 		char[][] newMap = new char[width][height];
 
@@ -203,7 +216,8 @@ public class DungeonGenerator extends Generator {
 				for (int j = 0; j <= roomSize; j++) {
 					if (!(i > 0 && i < roomSize) && !(j > 0 && j < roomSize)) {
 						newMap[x + j][y + i] = VOID;
-					} else if (!(i > 0 && i < roomSize) || !(j > 0 && j < roomSize)) {
+					}
+					else if (!(i > 0 && i < roomSize) || !(j > 0 && j < roomSize)) {
 						newMap[x + j][y + i] = WALL;
 					}
 
@@ -219,7 +233,8 @@ public class DungeonGenerator extends Generator {
 
 				if (xf != x) {
 					newMap[medX][medY] = DOOR_NORTH;
-				} else {
+				}
+				else {
 					newMap[medX][medY] = DOOR_EAST;
 				}
 			} // for f
@@ -240,6 +255,10 @@ public class DungeonGenerator extends Generator {
 	@Override
 	public Map generate() {
 		System.out.println("Generating map with seed : " + seed);
+		System.out.println("SizeX : " + sizeX + ", SizeY : " + sizeY);
+
+		realSizeX = sizeX;
+		realSizeY = sizeY;
 
 		long time_start = System.currentTimeMillis();
 
@@ -293,7 +312,7 @@ public class DungeonGenerator extends Generator {
 	}
 
 	public Pair get(int x, int y) {
-		return map.get(y * sizeX + x);
+		return map.get(y * realSizeX + x);
 	}
 
 	public ArrayList<Pair> getNeighbours(int x, int y, boolean foundNeighour) {
@@ -305,7 +324,7 @@ public class DungeonGenerator extends Generator {
 				list.add(p);
 		}
 
-		if (x < sizeX - 1) {
+		if (x < realSizeX - 1) {
 			Pair p = get(x + 1, y);
 			if (!(p.c != VOID && foundNeighour))
 				list.add(p);
@@ -317,7 +336,7 @@ public class DungeonGenerator extends Generator {
 				list.add(p);
 		}
 
-		if (y < sizeY - 1) {
+		if (y < realSizeY - 1) {
 			Pair p = get(x, y + 1);
 			if (!(p.c != VOID && foundNeighour))
 				list.add(p);
@@ -331,7 +350,7 @@ public class DungeonGenerator extends Generator {
 	}
 
 	public void print() {
-		char[][] newMap = new char[sizeX + 1][sizeY + 1];
+		char[][] newMap = new char[realSizeX + 1][realSizeY + 1];
 
 		for (Pair p : map) {
 			newMap[p.x][p.y] = p.c;
@@ -367,23 +386,11 @@ public class DungeonGenerator extends Generator {
 		map[x][y] = c;
 	}
 
-	private static final char	ARROW_LEFT	= 0x2190;
+	public long getSeed() {
+		return seed;
+	}
 
-	private static final char	ARROW_RIGHT	= 0x2192;
-
-	private static final char	ARROW_DOWN	= 0x2193;
-
-	private static final char	ARROW_UP	= 0x2191;
-
-	private static final char	START		= '¤';
-
-	private static final char	VOID		= ' ';
-
-	private static final char	WALL		= '*';
-
-	private static final char	PORTRAIT	= '+';
-
-	private static final char	DOOR_NORTH	= '|';
-
-	private static final char	DOOR_EAST	= '_';
+	public void setSeed(long seed) {
+		this.seed = seed;
+	}
 }

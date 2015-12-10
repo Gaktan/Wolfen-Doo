@@ -14,12 +14,14 @@ import engine.util.Vector3;
  */
 public class Particle {
 
-	public Vector3		position;
-	public Color		color;
-	public Vector3		velocity;
-	protected float		scale;
-	protected float		life;
-	protected boolean	paused;
+	protected static final Vector3 GRAVITY = new Vector3(0, -0.4f, 0);
+	public Vector3 position;
+	public Color color;
+	public Vector3 velocity;
+	protected float scale;
+	protected float life;
+
+	protected boolean paused;
 
 	public Particle(float life, Vector3 position, float scale) {
 		this.position = position;
@@ -53,7 +55,7 @@ public class Particle {
 		array[2] = color.b;
 		fb.put(array);
 
-		Matrix4 model = engine.util.Matrix4.createInstancingMatrix(position, new Vector3(scale));
+		Matrix4 model = engine.util.Matrix4.createModelMatrix(position, new Vector3(scale));
 		model.store(fb);
 
 		fb.put(-1f);
@@ -102,6 +104,4 @@ public class Particle {
 
 		return true;
 	}
-
-	protected static final Vector3	GRAVITY	= new Vector3(0, -0.4f, 0);
 }

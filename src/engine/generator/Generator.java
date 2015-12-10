@@ -7,8 +7,10 @@ package engine.generator;
  */
 public abstract class Generator {
 
-	protected int	sizeX;
-	protected int	sizeY;
+	public static final int MIN_SIZE = 3;
+	protected int sizeX;
+
+	protected int sizeY;
 
 	/**
 	 * 
@@ -31,6 +33,4 @@ public abstract class Generator {
 	 * @return newly generated Map
 	 */
 	public abstract Map generate();
-
-	public static final int	MIN_SIZE	= 3;
 }

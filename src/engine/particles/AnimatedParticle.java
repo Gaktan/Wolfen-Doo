@@ -9,7 +9,7 @@ import engine.util.Vector3;
 
 public class AnimatedParticle extends Particle {
 
-	protected Animation	a_current;
+	protected Animation a_current;
 
 	public AnimatedParticle(float life, Vector3 position, float scale) {
 		super(life, position, scale);
@@ -28,7 +28,7 @@ public class AnimatedParticle extends Particle {
 		array[2] = color.b;
 		fb.put(array);
 
-		Matrix4 model = Matrix4.createInstancingMatrix(position, new Vector3(scale));
+		Matrix4 model = Matrix4.createModelMatrix(position, new Vector3(scale));
 		model.store(fb);
 
 		fb.put(a_current.getCurrentFrame());

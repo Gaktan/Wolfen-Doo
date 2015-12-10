@@ -12,10 +12,18 @@ import engine.util.MathUtil;
  */
 public class AnimationReader {
 
-	protected HashMap<String, Animation>	animations;
-	protected Animation						currentAnimation;
-	protected String						currentAnimationName;
-	protected boolean						framesFirst;
+	protected static final String COMMAND_ANIMATION = "animation";
+	protected static final String COMMAND_ANIMATION_NAME = "name";
+	protected static final String COMMAND_ANIMATION_FRAMES = "frames";
+	protected static final String COMMAND_ANIMATION_DELAYS = "delays";
+
+	protected HashMap<String, Animation> animations;
+
+	protected Animation currentAnimation;
+
+	protected String currentAnimationName;
+
+	protected boolean framesFirst;
 
 	public AnimationReader() {
 		framesFirst = false;
@@ -63,7 +71,8 @@ public class AnimationReader {
 	private void performAnimationCommand(String command, String value) {
 		if (command.equals(COMMAND_ANIMATION_NAME)) {
 			currentAnimationName = value;
-		} else if (command.equals(COMMAND_ANIMATION_FRAMES)) {
+		}
+		else if (command.equals(COMMAND_ANIMATION_FRAMES)) {
 			framesFirst = true;
 
 			String[] split = value.split(",");
@@ -75,7 +84,8 @@ public class AnimationReader {
 			}
 
 			currentAnimation.setFrames(frames);
-		} else if (command.equals(COMMAND_ANIMATION_DELAYS)) {
+		}
+		else if (command.equals(COMMAND_ANIMATION_DELAYS)) {
 			if (!framesFirst) {
 				System.err.println("You must declare frames first, then delays");
 				return;
@@ -131,12 +141,4 @@ public class AnimationReader {
 			animations.put(currentAnimationName, currentAnimation);
 		}
 	}
-
-	protected static final String	COMMAND_ANIMATION			= "animation";
-
-	protected static final String	COMMAND_ANIMATION_NAME		= "name";
-
-	protected static final String	COMMAND_ANIMATION_FRAMES	= "frames";
-
-	protected static final String	COMMAND_ANIMATION_DELAYS	= "delays";
 }

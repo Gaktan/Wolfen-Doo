@@ -13,7 +13,15 @@ import engine.game.ShaderProgram;
 
 public class ShapeCubeTexture extends TexturedShape {
 
-	protected int	orientation;
+	protected static IntBuffer i_n;
+
+	protected static IntBuffer i_s;
+
+	protected static IntBuffer i_e;
+
+	protected static IntBuffer i_w;
+
+	protected int orientation;
 
 	public ShapeCubeTexture(ShaderProgram shaderProgram, int textureID) {
 		super(shaderProgram, textureID);
@@ -133,12 +141,4 @@ public class ShapeCubeTexture extends TexturedShape {
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);
 	}
-
-	protected static IntBuffer	i_n;
-
-	protected static IntBuffer	i_s;
-
-	protected static IntBuffer	i_e;
-
-	protected static IntBuffer	i_w;
 }

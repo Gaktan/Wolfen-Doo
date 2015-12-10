@@ -6,54 +6,53 @@ import java.util.Random;
 /**
  * Class used to hold static functions related to math in general that are
  * missing from Java's default Math class
- * 
+ *
  * @author Gaktan
  */
 public final class MathUtil {
 
-	private static Random	random	= new Random();
+	private static Random random = new Random();
 
 	/**
-	 * Approaches a float to its goal
-	 * 
-	 * @param goal
-	 *            Goal to approach
-	 * @param current
-	 *            Current value
-	 * @param dt
-	 *            Delta time
-	 * @return Approached value
+	 * Approaches a float from start to end with a percentage
+	 *
+	 * @param end
+	 *            End
+	 * @param start
+	 *            Start
+	 * @param percent
+	 *            Percentage
+	 *
+	 * @return
 	 */
-	public static float approach(float goal, float current, float dt) {
-		float diff = goal - current;
-
-		if (diff > dt)
-			return current + dt;
-		if (diff < -dt)
-			return current - dt;
-
-		return goal;
+	public static float approach(float start, float end, float percent) {
+		return (start + percent * (end - start));
 	}
 
 	/**
-	 * Approaches a velocity to its goal
-	 * 
-	 * @param goal
-	 *            Goal to approach
-	 * @param velocity
-	 *            Current velocity
-	 * @param dt
-	 *            Delta time
-	 * @return Approached velocity
+	 * Approaches a float from start to end with a percentage
+	 *
+	 * @param end
+	 *            End
+	 * @param start
+	 *            Start
+	 * @param percent
+	 *            Percentage
+	 *
+	 * @return
 	 */
-	public static Vector3 approach(Vector3 goal, Vector3 velocity, float dt) {
+	public static Vector3 approach(Vector3 start, Vector3 end, float percent) {
 		Vector3 v = new Vector3();
 
-		v.setX(approach(goal.getX(), velocity.getX(), dt));
-		v.setY(approach(goal.getY(), velocity.getY(), dt));
-		v.setZ(approach(goal.getZ(), velocity.getZ(), dt));
+		v.setX(approach(start.getX(), end.getX(), percent));
+		v.setY(approach(start.getY(), end.getY(), percent));
+		v.setZ(approach(start.getZ(), end.getZ(), percent));
 
 		return v;
+	}
+
+	public static Vector3 smoothApproach(Vector3 start, Vector3 end, float percent) {
+		return approach(start, end, smoothStep(0f, 1f, percent));
 	}
 
 	public static float clamp(float f, float min, float max) {
@@ -62,7 +61,7 @@ public final class MathUtil {
 
 	/**
 	 * Parse string value into float
-	 * 
+	 *
 	 * @return 0.f if there was an error
 	 */
 	public static float parseFloat(String value) {
@@ -78,7 +77,7 @@ public final class MathUtil {
 
 	/**
 	 * Parse string value into int
-	 * 
+	 *
 	 * @return 0 if there was an error
 	 */
 	public static int parseInt(String value) {
@@ -94,7 +93,7 @@ public final class MathUtil {
 
 	/**
 	 * Gets a random number
-	 * 
+	 *
 	 * @param min
 	 *            Must be the same value as max
 	 * @param max
@@ -106,7 +105,7 @@ public final class MathUtil {
 
 	/**
 	 * Gets a random vector between range
-	 * 
+	 *
 	 * @param min
 	 *            Minimum values of (x, y, z)
 	 * @param max
@@ -124,7 +123,7 @@ public final class MathUtil {
 
 	/**
 	 * Gets a random number from a negative minimum and a positive maximum
-	 * 
+	 *
 	 * @param min
 	 *            Must be negative
 	 * @param max
@@ -136,7 +135,7 @@ public final class MathUtil {
 
 	/**
 	 * Round to certain number of decimals
-	 * 
+	 *
 	 * @param f
 	 *            Value to be rounded
 	 * @param decimalPlace

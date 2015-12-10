@@ -14,7 +14,7 @@ import engine.util.Vector3;
  */
 public class BitMapFont {
 
-	protected ShapeInstancedSprite	shape;
+	protected ShapeInstancedSprite shape;
 
 	public BitMapFont(ShapeInstancedSprite shape) {
 		this.shape = shape;

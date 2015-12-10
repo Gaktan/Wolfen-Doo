@@ -7,13 +7,13 @@ import engine.util.MathUtil;
 
 public class Item extends EntityActor {
 
-	protected float		timeStamp;
-	protected float		time;
-	protected boolean	goingUp;
-	protected float		bottomY;
-	protected float		topY;
+	protected float timeStamp;
+	protected float time;
+	protected boolean goingUp;
+	protected float bottomY;
+	protected float topY;
 
-	protected float		rot;
+	protected float rot;
 
 	public Item(Shape shape) {
 		super(shape);
@@ -52,7 +52,8 @@ public class Item extends EntityActor {
 				goingUp = false;
 				timeStamp = 0f;
 			}
-		} else {
+		}
+		else {
 			position.setY(topY - (percent * Math.abs(topY - bottomY)));
 
 			if (position.getY() == bottomY) {

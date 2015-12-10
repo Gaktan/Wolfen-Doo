@@ -9,7 +9,7 @@ import engine.util.TextureUtil;
 
 public abstract class TexturedShape extends Shape {
 
-	protected int	textureID;
+	protected int textureID;
 
 	public TexturedShape(ShaderProgram shaderProgram, int textureID) {
 		super(shaderProgram);

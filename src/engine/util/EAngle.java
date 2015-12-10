@@ -2,7 +2,7 @@ package engine.util;
 
 /**
  * Class used to represent euler angles
- * 
+ *
  * @author Gaktan
  */
 public class EAngle {
@@ -10,7 +10,7 @@ public class EAngle {
 	/**
 	 * Angle in degrees
 	 */
-	public float	pitch, yaw, roll;
+	public float pitch, yaw, roll;
 
 	public EAngle() {
 		pitch = yaw = roll = 0;
@@ -50,7 +50,7 @@ public class EAngle {
 
 	/**
 	 * Gets a direction vector from the euler angle
-	 * 
+	 *
 	 * @return Direction vector
 	 */
 	public Vector3 toVector() {

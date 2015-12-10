@@ -10,9 +10,9 @@ import engine.util.Matrix4;
 
 public class DisplayableInstancedList extends DisplayableList {
 
-	protected InstancedTexturedShape	shape;
-	protected boolean					doUpdate;
-	protected boolean					updatedList;
+	protected InstancedTexturedShape shape;
+	protected boolean doUpdate;
+	protected boolean updatedList;
 
 	public DisplayableInstancedList(InstancedTexturedShape shape, boolean doUpdate) {
 		this.shape = shape;
@@ -63,7 +63,7 @@ public class DisplayableInstancedList extends DisplayableList {
 				array[2] = a.color.b;
 				fb1.put(array);
 
-				Matrix4 model = Matrix4.createInstancingMatrix(a.position, a.rotation, a.scale);
+				Matrix4 model = Matrix4.createModelMatrix(a.position, a.rotation, a.scale);
 				model.store(fb1);
 
 				fb1.put(-1f);

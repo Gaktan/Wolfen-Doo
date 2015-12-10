@@ -1,30 +1,24 @@
 package engine.entities;
 
 import engine.util.EAngle;
-import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 
 /**
  * Camera class
- * 
+ *
  * @author Gaktan
  */
 public class Camera extends Entity {
 
-	protected Matrix4	projection;
-	protected Matrix4	view;
-	protected Matrix4	projectionXview;
-
-	protected Vector3	movementGoal;
-	protected Vector3	movement;
-
-	protected float		slipperyLevel	= 1000.0f;
+	protected Matrix4 projection;
+	protected Matrix4 view;
+	protected Matrix4 projectionXview;
 
 	// Camera rotation
-	protected EAngle	viewAngle;
+	protected EAngle viewAngle;
 
-	protected float		fov, aspect, zNear, zFar;
+	protected float fov, aspect, zNear, zFar;
 
 	public Camera(float fov, float aspect, float zNear, float zFar) {
 		super();
@@ -39,9 +33,6 @@ public class Camera extends Entity {
 
 		view = Matrix4.createIdentityMatrix();
 		projectionXview = new Matrix4();
-
-		movementGoal = new Vector3();
-		movement = new Vector3();
 
 		viewAngle = new EAngle();
 	}
@@ -77,7 +68,7 @@ public class Camera extends Entity {
 
 	/**
 	 * Used for non-shader rendering
-	 * 
+	 *
 	 * @return The projection matrix * view Matrix
 	 */
 	public Matrix4 getProjectionXview() {
@@ -141,26 +132,7 @@ public class Camera extends Entity {
 	public boolean update(float elapsedTime) {
 		boolean result = super.update(elapsedTime);
 
-		float dt = elapsedTime / slipperyLevel;
-
-		movement = MathUtil.approach(movementGoal, movement, dt);
-
-		Vector3 forward = viewAngle.toVector();
-
-		forward.setY(0f);
-		forward.normalize();
-
-		Vector3 right = Matrix4.Y_AXIS.getCross(forward);
-
-		forward.scale(movement.getX());
-		right.scale(movement.getZ());
-
-		float y = velocity.getY();
-		velocity = forward.getAdd(right);
-		velocity.setY(y);
-
 		projectionXview.set(projection.getMul(view));
-		// Matrix4.mul(projection, view, projectionXview);
 
 		return result;
 	}

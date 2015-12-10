@@ -8,7 +8,7 @@ import engine.game.ShaderProgram;
 
 public abstract class InstancedTexturedShape extends TexturedShape {
 
-	protected int	instancedVBO;
+	protected int instancedVBO;
 
 	public InstancedTexturedShape(ShaderProgram shaderProgram, int textureID) {
 		super(shaderProgram, textureID);

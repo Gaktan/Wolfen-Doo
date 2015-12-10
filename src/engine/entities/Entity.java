@@ -10,11 +10,11 @@ import engine.util.Vector3;
  */
 public abstract class Entity implements Displayable {
 
-	public Vector3	position;
-	public Vector3	velocity;
-	public Vector3	scale;
-	private boolean	solid;
-	private boolean	delete;
+	public Vector3 position;
+	public Vector3 velocity;
+	public Vector3 scale;
+	private boolean solid;
+	private boolean delete;
 
 	public Entity() {
 		position = new Vector3();

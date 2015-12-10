@@ -9,7 +9,9 @@ import java.util.LinkedList;
  */
 public class Fps {
 
-	private LinkedList<Long>	frames;
+	private static long ONE_SECOND = 1000000L * 1000L;
+
+	private LinkedList<Long> frames;
 
 	public Fps() {
 		frames = new LinkedList<>();
@@ -23,11 +25,10 @@ public class Fps {
 			long f = frames.getFirst();
 			if (time - f > ONE_SECOND) {
 				frames.remove();
-			} else
+			}
+			else
 				break;
 		}
 		return frames.size();
 	}
-
-	private static long	ONE_SECOND	= 1000000L * 1000L;
 }

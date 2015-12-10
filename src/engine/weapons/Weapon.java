@@ -6,7 +6,6 @@ import engine.Displayable;
 import engine.DisplayableText;
 import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
-import engine.entities.Camera;
 import engine.game.GameWolfen;
 import engine.util.MathUtil;
 import engine.util.Vector3;
@@ -23,38 +22,50 @@ public abstract class Weapon implements Displayable {
 
 	// SHOOTING --
 
-	protected Camera			camera;
-	protected float				cooldownTime;
+	// BOBBING --
+	protected static Vector3 POSITION_CENTER;
+	protected static Vector3 POSITION_LEFT;
 
-	protected float				currentCooldown;
-	protected int				shotsLeft;
-	protected int				shotsCapacity;
+	protected static Vector3 POSITION_RIGHT;
+	// 0f, -.25f
+	// TODO: change this
+	static {
+		POSITION_CENTER = new Vector3(0f, -.58f, 0f);
+		POSITION_LEFT = new Vector3(-0.2f, -.58f, 0f);
+		POSITION_RIGHT = new Vector3(0.2f, -.58f, 0f);
+	}
 
 	// RELOADING --
 
-	protected int				totalAmmo;
-	protected float				reloadingTime;
+	protected float cooldownTime;
+	protected float currentCooldown;
 
-	protected float				currentReloading;
-	protected DisplayableText	reloadingText;
+	protected int shotsLeft;
+	protected int shotsCapacity;
 
-	protected DisplayableText	ammoText;
-	protected BobbingState		bobbingState;
-	protected float				timeStamp;
+	protected int totalAmmo;
+	protected float reloadingTime;
+	protected float currentReloading;
 
-	protected float				bobbingTime;
-	protected Vector3			bendingCurve;
-	protected Vector3			lastKnownPosition;
+	protected DisplayableText reloadingText;
+	protected DisplayableText ammoText;
+	protected BobbingState bobbingState;
 
-	protected boolean			moving;
+	protected float timeStamp;
+	protected float bobbingTime;
+
+	protected Vector3 bendingCurve;
+
+	protected Vector3 lastKnownPosition;
+
+	protected boolean moving;
+
 	// WEAPON_SPRITE
-	protected AnimatedActor		weaponSprite;
+	protected AnimatedActor weaponSprite;
 
-	public Weapon(Camera camera, float coolDownTime, int shotsCapacity, float reloadingTime, int totalAmmo,
-			float bobbingTime) {
-		this.camera = camera;
+	public Weapon(float coolDownTime, int shotsCapacity, float reloadingTime, int totalAmmo, float bobbingTime) {
 
-		this.cooldownTime = coolDownTime;
+		cooldownTime = coolDownTime;
 		this.shotsCapacity = shotsCapacity;
 		this.reloadingTime = reloadingTime;
 		this.totalAmmo = totalAmmo;
@@ -99,7 +110,6 @@ public abstract class Weapon implements Displayable {
 	}
 
 	public void setMoving(boolean moving) {
-
 		if (this.moving == moving)
 			return;
 
@@ -120,6 +130,7 @@ public abstract class Weapon implements Displayable {
 		return reloadingText.size() + ammoText.size() + weaponSprite.size();
 	}
 
+	@Override
 	public boolean update(float dt) {
 		currentCooldown -= dt;
 
@@ -133,7 +144,8 @@ public abstract class Weapon implements Displayable {
 				lastKnownPosition = POSITION_RIGHT;
 				timeStamp = 0f;
 			}
-		} else if (bobbingState == BobbingState.TO_LEFT) {
+		}
+		else if (bobbingState == BobbingState.TO_LEFT) {
 			moveToPosition(lastKnownPosition, POSITION_LEFT);
 
 			if (timeStamp > bobbingTime) {
@@ -141,7 +153,8 @@ public abstract class Weapon implements Displayable {
 				lastKnownPosition = POSITION_LEFT;
 				timeStamp = 0f;
 			}
-		} else if (bobbingState == BobbingState.TO_CENTER) {
+		}
+		else if (bobbingState == BobbingState.TO_CENTER) {
 			moveToPosition(lastKnownPosition, POSITION_CENTER);
 
 			if (timeStamp > bobbingTime) {
@@ -183,11 +196,9 @@ public abstract class Weapon implements Displayable {
 	}
 
 	protected void moveToPosition(Vector3 start, Vector3 goal) {
-		Vector3 vDiff = goal.getSub(start);
-		// Vector3.sub(goal, start, vDiff);
-		float diff = vDiff.length();
+		float diff = goal.getSub(start).length();
 
-		Vector3 currentPos = MathUtil.approach(goal, start, (timeStamp / bobbingTime) * diff);
+		Vector3 currentPos = MathUtil.smoothApproach(start, goal, (timeStamp / bobbingTime));
 
 		Vector3 bending = new Vector3(bendingCurve);
 		bending.scale(diff);
@@ -219,7 +230,8 @@ public abstract class Weapon implements Displayable {
 		if (totalAmmo < 0) {
 			shotsLeft = shotsCapacity + totalAmmo;
 			totalAmmo = 0;
-		} else {
+		}
+		else {
 			shotsLeft = shotsCapacity;
 		}
 
@@ -229,20 +241,5 @@ public abstract class Weapon implements Displayable {
 
 	protected void updateAmmoText() {
 		ammoText.setText(shotsLeft + "/" + totalAmmo);
-	}
-
-	// BOBBING --
-	protected static Vector3	POSITION_CENTER;
-
-	protected static Vector3	POSITION_LEFT;
-
-	protected static Vector3	POSITION_RIGHT;
-
-	// 0f, -.25f
-	// TODO: change this
-	static {
-		POSITION_CENTER = new Vector3(0f, -.575f, 0f);
-		POSITION_LEFT = new Vector3(-0.2f, -.575f, 0f);
-		POSITION_RIGHT = new Vector3(0.2f, -.575f, 0f);
 	}
 }

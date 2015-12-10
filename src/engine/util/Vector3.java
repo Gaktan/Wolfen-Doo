@@ -7,7 +7,7 @@ package engine.util;
  */
 public class Vector3 {
 
-	protected float	x, y, z;
+	protected float x, y, z;
 
 	public Vector3() {
 		this(0, 0, 0);
@@ -216,7 +216,7 @@ public class Vector3 {
 
 	/**
 	 * Gets length of the Vector
-	 * 
+	 *
 	 * @return
 	 */
 	public float length() {
@@ -225,7 +225,7 @@ public class Vector3 {
 
 	/**
 	 * Gets length² of the Vector
-	 * 
+	 *
 	 * @return
 	 */
 	public float lengthSquared() {
@@ -246,6 +246,8 @@ public class Vector3 {
 	 */
 	public void normalize() {
 		float length = length();
+		if (length == 0)
+			return;
 
 		x /= length;
 		y /= length;

@@ -6,7 +6,7 @@ import engine.game.ShaderProgram;
 
 public class ShapeInstancedSprite extends ShapeInstancedQuadTexture {
 
-	protected int	imageWidth, imageHeight, spritesWidth, spritesHeight;
+	protected int imageWidth, imageHeight, spritesWidth, spritesHeight;
 
 	public ShapeInstancedSprite(ShaderProgram shaderProgram, String texture, int imageWidth, int imageHeight,
 			int spritesWidth, int spritesHeight) {

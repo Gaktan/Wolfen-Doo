@@ -27,9 +27,9 @@ public class Map implements Displayable {
 
 	public class DoorShapeInfo extends ShapeInfo {
 
-		protected Vector3	openingPosition;
-		protected int		orientation;
-		protected float		time;
+		protected Vector3 openingPosition;
+		protected int orientation;
+		protected float time;
 
 		public DoorShapeInfo(Shape shape, boolean solid, Vector3 openingPosition, int orientation, float time) {
 
@@ -42,9 +42,9 @@ public class Map implements Displayable {
 
 	public class ShapeInfo {
 
-		protected Shape		shape;
-		protected int		amount;
-		protected boolean	solid;
+		protected Shape shape;
+		protected int amount;
+		protected boolean solid;
 
 		public ShapeInfo(Shape shape, boolean solid) {
 			this.shape = shape;
@@ -57,20 +57,16 @@ public class Map implements Displayable {
 		}
 	}
 
-	private int								sizeX;
+	private int sizeX;
+	private int sizeY;
 
-	private int								sizeY;
+	protected char map[][];
+	protected HashMap<Character, ShapeInfo> shapeMap;
 
-	protected char							map[][];
-	protected HashMap<Character, ShapeInfo>	shapeMap;
-
-	protected DisplayableList				actorsList;
-
-	protected EntityActor					sky;
-
-	protected boolean						delete;
-
-	protected Vector3						startingPoint;
+	protected DisplayableList actorsList;
+	protected EntityActor sky;
+	protected boolean delete;
+	protected Vector3 startingPoint;
 
 	public Map() {
 		this(20, 20);
@@ -87,12 +83,12 @@ public class Map implements Displayable {
 
 	/**
 	 * Builds a map on a given string
-	 * 
+	 *
 	 * @param st
 	 */
 	public void buildMapFromString(String st) {
 
-		System.out.println(sizeX + ", " + sizeY);
+		setSize(sizeX, sizeY);
 
 		for (int i = 0; i < sizeX * sizeY; i++) {
 			char c = st.charAt(i);
@@ -122,7 +118,8 @@ public class Map implements Displayable {
 				door.position = new Vector3(x, 0, y);
 				if ((doorInfo.orientation & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
 					door.scale.setX(0.1f);
-				} else {
+				}
+				else {
 					door.scale.setZ(0.1f);
 				}
 
@@ -162,7 +159,7 @@ public class Map implements Displayable {
 					color[2] = 1.0f;
 					fb.put(color);
 
-					Matrix4 model = Matrix4.createInstancingMatrix(new Vector3(i, 0f, j));
+					Matrix4 model = Matrix4.createModelMatrix(new Vector3(i, 0f, j));
 					model.store(fb);
 
 					fb.put(-1f);
@@ -268,7 +265,7 @@ public class Map implements Displayable {
 
 	/**
 	 * Casts a ray to find the nearest entity in its direction
-	 * 
+	 *
 	 * @param position
 	 *            Position to cast the ray from
 	 * @param ray
@@ -362,8 +359,10 @@ public class Map implements Displayable {
 	@Override
 	public boolean update(float dt) {
 
-		int x = (int) (GameWolfen.getInstance().camera.position.getX() + 0.5f);
-		int z = (int) (GameWolfen.getInstance().camera.position.getZ() + 0.5f);
+		int x = (int) (GameWolfen.getInstance().player.position.getX() + 0.5f);
+		int z = (int) (GameWolfen.getInstance().player.position.getZ() + 0.5f);
+
+		AABBRectangle playerAABB = GameWolfen.getInstance().player.collisionRectangle;
 
 		for (int i = x - 1; i < x + 2; i++) {
 			for (int j = z - 1; j < z + 2; j++) {
@@ -381,18 +380,14 @@ public class Map implements Displayable {
 						continue;
 
 					rect = new AABBRectangle(new Vector3(i, 0, j));
-				} else {
+				}
+				else {
 					rect = new AABBRectangle(e);
 				}
 
-				AABBRectangle cameraAABB = new AABBRectangle(GameWolfen.getInstance().camera);
-
-				if (cameraAABB.collide(rect)) {
-					Vector3 resolution = cameraAABB.resolveCollision(rect);
-					Vector3 cameraPos = GameWolfen.getInstance().camera.position;
-
-					cameraPos.add(resolution);
-					// Vector3.add(cameraPos, resolution, cameraPos);
+				if (playerAABB.collide(rect)) {
+					Vector3 resolution = playerAABB.resolveCollision(rect);
+					GameWolfen.getInstance().player.position.add(resolution);
 				}
 			}
 		}

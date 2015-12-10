@@ -12,7 +12,7 @@ import engine.util.Vector3;
 
 /**
  * Works like a wall, but can be opened
- * 
+ *
  * @author Gaktan
  */
 public class EntityDoor extends EntityWall implements ControlsListener {
@@ -24,15 +24,15 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 		OPEN, OPENING, CLOSED, CLOSING
 	}
 
-	protected DoorState	state;
+	protected DoorState state;
 
-	protected Vector3	originialPosition;
-	protected Vector3	openingPosition;
-	protected Vector3	lastKnownPosition;
+	protected Vector3 originialPosition;
+	protected Vector3 openingPosition;
+	protected Vector3 lastKnownPosition;
 
-	protected float		openingTime;
+	protected float openingTime;
 
-	protected float		timeStamp;
+	protected float timeStamp;
 
 	public EntityDoor(ShapeCubeTexture shape) {
 		super(shape);
@@ -42,7 +42,7 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 		originialPosition = new Vector3();
 		openingPosition = new Vector3();
 
-		lastKnownPosition = originialPosition;
+		lastKnownPosition = new Vector3(originialPosition);
 
 		state = DoorState.CLOSED;
 		openingTime = 0.5f;
@@ -84,7 +84,7 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 	public void onKeyRelease(int key) {
 		if (key == Keyboard.KEY_E) {
 
-			Vector3 diff = originialPosition.getSub(GameWolfen.getInstance().camera.position);
+			Vector3 diff = originialPosition.getSub(GameWolfen.getInstance().player.position);
 			// Vector3.sub(originialPosition,
 			// GameWolfen.getInstance().camera.position, diff);
 
@@ -93,7 +93,7 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 
 			diff.normalize();
 
-			Vector3 vec1 = GameWolfen.getInstance().camera.getViewAngle().toVector();
+			Vector3 vec1 = GameWolfen.getInstance().player.getViewAngle().toVector();
 			float angle = (float) ((Math.atan2(diff.getZ(), diff.getX()) - Math.atan2(vec1.getZ(), vec1.getX())) + Math.PI / 4);
 			angle -= Math.PI;
 
@@ -130,7 +130,7 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 	 * Toggle the door's state
 	 */
 	public void toggle() {
-		lastKnownPosition = position;
+		lastKnownPosition.set(position);
 		timeStamp = 0;
 
 		if (state == DoorState.CLOSED || state == DoorState.CLOSING) {
@@ -155,29 +155,31 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 			return result;
 		}
 
-		timeStamp += dt;
-
 		if (state == DoorState.OPENING) {
-			Vector3 newPos = MathUtil.approach(openingPosition, lastKnownPosition, timeStamp / openingTime * 0.01f);
+			Vector3 newPos = MathUtil.smoothApproach(lastKnownPosition, openingPosition, timeStamp / openingTime);
 			position.set(newPos);
 
-			if (position.equals(openingPosition)) {
+			if (timeStamp > openingTime) {
+				position.set(openingPosition);
 				state = DoorState.OPEN;
 				timeStamp = 0f;
-				lastKnownPosition = openingPosition;
+				lastKnownPosition.set(openingPosition);
 			}
 		}
 
 		else if (state == DoorState.CLOSING) {
-			Vector3 newPos = MathUtil.approach(originialPosition, lastKnownPosition, timeStamp / openingTime * 0.01f);
+			Vector3 newPos = MathUtil.smoothApproach(lastKnownPosition, originialPosition, timeStamp / openingTime);
 			position.set(newPos);
 
-			if (position.equals(originialPosition)) {
+			if (timeStamp > openingTime) {
+				position.set(originialPosition);
 				state = DoorState.CLOSED;
 				timeStamp = 0f;
-				lastKnownPosition = originialPosition;
+				lastKnownPosition.set(originialPosition);
 			}
 		}
+
+		timeStamp += dt;
 
 		return result;
 	}

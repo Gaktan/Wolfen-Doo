@@ -17,12 +17,30 @@ import engine.util.Vector3;
  */
 public class MapReader {
 
-	protected String		mapData;
-	protected String		name;
-	protected int			width;
-	protected int			height;
-	protected Map			map;
-	protected EntityActor	sky;
+	// Commands
+	protected static final String COMMAND_NAME = "name";
+	protected static final String COMMAND_WIDTH = "width";
+	protected static final String COMMAND_HEIGHT = "height";
+	protected static final String COMMAND_BILLBOARD = "billboard";
+	protected static final String COMMAND_WALL = "wall";
+	protected static final String COMMAND_ANIMATION = "animation";
+
+	protected static final String COMMAND_DOOR = "door";
+
+	protected static final String COMMAND_MAP = "map";
+
+	protected static final String COMMAND_SKY = "sky";
+
+	protected String mapData;
+
+	protected String name;
+
+	protected int width;
+
+	protected int height;
+
+	protected Map map;
+	protected EntityActor sky;
 
 	public MapReader() {
 	}
@@ -163,22 +181,4 @@ public class MapReader {
 
 		sky = new EntityActor(skyShape);
 	}
-
-	// Commands
-	protected static final String	COMMAND_NAME		= "name";
-	protected static final String	COMMAND_WIDTH		= "width";
-
-	protected static final String	COMMAND_HEIGHT		= "height";
-
-	protected static final String	COMMAND_BILLBOARD	= "billboard";
-
-	protected static final String	COMMAND_WALL		= "wall";
-
-	protected static final String	COMMAND_ANIMATION	= "animation";
-
-	protected static final String	COMMAND_DOOR		= "door";
-
-	protected static final String	COMMAND_MAP			= "map";
-
-	protected static final String	COMMAND_SKY			= "sky";
 }

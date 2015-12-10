@@ -10,11 +10,13 @@ import engine.util.Vector3;
 
 public class CustomAnimatedActorExample extends AnimatedActor {
 
-	protected Vector3		lookingPoint;
-	protected Vector3		lookingDirection;
-	protected EntityLine	dirLine;
+	private static final float PI_OVER_2 = 3.14159f / 2.f;
+	protected Vector3 lookingPoint;
+	protected Vector3 lookingDirection;
 
-	protected int			orientation;
+	protected EntityLine dirLine;
+
+	protected int orientation;
 
 	public CustomAnimatedActorExample(ShapeSprite shape, String file, String currentAnimation) {
 		super(shape, file, currentAnimation);
@@ -40,7 +42,7 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		dirLine.update(dt);
 		lookingPoint.set(position.getAdd(lookingDirection));
 
-		Vector3 vec1 = GameWolfen.getInstance().camera.getViewAngle().toVector();
+		Vector3 vec1 = GameWolfen.getInstance().current_camera.getViewAngle().toVector();
 
 		float angle = (float) (Math.atan2(lookingDirection.getZ(), lookingDirection.getX()) - Math.atan2(vec1.getZ(),
 				vec1.getX())) + PI_OVER_2 / 2f;
@@ -50,11 +52,14 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 
 		if (angle < PI_OVER_2) {
 			changeOrientation(Orientation.EAST);
-		} else if (angle >= PI_OVER_2 && angle < Math.PI) {
+		}
+		else if (angle >= PI_OVER_2 && angle < Math.PI) {
 			changeOrientation(Orientation.SOUTH);
-		} else if (angle >= Math.PI && angle < PI_OVER_2 * 3.f) {
+		}
+		else if (angle >= Math.PI && angle < PI_OVER_2 * 3.f) {
 			changeOrientation(Orientation.WEST);
-		} else {
+		}
+		else {
 			changeOrientation(Orientation.NORTH);
 		}
 
@@ -83,6 +88,4 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		break;
 		}
 	}
-
-	private static final float	PI_OVER_2	= 3.14159f / 2.f;
 }

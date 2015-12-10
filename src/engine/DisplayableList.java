@@ -6,15 +6,15 @@ import java.util.List;
 
 /**
  * Acts as an ArrayList for Displayables
- * 
+ *
  * @author Gaktan
  */
 public class DisplayableList implements Displayable, Iterable<Displayable> {
 
-	public List<Displayable>	list;
-	private List<Displayable>	toBeAdded;
-	private List<Displayable>	toBeDeleted;
-	private boolean				delete	= false;
+	public List<Displayable> list;
+	private List<Displayable> toBeAdded;
+	private List<Displayable> toBeDeleted;
+	private boolean delete = false;
 
 	public DisplayableList() {
 		list = new ArrayList<Displayable>();
@@ -24,7 +24,7 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 
 	/**
 	 * Adds a displayable to the list
-	 * 
+	 *
 	 * @param d
 	 *            Displayable to add
 	 */
@@ -37,6 +37,14 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 		delete = true;
 	}
 
+	public Displayable get(int i) {
+		return list.get(i);
+	}
+
+	public int indexOf(Displayable d) {
+		return list.indexOf(d);
+	}
+
 	@Override
 	public Iterator<Displayable> iterator() {
 		return list.iterator();
@@ -44,7 +52,7 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 
 	/**
 	 * Removes a displayable from the list
-	 * 
+	 *
 	 * @param d
 	 *            Displayable to remove
 	 */
@@ -59,6 +67,7 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 		}
 	}
 
+	@Override
 	public int size() {
 		int size = 0;
 

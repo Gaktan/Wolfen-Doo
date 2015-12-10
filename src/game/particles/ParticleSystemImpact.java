@@ -11,8 +11,8 @@ import engine.util.Vector3;
 
 public class ParticleSystemImpact extends ParticleSystem {
 
-	private Vector3	direction;
-	private Vector3	impactNormal;
+	private Vector3 direction;
+	private Vector3 impactNormal;
 
 	public ParticleSystemImpact(Vector3 position, Vector3 direction, Vector3 impactNormal) {
 		super(position, 1);

@@ -1,8 +1,8 @@
 package game.weapons;
 
 import engine.animations.AnimatedActor;
-import engine.entities.Camera;
 import engine.game.GameWolfen;
+import engine.game.Player;
 import engine.game.ShaderProgram;
 import engine.shapes.ShapeSprite;
 import engine.util.EAngle;
@@ -13,8 +13,12 @@ import game.entities.EntityProjctile;
 
 public class WeaponRevolver extends Weapon {
 
-	public WeaponRevolver(Camera camera) {
-		super(camera, 400f, 6, 1000f, 40, 600f);
+	protected Player player;
+
+	public WeaponRevolver(Player player) {
+		super(400f, 6, 1000f, 40, 600f);
+
+		this.player = player;
 
 		updateAmmoText();
 
@@ -34,11 +38,11 @@ public class WeaponRevolver extends Weapon {
 		if (!canFire())
 			return;
 
-		Vector3 linePosition = new Vector3(camera.getPosition());
+		Vector3 linePosition = new Vector3(player.position);
 
 		linePosition.addY(MathUtil.random(-0.1f, 0));
 
-		EAngle angle = new EAngle(camera.getViewAngle());
+		EAngle angle = new EAngle(player.getViewAngle());
 
 		angle.yaw -= 90;
 		angle.pitch = -angle.pitch;

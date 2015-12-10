@@ -6,20 +6,18 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import engine.entities.Camera;
-
 /**
- * Dirty class used to handle controls <br>
- * To be redone at some point
- * 
+ * Class used to send Controls notifications to MouseListener and
+ * ControlsListener listeners
+ *
  * @author Gaktan
  */
 public class Controls {
 
-	protected static ArrayList<ControlsListener>	controlsListeners;
-	protected static ArrayList<MouseListener>		mouseListeners;
+	protected static ArrayList<ControlsListener> controlsListeners;
+	protected static ArrayList<MouseListener> mouseListeners;
 
-	protected static String							locale;
+	protected static String locale;
 
 	static {
 		InputContext context = InputContext.getInstance();
@@ -28,6 +26,9 @@ public class Controls {
 
 		controlsListeners = new ArrayList<ControlsListener>();
 		mouseListeners = new ArrayList<MouseListener>();
+
+		Mouse.setGrabbed(true);
+		Mouse.setClipMouseCoordinatesToWindow(false);
 	}
 
 	public static void addControlsListener(ControlsListener l) {
@@ -42,7 +43,7 @@ public class Controls {
 		return locale;
 	}
 
-	public static void update(Camera camera, float dt) {
+	public static void update(float dt) {
 
 		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
@@ -60,9 +61,26 @@ public class Controls {
 			}
 		}
 
+		while (Mouse.next()) {
+			int button = Mouse.getEventButton();
+
+			if (button < 0)
+				break;
+
+			if (Mouse.getEventButtonState()) {
+				for (MouseListener l : mouseListeners) {
+					l.onButtonPress(button);
+				}
+			}
+			else {
+				for (MouseListener l : mouseListeners) {
+					l.onButtonRelease(button);
+				}
+			}
+		}
+
 		int mouseX = Mouse.getX();
 		int mouseY = Mouse.getY();
-
 		for (MouseListener l : mouseListeners) {
 			l.onMouseMoved(mouseX, mouseY);
 		}

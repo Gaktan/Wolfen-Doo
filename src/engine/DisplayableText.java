@@ -21,22 +21,22 @@ public class DisplayableText implements Displayable {
 		LEFT, CENTER, RIGHT
 	}
 
-	protected String				text;
-	protected Vector3				position;
-	protected BitMapFont			font;
-	protected float					textSize;
-	protected ShapeInstancedSprite	shape;
+	protected String text;
+	protected Vector3 position;
+	protected BitMapFont font;
+	protected float textSize;
+	protected ShapeInstancedSprite shape;
 
-	protected Color					color;
+	protected Color color;
 
-	protected int					charCount;
-	protected TextPosition			textPosition;
-	protected boolean				hasDepth;
-	protected boolean				delete;
+	protected int charCount;
+	protected TextPosition textPosition;
+	protected boolean hasDepth;
+	protected boolean delete;
 
-	protected boolean				updatedText;
+	protected boolean updatedText;
 
-	protected float					rotation;
+	protected float rotation;
 
 	public DisplayableText(Vector3 position, String text, BitMapFont font, float textSize, Color color,
 			TextPosition textPosition, boolean hasDepth) {
@@ -129,7 +129,8 @@ public class DisplayableText implements Displayable {
 		if (textPosition == TextPosition.RIGHT) {
 			startingPosition.addX(-text.length() * 0.085f * textSize);
 			startingPosition.addY(0.09f * textSize);
-		} else if (textPosition == TextPosition.CENTER) {
+		}
+		else if (textPosition == TextPosition.CENTER) {
 			startingPosition.addX((-text.length() * 0.08f * textSize) * 0.5f);
 			startingPosition.addY((0.08f * textSize) * 0.5f);
 		}
@@ -163,7 +164,8 @@ public class DisplayableText implements Displayable {
 					model.rotate(rotation, Matrix4.Y_AXIS);
 					model.translate(position.getNegate());
 					model.translate(pos);
-				} else {
+				}
+				else {
 					model.setPosition(pos);
 				}
 				model.scale(new Vector3(0.1f * textSize));

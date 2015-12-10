@@ -41,13 +41,15 @@ import engine.util.Vector3;
  * @author Sri Harsha Chilakapati
  */
 public class ShaderProgram {
-	// ProgramID
-	protected int	programID;
+	protected static final HashMap<String, ShaderProgram> allPrograms = new HashMap<String, ShaderProgram>();
 
+	// ProgramID
+	protected int programID;
 	// Vertex Shader ID
-	protected int	vertexShaderID;
+	protected int vertexShaderID;
+
 	// Fragment Shader ID
-	protected int	fragmentShaderID;
+	protected int fragmentShaderID;
 
 	public ShaderProgram(String name) {
 		this(name, name, name);
@@ -224,8 +226,6 @@ public class ShaderProgram {
 	public void setUniform(String name, Vector4f v) {
 		glUniform4f(glGetUniformLocation(programID, name), v.x, v.y, v.z, v.w);
 	}
-
-	protected static final HashMap<String, ShaderProgram>	allPrograms	= new HashMap<String, ShaderProgram>();
 
 	public static Set<Entry<String, ShaderProgram>> getAllPrograms() {
 		return allPrograms.entrySet();

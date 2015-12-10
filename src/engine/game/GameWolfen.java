@@ -27,29 +27,35 @@ import game.entities.RotatingText;
 import game.particles.AnimatedParticleSystemTest;
 import game.weapons.WeaponRevolver;
 
-@SuppressWarnings("unused")
 public class GameWolfen extends Game {
 
-	public Camera					camera;
+	private static final float MAX_DELTA = 40.f;
+	private static final float Z_NEAR = 0.1f;
+	private static final float Z_FAR = 100.0f;
 
-	public DisplayableList			ac;
-	public Map						map;
+	public Camera current_camera;
 
-	public DisplayableInstancedList	bulletHoles;
+	public Player player;
 
-	public BitMapFont				bmf;
-	public DisplayableText			textPos;
-	public DisplayableText			textFps;
+	public DisplayableList ac;
+	public Map map;
+	public DisplayableInstancedList bulletHoles;
 
 	/* TEMP STUFF */
 
-	public DisplayableText			textEntities;
-	public DisplayableText			textMemory;
-	public long						elapsedTime;
-	public Fps						fps;
-	public long						l_fps;
+	public BitMapFont bmf;
+	public DisplayableText textPos;
+	public DisplayableText textFps;
+	public DisplayableText textEntities;
+	public DisplayableText textMemory;
 
-	public Weapon					currentWeapon;
+	public long elapsedTime;
+	public Fps fps;
+	public long l_fps;
+
+	public Weapon currentWeapon;
+
+	public DungeonGenerator generator;
 
 	@Override
 	public void dispose() {
@@ -83,21 +89,24 @@ public class GameWolfen extends Game {
 		GL11.glFrontFace(GL11.GL_CW);
 
 		ShaderProgram shaderProgramTex = new ShaderProgram("texture");
-		ShaderProgram shaderProgramColor = new ShaderProgram("color");
+		new ShaderProgram("color");
 		ShaderProgram shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
-		ShaderProgram shaderProgramTexCamera = new ShaderProgram("texture_camera", "texture", "texture_camera");
+		new ShaderProgram("texture_camera", "texture", "texture_camera");
 		ShaderProgram shaderProgramTexCameraInstanced = new ShaderProgram("texture_camera_instanced", "texture",
 				"texture_camera_instanced");
 		ShaderProgram shaderProgramTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture",
 				"texture_billboard_instanced");
 		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", "texture_instanced");
-		ShaderProgram shaderProgramScreen = new ShaderProgram("texture_camera", "screen", "screen");
+		new ShaderProgram("texture_camera", "screen", "screen");
 
 		FrameBuffer.getInstance().init();
 
-		camera = new Player(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
-		// camera.setPosition(new Vector3(2, 0, 2));
-		setZfar(camera.getzFar());
+		current_camera = new Camera(45.0f, (float) getWidth() / (float) getHeight(), Z_NEAR, Z_FAR);
+		setZfar(current_camera.getzFar());
+
+		player = new Player(current_camera);
+
+		setZfar(current_camera.getzFar());
 
 		ac = new DisplayableList();
 
@@ -105,8 +114,10 @@ public class GameWolfen extends Game {
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
-		map = new DungeonGenerator(30, 4, 8, 4, false).generate();
-		camera.setPosition(map.getStartingPoint());
+		generator = new DungeonGenerator(30, 4, 8, 4, false);
+
+		map = generator.generate();
+		player.position.set(map.getStartingPoint());
 
 		// MapReader mr = new MapReader();
 		// map = mr.createMap("01.map");
@@ -169,7 +180,7 @@ public class GameWolfen extends Game {
 		ParticleSystem psTest = new AnimatedParticleSystemTest(new Vector3(4, 0, 4), 16000, shapeExplosion);
 		ac.add(psTest);
 
-		currentWeapon = new WeaponRevolver(camera);
+		currentWeapon = new WeaponRevolver(player);
 
 		bulletHoles = new DisplayableInstancedList(new ShapeInstancedQuadTexture(shaderProgramTexInstanced,
 				"bullet_impact.png"), false);
@@ -184,16 +195,18 @@ public class GameWolfen extends Game {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		// GL11.glClearColor(0, 0, 0, 1);
 
-		camera.apply();
+		current_camera.apply();
 
 		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
 			ShaderProgram program = entry.getValue();
 
 			program.bind();
-			program.setUniform("u_projection", camera.getProjection());
-			program.setUniform("u_view", camera.getMatrixView());
+			program.setUniform("u_projection", current_camera.getProjection());
+			program.setUniform("u_view", current_camera.getMatrixView());
 		}
 		ShaderProgram.unbind();
+
+		player.render();
 
 		ac.render();
 
@@ -216,9 +229,11 @@ public class GameWolfen extends Game {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 
-		if (camera != null)
-			camera.setAspect(getWidth() / getHeight());
+		if (current_camera != null)
+			current_camera.setAspect(getWidth() / getHeight());
 	}
+
+	public long generationWaitingTime;
 
 	@Override
 	public void update(float elapsedTime) {
@@ -230,13 +245,23 @@ public class GameWolfen extends Game {
 		// Timescale!
 		// elapsedTime *= 0.1f;
 
-		Controls.update(camera, elapsedTime);
+		/*
+		 * generationWaitingTime += elapsedTime;
+		 * 
+		 * if (generationWaitingTime > 1000) {
+		 * generator.setSeed(generator.getSeed() + 1);
+		 * 
+		 * ac.remove(map); map = generator.generate(); ac.add(map);
+		 * generationWaitingTime = 0; }
+		 */
+		Controls.update(elapsedTime);
 
-		camera.update(elapsedTime);
+		current_camera.update(elapsedTime);
+		player.update(elapsedTime);
 
 		ac.update(elapsedTime);
 
-		textPos.setText(Math.round(camera.position.getX()) + ", " + Math.round(camera.position.getZ()));
+		textPos.setText(Math.round(player.position.getX()) + ", " + Math.round(player.position.getZ()));
 		textFps.setText("fps : " + l_fps);
 		textEntities.setText("Displaying : " + ac.size());
 
@@ -258,7 +283,7 @@ public class GameWolfen extends Game {
 	}
 
 	protected void setZfar(float zFar) {
-		camera.setzFar(zFar);
+		current_camera.setzFar(zFar);
 
 		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
 			ShaderProgram program = entry.getValue();
@@ -269,12 +294,6 @@ public class GameWolfen extends Game {
 
 		ShaderProgram.unbind();
 	}
-
-	private static final float	MAX_DELTA	= 20.f;
-
-	private static final float	Z_NEAR		= 0.1f;
-
-	private static final float	Z_FAR		= 100.0f;
 
 	public static GameWolfen getInstance() {
 		return (GameWolfen) instance;

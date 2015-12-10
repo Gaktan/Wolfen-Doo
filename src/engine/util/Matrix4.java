@@ -12,10 +12,22 @@ import org.lwjgl.BufferUtils;
  */
 public class Matrix4 {
 
-	protected float	m00, m10, m20, m30;
-	protected float	m01, m11, m21, m31;
-	protected float	m02, m12, m22, m32;
-	protected float	m03, m13, m23, m33;
+	/**
+	 * Axis used for rotation
+	 */
+	public static final Vector3 X_AXIS;
+	public static final Vector3 Y_AXIS;
+	public static final Vector3 Z_AXIS;
+	static {
+		X_AXIS = new Vector3(1, 0, 0);
+		Y_AXIS = new Vector3(0, 1, 0);
+		Z_AXIS = new Vector3(0, 0, 1);
+	}
+
+	protected float m00, m10, m20, m30;
+	protected float m01, m11, m21, m31;
+	protected float m02, m12, m22, m32;
+	protected float m03, m13, m23, m33;
 
 	public Matrix4() {
 	}
@@ -316,6 +328,17 @@ public class Matrix4 {
 		return buffer;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(m00).append(' ').append(m10).append(' ').append(m20).append(' ').append(m30).append('\n');
+		sb.append(m01).append(' ').append(m11).append(' ').append(m21).append(' ').append(m31).append('\n');
+		sb.append(m02).append(' ').append(m12).append(' ').append(m22).append(' ').append(m32).append('\n');
+		sb.append(m03).append(' ').append(m13).append(' ').append(m23).append(' ').append(m33);
+
+		return sb.toString();
+	}
+
 	/**
 	 * Translates Matrix to given position
 	 *
@@ -327,21 +350,6 @@ public class Matrix4 {
 		m31 += m01 * pos.x + m11 * pos.y + m21 * pos.z;
 		m32 += m02 * pos.x + m12 * pos.y + m22 * pos.z;
 		m33 += m03 * pos.x + m13 * pos.y + m23 * pos.z;
-	}
-
-	/**
-	 * Axis used for rotation
-	 */
-	public static final Vector3	X_AXIS;
-
-	public static final Vector3	Y_AXIS;
-
-	public static final Vector3	Z_AXIS;
-
-	static {
-		X_AXIS = new Vector3(1, 0, 0);
-		Y_AXIS = new Vector3(0, 1, 0);
-		Z_AXIS = new Vector3(0, 0, 1);
 	}
 
 	/**
@@ -373,31 +381,31 @@ public class Matrix4 {
 	}
 
 	/**
-	 * Creates a Matrix used for Instancing
+	 * Creates a model Matrix used for shaders
 	 *
 	 * @param pos
 	 *            Position
-	 * @return Matrix formatted for Instancing
+	 * @return model Matrix formatted for shaders
 	 */
-	public static Matrix4 createInstancingMatrix(Vector3 pos) {
-		return createInstancingMatrix(pos, new Vector3(1f));
+	public static Matrix4 createModelMatrix(Vector3 pos) {
+		return createModelMatrix(pos, new Vector3(1f));
 	}
 
 	/**
-	 * Creates a Matrix used for Instancing
+	 * Creates a model Matrix used for shaders
 	 *
 	 * @param pos
 	 *            Position
 	 * @param scale
 	 *            Scale
-	 * @return Matrix formatted for Instancing
+	 * @return model Matrix formatted for shaders
 	 */
-	public static Matrix4 createInstancingMatrix(Vector3 pos, Vector3 scale) {
-		return createInstancingMatrix(pos, new Vector3(), scale);
+	public static Matrix4 createModelMatrix(Vector3 pos, Vector3 scale) {
+		return createModelMatrix(pos, new Vector3(), scale);
 	}
 
 	/**
-	 * Creates a Matrix used for Instancing
+	 * Creates a model Matrix used for shaders
 	 *
 	 * @param pos
 	 *            Position
@@ -405,9 +413,9 @@ public class Matrix4 {
 	 *            Rotation
 	 * @param scale
 	 *            Scale
-	 * @return Matrix formatted for Instancing
+	 * @return model Matrix formatted for Instancing
 	 */
-	public static Matrix4 createInstancingMatrix(Vector3 pos, Vector3 rot, Vector3 scale) {
+	public static Matrix4 createModelMatrix(Vector3 pos, Vector3 rot, Vector3 scale) {
 		Matrix4 model = createIdentityMatrix();
 
 		model.translate(pos);
@@ -432,32 +440,45 @@ public class Matrix4 {
 	 *            Up Vector
 	 */
 	public static Matrix4 createLookAt(Vector3 eye, Vector3 center, Vector3 up) {
+		/*
+		 * Vector3 f = center.getSub(eye); f.normalize();
+		 * 
+		 * Vector3 u = up.getNormalize();
+		 * 
+		 * Vector3 s = f.getCross(u); s.normalize();
+		 * 
+		 * u = s.getCross(f);
+		 * 
+		 * Matrix4 result = new Matrix4(); result.m00 = s.getX(); result.m10 =
+		 * s.getY(); result.m20 = s.getZ(); result.m01 = u.getX(); result.m11 =
+		 * u.getY(); result.m21 = u.getZ(); result.m02 = -f.getX(); result.m12 =
+		 * -f.getY(); result.m22 = -f.getZ();
+		 * 
+		 * result.translate(eye.getNegate()); //
+		 * Matrix4.translate(eye.getNegate(), result, result);
+		 * 
+		 * return result;
+		 */
 
-		Vector3 f = center.getSub(eye);
-		f.normalize();
+		Vector3 dir = center.getSub(eye);
+		Vector3 z = new Vector3(dir);
+		z.normalize();
 
-		Vector3 u = up.getNormalize();
+		Vector3 x = up.getCross(z);
+		x.normalize();
 
-		Vector3 s = f.getCross(u);
-		// Vector3f.cross(f, u, s);
-		s.normalize();
-
-		u = s.getCross(f);
-		// Vector3f.cross(s, f, u);
+		Vector3 y = z.getCross(x);
 
 		Matrix4 result = new Matrix4();
-		result.m00 = s.getX();
-		result.m10 = s.getY();
-		result.m20 = s.getZ();
-		result.m01 = u.getX();
-		result.m11 = u.getY();
-		result.m21 = u.getZ();
-		result.m02 = -f.getX();
-		result.m12 = -f.getY();
-		result.m22 = -f.getZ();
-
-		result.translate(eye.getNegate());
-		// Matrix4.translate(eye.getNegate(), result, result);
+		result.m00 = x.getX();
+		result.m10 = x.getY();
+		result.m20 = x.getZ();
+		result.m01 = y.getX();
+		result.m11 = y.getY();
+		result.m21 = y.getZ();
+		result.m02 = z.getX();
+		result.m12 = z.getY();
+		result.m22 = z.getZ();
 
 		return result;
 	}

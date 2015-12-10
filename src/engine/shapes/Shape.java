@@ -12,8 +12,8 @@ import engine.game.ShaderProgram;
  */
 public abstract class Shape {
 
-	protected int			VBO, VAO, EBO;
-	protected ShaderProgram	shaderProgram;
+	protected int VBO, VAO, EBO;
+	protected ShaderProgram shaderProgram;
 
 	public Shape() {
 	}

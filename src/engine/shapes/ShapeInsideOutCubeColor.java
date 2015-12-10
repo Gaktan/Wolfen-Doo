@@ -14,8 +14,8 @@ import engine.util.Vector3;
 
 public class ShapeInsideOutCubeColor extends Shape {
 
-	protected Vector3	upColor;
-	protected Vector3	downColor;
+	protected Vector3 upColor;
+	protected Vector3 downColor;
 
 	public ShapeInsideOutCubeColor(ShaderProgram shaderProgram, Vector3 upColor, Vector3 downColor) {
 		this.shaderProgram = shaderProgram;

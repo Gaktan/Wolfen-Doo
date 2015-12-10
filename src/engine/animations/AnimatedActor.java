@@ -10,8 +10,8 @@ import engine.shapes.ShapeSprite;
  */
 public class AnimatedActor extends EntityActor {
 
-	protected String	a_file;
-	protected Animation	a_current;
+	protected String a_file;
+	protected Animation a_current;
 
 	/**
 	 * @param file

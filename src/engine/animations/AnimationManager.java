@@ -16,7 +16,7 @@ public class AnimationManager {
 	 * @author Gaktan
 	 */
 	public class AnimationHolder {
-		private HashMap<String, Animation>	animations;
+		private HashMap<String, Animation> animations;
 
 		public AnimationHolder(HashMap<String, Animation> animations) {
 			this.animations = animations;
@@ -27,7 +27,13 @@ public class AnimationManager {
 		}
 	}
 
-	private HashMap<String, AnimationHolder>	holders;
+	private static final AnimationManager instance;
+
+	static {
+		instance = new AnimationManager();
+	}
+
+	private HashMap<String, AnimationHolder> holders;
 
 	private AnimationManager() {
 		holders = new HashMap<String, AnimationHolder>();
@@ -69,12 +75,6 @@ public class AnimationManager {
 
 			holders.put(path, new AnimationHolder(animations));
 		}
-	}
-
-	private static final AnimationManager	instance;
-
-	static {
-		instance = new AnimationManager();
 	}
 
 	public static AnimationManager getInstance() {
