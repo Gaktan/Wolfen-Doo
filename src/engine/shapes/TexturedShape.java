@@ -3,6 +3,7 @@ package engine.shapes;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector4f;
 
 import engine.util.TextureUtil;
 
@@ -22,6 +23,7 @@ public abstract class TexturedShape extends Shape {
 		textureID = TextureUtil.loadTexture(texture);
 	}
 
+	@Override
 	public void dispose() {
 		GL11.glDeleteTextures(textureID);
 
@@ -38,6 +40,8 @@ public abstract class TexturedShape extends Shape {
 	@Override
 	public void preRender() {
 		shaderProgram.bind();
+
+		shaderProgram.setUniform("u_imageInfo", new Vector4f(1f, 1f, 1f, 1f));
 
 		GL30.glBindVertexArray(VAO);
 

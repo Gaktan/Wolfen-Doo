@@ -3,11 +3,13 @@ package engine.game;
 import org.lwjgl.opengl.GL11;
 
 import engine.game.states.GameStateManager;
-import game.game.states.WolfenGameState;
+import game.game.states.MenuState;
 
 public class GameWolfen extends Game {
 
 	protected static final float MAX_DELTA = 40.f;
+
+	public long generationWaitingTime;
 
 	@Override
 	public void dispose() {
@@ -35,7 +37,8 @@ public class GameWolfen extends Game {
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glFrontFace(GL11.GL_CW);
 
-		GameStateManager.changeGameState(new WolfenGameState());
+		// GameStateManager.changeGameState(new WolfenGameState());
+		GameStateManager.changeGameState(new MenuState());
 	}
 
 	@Override
@@ -59,8 +62,6 @@ public class GameWolfen extends Game {
 			current_camera.setAspect(getWidth() / getHeight());
 		*/
 	}
-
-	public long generationWaitingTime;
 
 	@Override
 	public void update(float elapsedTime) {

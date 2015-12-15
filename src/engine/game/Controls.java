@@ -29,6 +29,7 @@ public class Controls {
 
 		Mouse.setGrabbed(true);
 		Mouse.setClipMouseCoordinatesToWindow(false);
+		Mouse.setCursorPosition(0, 0);
 	}
 
 	public static void addControlsListener(ControlsListener l) {
@@ -41,6 +42,14 @@ public class Controls {
 
 	public static String getLocale() {
 		return locale;
+	}
+
+	public static void removeControlsListener(ControlsListener l) {
+		controlsListeners.remove(l);
+	}
+
+	public static void removeMouseListener(MouseListener l) {
+		mouseListeners.remove(l);
 	}
 
 	public static void update() {

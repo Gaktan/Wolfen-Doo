@@ -5,12 +5,12 @@ public class GameStateManager {
 	private static GameState currentGameState;
 	private static GameState nextGameState;
 
-	public static GameState getCurrentGameState() {
-		return currentGameState;
-	}
-
 	public static void changeGameState(GameState newGameState) {
 		nextGameState = newGameState;
+	}
+
+	public static GameState getCurrentGameState() {
+		return currentGameState;
 	}
 
 	public static void updateState() {

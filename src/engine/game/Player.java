@@ -13,6 +13,7 @@ import static org.lwjgl.input.Keyboard.KEY_Z;
 import engine.entities.AABBRectangle;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
+import engine.game.states.GameStateManager;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.EAngle;
@@ -20,6 +21,7 @@ import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 import engine.weapons.Weapon;
+import game.game.states.MenuState;
 import game.weapons.WeaponRevolver;
 
 public class Player extends EntityActor implements ControlsListener, MouseListener {
@@ -81,18 +83,8 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		instance = this;
 	}
 
-	@Override
-	public void onMouseRelease(int button) {
-		if (button == 0) {
-			currentWeapon.setFiring(false);
-		}
-	}
-
-	@Override
-	public void onMousePress(int button) {
-		if (button == 0) {
-			currentWeapon.setFiring(true);
-		}
+	public EAngle getViewAngle() {
+		return camera.getViewAngle();
 	}
 
 	@Override
@@ -151,7 +143,8 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 			currentWeapon.forceReload();
 		}
 		else if (key == KEY_ESCAPE) {
-			GameWolfen.end();
+			// TODO: Engine/Game dependency
+			GameStateManager.changeGameState(new MenuState());
 		}
 	}
 
@@ -167,6 +160,26 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 
 		lastMouseX = x;
 		lastMouseY = y;
+	}
+
+	@Override
+	public void onMousePress(int button) {
+		if (button == 0) {
+			currentWeapon.setFiring(true);
+		}
+	}
+
+	@Override
+	public void onMouseRelease(int button) {
+		if (button == 0) {
+			currentWeapon.setFiring(false);
+		}
+	}
+
+	@Override
+	public void render() {
+		super.render();
+		currentWeapon.render();
 	}
 
 	@Override
@@ -199,16 +212,6 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		rotation.setZ((float) Math.toRadians(-camera.getViewAngle().yaw));
 
 		return result;
-	}
-
-	@Override
-	public void render() {
-		super.render();
-		currentWeapon.render();
-	}
-
-	public EAngle getViewAngle() {
-		return camera.getViewAngle();
 	}
 
 	public static Player getInstance() {

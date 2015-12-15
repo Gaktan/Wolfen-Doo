@@ -349,6 +349,10 @@ public class DungeonGenerator extends Generator {
 		return getNeighbours(p.x, p.y, foundNeighour);
 	}
 
+	public long getSeed() {
+		return seed;
+	}
+
 	public void print() {
 		char[][] newMap = new char[realSizeX + 1][realSizeY + 1];
 
@@ -384,10 +388,6 @@ public class DungeonGenerator extends Generator {
 
 	public void setChar(char c, int x, int y, char[][] map) {
 		map[x][y] = c;
-	}
-
-	public long getSeed() {
-		return seed;
 	}
 
 	public void setSeed(long seed) {

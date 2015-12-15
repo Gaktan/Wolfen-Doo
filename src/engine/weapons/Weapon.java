@@ -100,6 +100,10 @@ public abstract class Weapon implements Displayable {
 		}
 	}
 
+	public boolean isFiring() {
+		return firing;
+	}
+
 	@Override
 	public void render() {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -108,6 +112,10 @@ public abstract class Weapon implements Displayable {
 
 		reloadingText.render();
 		ammoText.render();
+	}
+
+	public void setFiring(boolean firing) {
+		this.firing = firing;
 	}
 
 	public void setMoving(boolean moving) {
@@ -244,13 +252,5 @@ public abstract class Weapon implements Displayable {
 
 	protected void updateAmmoText() {
 		ammoText.setText(shotsLeft + "/" + totalAmmo);
-	}
-
-	public void setFiring(boolean firing) {
-		this.firing = firing;
-	}
-
-	public boolean isFiring() {
-		return firing;
 	}
 }

@@ -381,55 +381,6 @@ public class Matrix4 {
 	}
 
 	/**
-	 * Creates a model Matrix used for shaders
-	 *
-	 * @param pos
-	 *            Position
-	 * @return model Matrix formatted for shaders
-	 */
-	public static Matrix4 createModelMatrix(Vector3 pos) {
-		return createModelMatrix(pos, new Vector3(1f));
-	}
-
-	/**
-	 * Creates a model Matrix used for shaders
-	 *
-	 * @param pos
-	 *            Position
-	 * @param scale
-	 *            Scale
-	 * @return model Matrix formatted for shaders
-	 */
-	public static Matrix4 createModelMatrix(Vector3 pos, Vector3 scale) {
-		return createModelMatrix(pos, new Vector3(), scale);
-	}
-
-	/**
-	 * Creates a model Matrix used for shaders
-	 *
-	 * @param pos
-	 *            Position
-	 * @param rot
-	 *            Rotation
-	 * @param scale
-	 *            Scale
-	 * @return model Matrix formatted for Instancing
-	 */
-	public static Matrix4 createModelMatrix(Vector3 pos, Vector3 rot, Vector3 scale) {
-		Matrix4 model = createIdentityMatrix();
-
-		model.translate(pos);
-
-		model.rotate(rot.getX(), X_AXIS);
-		model.rotate(rot.getY(), Y_AXIS);
-		model.rotate(rot.getZ(), Z_AXIS);
-
-		model.scale(scale);
-
-		return model;
-	}
-
-	/**
 	 * Creates a view matrix looking at a specific coordinate
 	 *
 	 * @param eye
@@ -481,6 +432,55 @@ public class Matrix4 {
 		result.m22 = z.getZ();
 
 		return result;
+	}
+
+	/**
+	 * Creates a model Matrix used for shaders
+	 *
+	 * @param pos
+	 *            Position
+	 * @return model Matrix formatted for shaders
+	 */
+	public static Matrix4 createModelMatrix(Vector3 pos) {
+		return createModelMatrix(pos, new Vector3(1f));
+	}
+
+	/**
+	 * Creates a model Matrix used for shaders
+	 *
+	 * @param pos
+	 *            Position
+	 * @param scale
+	 *            Scale
+	 * @return model Matrix formatted for shaders
+	 */
+	public static Matrix4 createModelMatrix(Vector3 pos, Vector3 scale) {
+		return createModelMatrix(pos, new Vector3(), scale);
+	}
+
+	/**
+	 * Creates a model Matrix used for shaders
+	 *
+	 * @param pos
+	 *            Position
+	 * @param rot
+	 *            Rotation
+	 * @param scale
+	 *            Scale
+	 * @return model Matrix formatted for Instancing
+	 */
+	public static Matrix4 createModelMatrix(Vector3 pos, Vector3 rot, Vector3 scale) {
+		Matrix4 model = createIdentityMatrix();
+
+		model.translate(pos);
+
+		model.rotate(rot.getX(), X_AXIS);
+		model.rotate(rot.getY(), Y_AXIS);
+		model.rotate(rot.getZ(), Z_AXIS);
+
+		model.scale(scale);
+
+		return model;
 	}
 
 	/**

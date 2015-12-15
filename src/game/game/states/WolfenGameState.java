@@ -13,6 +13,7 @@ import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
 import engine.entities.Item;
+import engine.game.Controls;
 import engine.game.Fps;
 import engine.game.FrameBuffer;
 import engine.game.Game;
@@ -26,6 +27,7 @@ import engine.shapes.ShapeInstancedQuadTexture;
 import engine.shapes.ShapeInstancedSprite;
 import engine.shapes.ShapeQuadTexture;
 import engine.shapes.ShapeSprite;
+import engine.util.MathUtil;
 import engine.util.Vector3;
 import game.animations.CustomAnimatedActorExample;
 import game.entities.RotatingText;
@@ -56,6 +58,32 @@ public class WolfenGameState extends GameState {
 
 	protected FrameBuffer frameBuffer;
 
+	public void add(Displayable d) {
+		displayableList.add(d);
+	}
+
+	public void addBulletHole(Displayable d) {
+		bulletHoles.add(d);
+	}
+
+	@Override
+	public void dispose() {
+		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
+			ShaderProgram program = entry.getValue();
+
+			program.dispose();
+		}
+
+		frameBuffer.dispose();
+
+		Controls.removeControlsListener(Player.getInstance());
+		Controls.removeMouseListener(Player.getInstance());
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
 	@Override
 	public void init() {
 		ShaderProgram shaderProgramTex = new ShaderProgram("texture");
@@ -79,15 +107,13 @@ public class WolfenGameState extends GameState {
 
 		player = new Player(current_camera);
 
-		setZfar(current_camera.getzFar());
-
 		displayableList = new DisplayableList();
 
 		ShapeSprite shapeAnimatedSmurf = new ShapeSprite(shaderProgramTexBill, "mul_test.png", 256, 256, 64, 64);
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
-		generator = new DungeonGenerator(30, 4, 8, 4, false);
+		generator = new DungeonGenerator(30, 4, (long) MathUtil.random(0, 10000), 4, false);
 
 		map = generator.generate();
 		player.position.set(map.getStartingPoint());
@@ -211,17 +237,6 @@ public class WolfenGameState extends GameState {
 		l_fps = fps.update();
 	}
 
-	@Override
-	public void dispose() {
-		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
-			ShaderProgram program = entry.getValue();
-
-			program.dispose();
-		}
-
-		frameBuffer.dispose();
-	}
-
 	protected void setZfar(float zFar) {
 		current_camera.setzFar(zFar);
 
@@ -233,17 +248,5 @@ public class WolfenGameState extends GameState {
 		}
 
 		ShaderProgram.unbind();
-	}
-
-	public void add(Displayable d) {
-		displayableList.add(d);
-	}
-
-	public void addBulletHole(Displayable d) {
-		bulletHoles.add(d);
-	}
-
-	public Map getMap() {
-		return map;
 	}
 }

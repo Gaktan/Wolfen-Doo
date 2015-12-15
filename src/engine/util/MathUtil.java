@@ -51,10 +51,6 @@ public final class MathUtil {
 		return v;
 	}
 
-	public static Vector3 smoothApproach(Vector3 start, Vector3 end, float percent) {
-		return approach(start, end, smoothStep(0f, 1f, percent));
-	}
-
 	public static float clamp(float f, float min, float max) {
 		return Math.max(min, Math.min(max, f));
 	}
@@ -131,6 +127,10 @@ public final class MathUtil {
 	 */
 	public static float round(float f, int decimalPlace) {
 		return BigDecimal.valueOf(f).setScale(decimalPlace, BigDecimal.ROUND_HALF_UP).floatValue();
+	}
+
+	public static Vector3 smoothApproach(Vector3 start, Vector3 end, float percent) {
+		return approach(start, end, smoothStep(0f, 1f, percent));
 	}
 
 	public static float smoothStep(float edge0, float edge1, float x) {
