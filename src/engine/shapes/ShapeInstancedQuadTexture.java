@@ -10,8 +10,6 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL33;
 
-import engine.game.ShaderProgram;
-
 /**
  * 2D Shape of a simple quad
  */

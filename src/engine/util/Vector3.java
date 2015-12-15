@@ -48,7 +48,9 @@ public class Vector3 {
 	 *            Z value
 	 */
 	public void add(float x, float y, float z) {
-		add(new Vector3(x, y, z));
+		this.x += x;
+		this.y += y;
+		this.z += z;
 	}
 
 	/**
@@ -58,9 +60,7 @@ public class Vector3 {
 	 *            Vector to add
 	 */
 	public void add(Vector3 vec) {
-		x += vec.x;
-		y += vec.y;
-		z += vec.z;
+		add(vec.x, vec.y, vec.z);
 	}
 
 	/**
@@ -135,7 +135,9 @@ public class Vector3 {
 	 * @return Vector + (x, y, z)
 	 */
 	public Vector3 getAdd(float x, float y, float z) {
-		return getAdd(new Vector3(x, y, z));
+		Vector3 ret = new Vector3(this);
+		ret.add(x, y, z);
+		return ret;
 	}
 
 	/**
@@ -145,9 +147,7 @@ public class Vector3 {
 	 * @return Vector + vec
 	 */
 	public Vector3 getAdd(Vector3 vec) {
-		Vector3 ret = new Vector3(this);
-		ret.add(vec);
-		return ret;
+		return getAdd(vec.x, vec.y, vec.z);
 	}
 
 	/**
@@ -184,9 +184,9 @@ public class Vector3 {
 		return v;
 	}
 
-	public Vector3 getScale(float angle) {
+	public Vector3 getScale(float scale) {
 		Vector3 ret = new Vector3(this);
-		ret.scale(angle);
+		ret.scale(scale);
 		return ret;
 	}
 
@@ -266,7 +266,9 @@ public class Vector3 {
 	}
 
 	public void scale(float x, float y, float z) {
-		scale(new Vector3(x, y, z));
+		this.x *= x;
+		this.y *= y;
+		this.z *= z;
 	}
 
 	/**
@@ -276,9 +278,7 @@ public class Vector3 {
 	 *            Other Vector
 	 */
 	public void scale(Vector3 vec) {
-		x *= vec.x;
-		y *= vec.y;
-		z *= vec.z;
+		scale(vec.x, vec.y, vec.z);
 	}
 
 	/**
@@ -301,7 +301,9 @@ public class Vector3 {
 	 *            Z
 	 */
 	public void set(float x, float y, float z) {
-		set(new Vector3(x, y, z));
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	/**
@@ -311,9 +313,7 @@ public class Vector3 {
 	 *            Vector
 	 */
 	public void set(Vector3 vec) {
-		x = vec.x;
-		y = vec.y;
-		z = vec.z;
+		set(vec.x, vec.y, vec.z);
 	}
 
 	public void setX(float x) {

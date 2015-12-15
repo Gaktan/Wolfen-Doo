@@ -5,17 +5,16 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 
 public class FrameBuffer {
 
-	protected static FrameBuffer instance;
 	public static final boolean ENABLED;
 
 	static {
-		instance = new FrameBuffer("screen");
 		ENABLED = false;
 	}
 
@@ -25,12 +24,6 @@ public class FrameBuffer {
 
 	protected ShapeQuadTexture screenShape;
 
-	protected String shaderName;
-
-	public FrameBuffer(String shaderName) {
-		this.shaderName = shaderName;
-	}
-
 	public void bind() {
 		if (!ENABLED)
 			return;
@@ -38,7 +31,11 @@ public class FrameBuffer {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
 	}
 
-	public void init() {
+	public void dispose() {
+		GL30.glDeleteFramebuffers(frameBuffer);
+	}
+
+	public void init(String shaderName) {
 		if (!ENABLED)
 			return;
 
@@ -59,22 +56,15 @@ public class FrameBuffer {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, textureID, 0);
-		// Create a renderbuffer object for depth and stencil attachment (we
-		// won't be sampling these)
+
 		int rbo = GL30.glGenRenderbuffers();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
 		GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH24_STENCIL8, Game.getInstance().getWidth(), Game
-				.getInstance().getHeight()); // Use a single
-												// renderbuffer object
-												// for both a depth AND
-												// stencil buffer.
+				.getInstance().getHeight());
+
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, rbo); // Now
-																															// actually
-																															// attach
-																															// it
-		// Now that we actually created the framebuffer and added all
-		// attachments we want to check if it is actually complete now
+		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, rbo);
+
 		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
 			System.err.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
 			Game.end();
@@ -112,9 +102,5 @@ public class FrameBuffer {
 			return;
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-	}
-
-	public static FrameBuffer getInstance() {
-		return instance;
 	}
 }

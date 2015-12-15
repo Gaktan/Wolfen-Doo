@@ -1,4 +1,4 @@
-package engine.game;
+package engine.shapes;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.lwjgl.util.vector.Vector4f;
 
+import engine.game.Game;
 import engine.util.FileUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;

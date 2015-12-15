@@ -102,11 +102,6 @@ public class DisplayableText implements Displayable {
 	}
 
 	@Override
-	public int size() {
-		return charCount;
-	}
-
-	@Override
 	public boolean update(float dt) {
 		if (updatedText) {
 			updatedText = false;

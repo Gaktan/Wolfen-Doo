@@ -1,15 +1,16 @@
 package game.weapons;
 
 import engine.animations.AnimatedActor;
-import engine.game.GameWolfen;
 import engine.game.Player;
-import engine.game.ShaderProgram;
+import engine.game.states.GameStateManager;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeSprite;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 import engine.weapons.Weapon;
 import game.entities.EntityProjctile;
+import game.game.states.WolfenGameState;
 
 public class WeaponRevolver extends Weapon {
 
@@ -40,19 +41,20 @@ public class WeaponRevolver extends Weapon {
 
 		Vector3 linePosition = new Vector3(player.position);
 
-		linePosition.addY(MathUtil.random(-0.1f, 0));
+		linePosition.addY(MathUtil.random(-0.1f, 0f));
 
 		EAngle angle = new EAngle(player.getViewAngle());
 
 		angle.yaw -= 90;
 		angle.pitch = -angle.pitch;
 
-		angle.yaw += MathUtil.randomNegative(-3, 3);
+		angle.yaw += MathUtil.random(-3f, 3f);
 
 		Vector3 lineVector = angle.toVector();
 		lineVector.normalize();
 
-		GameWolfen.getInstance().ac.add(new EntityProjctile(linePosition, lineVector, GameWolfen.getInstance().map));
+		((WolfenGameState) GameStateManager.getCurrentGameState()).add(new EntityProjctile(linePosition, lineVector,
+				((WolfenGameState) GameStateManager.getCurrentGameState()).getMap()));
 
 		weaponSprite.setAnimation("a_fire");
 	}

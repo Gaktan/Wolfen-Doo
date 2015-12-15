@@ -1,8 +1,8 @@
 package game.particles;
 
-import engine.game.ShaderProgram;
 import engine.particles.Particle;
 import engine.particles.ParticleSystem;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.util.MathUtil;
 import engine.util.Vector3;
@@ -26,8 +26,8 @@ public class ParticleSystemBlood extends ParticleSystem {
 
 		Particle p;
 		p = new Particle(MathUtil.random(500, maxLife / 2), new Vector3(position), scale);
-		p.velocity = new Vector3(MathUtil.randomNegative(-0.5f, 0.5f), MathUtil.random(-0.1f, 0.1f),
-				MathUtil.randomNegative(-0.5f, 0.5f));
+		p.velocity = new Vector3(MathUtil.random(-0.5f, 0.5f), MathUtil.random(-0.1f, 0.1f), MathUtil.random(-0.5f,
+				0.5f));
 		p.velocity.normalize();
 		// p.velocity.scale(0.25f);
 

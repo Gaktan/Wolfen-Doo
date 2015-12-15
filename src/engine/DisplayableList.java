@@ -68,17 +68,6 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 	}
 
 	@Override
-	public int size() {
-		int size = 0;
-
-		for (Displayable d : list) {
-			size += d.size();
-		}
-
-		return size;
-	}
-
-	@Override
 	public boolean update(float dt) {
 
 		for (Displayable d : toBeAdded) {

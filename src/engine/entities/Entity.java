@@ -5,7 +5,7 @@ import engine.util.Vector3;
 
 /**
  * Object used to store a position and a velocity. (a moving object)
- * 
+ *
  * @author Gaktan
  */
 public abstract class Entity implements Displayable {
@@ -36,10 +36,6 @@ public abstract class Entity implements Displayable {
 
 	public void setSolid(boolean solid) {
 		this.solid = solid;
-	}
-
-	public int size() {
-		return 1;
 	}
 
 	@Override

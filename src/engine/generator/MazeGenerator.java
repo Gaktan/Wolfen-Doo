@@ -7,7 +7,7 @@ import java.util.Stack;
 import org.lwjgl.util.vector.Vector2f;
 
 import engine.entities.EntityActor;
-import engine.game.ShaderProgram;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.Vector3;
 

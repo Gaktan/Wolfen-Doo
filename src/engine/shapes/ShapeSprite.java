@@ -2,8 +2,6 @@ package engine.shapes;
 
 import org.lwjgl.util.vector.Vector4f;
 
-import engine.game.ShaderProgram;
-
 public class ShapeSprite extends ShapeQuadTexture {
 
 	protected int imageWidth, imageHeight, spritesWidth, spritesHeight;

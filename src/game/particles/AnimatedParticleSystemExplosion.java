@@ -7,9 +7,9 @@ import engine.shapes.ShapeInstancedSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 
-public class AnimatedParticleSystemTest extends ParticleSystem {
+public class AnimatedParticleSystemExplosion extends ParticleSystem {
 
-	public AnimatedParticleSystemTest(Vector3 position, int life, ShapeInstancedSprite shape) {
+	public AnimatedParticleSystemExplosion(Vector3 position, int life, ShapeInstancedSprite shape) {
 		super(position, life);
 
 		particleShape = shape;
@@ -25,11 +25,11 @@ public class AnimatedParticleSystemTest extends ParticleSystem {
 
 		AnimatedParticle p;
 		p = new AnimatedParticle(MathUtil.random(500, maxLife / 2), new Vector3(position), scale);
-		p.velocity = new Vector3(MathUtil.random(-1f, 1f), MathUtil.random(-0.3f, 0.3f), MathUtil.random(-1f, 1f));
+		p.velocity = new Vector3(MathUtil.random(-2f, 2f), MathUtil.random(-0.3f, 0.3f), MathUtil.random(-2f, 2f));
 
-		// p.position.x += p.velocity.x;
-		// p.position.y += p.velocity.y;
-		// p.position.z += p.velocity.z;
+		p.velocity.normalize();
+		p.velocity.scale(MathUtil.random(0.1f, 1f));
+
 		p.position.add(p.velocity);
 
 		p.setPaused(true);

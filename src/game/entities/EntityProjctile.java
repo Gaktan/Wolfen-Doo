@@ -6,17 +6,18 @@ import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
-import engine.game.GameWolfen;
+import engine.game.states.GameStateManager;
 import engine.generator.Map;
 import engine.generator.Map.DoorShapeInfo;
 import engine.generator.Map.ShapeInfo;
 import engine.util.MathUtil;
 import engine.util.Vector3;
+import game.game.states.WolfenGameState;
 import game.particles.ParticleSystemImpact;
 
 /**
  * Line that flows through the map and bounces (optionnal)
- * 
+ *
  * @author Gaktan
  */
 public class EntityProjctile extends EntityLine {
@@ -35,10 +36,10 @@ public class EntityProjctile extends EntityLine {
 
 		this.map = map;
 
-		this.velocity = direction.getNormalize();
-		this.velocity.scale(SPEED);
+		velocity = direction.getNormalize();
+		velocity.scale(SPEED);
 
-		this.bounces = 0;
+		bounces = 0;
 	}
 
 	@Override
@@ -193,10 +194,11 @@ public class EntityProjctile extends EntityLine {
 		e.rotation = newRot;
 		e.scale.scale(0.1f);
 
-		GameWolfen.getInstance().bulletHoles.add(e);
+		((WolfenGameState) GameStateManager.getCurrentGameState()).addBulletHole(e);
 
 		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3(newPos), new Vector3(velocity),
 				new Vector3(normal));
-		GameWolfen.getInstance().ac.add(particles);
+
+		((WolfenGameState) GameStateManager.getCurrentGameState()).add(particles);
 	}
 }

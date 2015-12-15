@@ -3,7 +3,7 @@ package engine.entities;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
-import engine.game.GameWolfen;
+import engine.game.states.GameStateManager;
 import engine.util.Vector3;
 
 /**
@@ -33,7 +33,7 @@ public class EntityLine extends Entity {
 	public void render() {
 		GL11.glPushMatrix();
 
-		GL11.glLoadMatrix(GameWolfen.getInstance().current_camera.getProjectionXview().toFloatBuffer());
+		GL11.glLoadMatrix(GameStateManager.getCurrentGameState().current_camera.getProjectionXview().toFloatBuffer());
 
 		GL11.glLineWidth(2.5f);
 		GL11.glColor3f(colorA.r, colorA.g, colorA.b);

@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard;
 
 import engine.game.Controls;
 import engine.game.ControlsListener;
-import engine.game.GameWolfen;
+import engine.game.Player;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeCubeTexture;
 import engine.util.MathUtil;
@@ -84,7 +84,7 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 	public void onKeyRelease(int key) {
 		if (key == Keyboard.KEY_E) {
 
-			Vector3 diff = originialPosition.getSub(GameWolfen.getInstance().player.position);
+			Vector3 diff = originialPosition.getSub(Player.getInstance().position);
 			// Vector3.sub(originialPosition,
 			// GameWolfen.getInstance().camera.position, diff);
 
@@ -93,7 +93,7 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 
 			diff.normalize();
 
-			Vector3 vec1 = GameWolfen.getInstance().player.getViewAngle().toVector();
+			Vector3 vec1 = Player.getInstance().getViewAngle().toVector();
 			float angle = (float) ((Math.atan2(diff.getZ(), diff.getX()) - Math.atan2(vec1.getZ(), vec1.getX())) + Math.PI / 4);
 			angle -= Math.PI;
 

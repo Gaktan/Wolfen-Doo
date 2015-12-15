@@ -12,10 +12,10 @@ import engine.entities.AABBRectangle;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
-import engine.game.GameWolfen;
-import engine.game.ShaderProgram;
+import engine.game.Player;
 import engine.shapes.InstancedTexturedShape;
 import engine.shapes.Orientation;
+import engine.shapes.ShaderProgram;
 import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
 import engine.shapes.ShapeInstancedCubeTexture;
@@ -341,28 +341,12 @@ public class Map implements Displayable {
 	}
 
 	@Override
-	public int size() {
-
-		int total = 0;
-
-		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
-			ShapeInfo info = entry.getValue();
-
-			total += info.amount;
-		}
-
-		total += actorsList.size();
-
-		return total;
-	}
-
-	@Override
 	public boolean update(float dt) {
 
-		int x = (int) (GameWolfen.getInstance().player.position.getX() + 0.5f);
-		int z = (int) (GameWolfen.getInstance().player.position.getZ() + 0.5f);
+		int x = (int) (Player.getInstance().position.getX() + 0.5f);
+		int z = (int) (Player.getInstance().position.getZ() + 0.5f);
 
-		AABBRectangle playerAABB = GameWolfen.getInstance().player.collisionRectangle;
+		AABBRectangle playerAABB = Player.getInstance().collisionRectangle;
 
 		for (int i = x - 1; i < x + 2; i++) {
 			for (int j = z - 1; j < z + 2; j++) {
@@ -387,7 +371,7 @@ public class Map implements Displayable {
 
 				if (playerAABB.collide(rect)) {
 					Vector3 resolution = playerAABB.resolveCollision(rect);
-					GameWolfen.getInstance().player.position.add(resolution);
+					Player.getInstance().position.add(resolution);
 				}
 			}
 		}

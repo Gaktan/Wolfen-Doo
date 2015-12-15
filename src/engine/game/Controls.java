@@ -43,7 +43,7 @@ public class Controls {
 		return locale;
 	}
 
-	public static void update(float dt) {
+	public static void update() {
 
 		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
@@ -69,12 +69,12 @@ public class Controls {
 
 			if (Mouse.getEventButtonState()) {
 				for (MouseListener l : mouseListeners) {
-					l.onButtonPress(button);
+					l.onMousePress(button);
 				}
 			}
 			else {
 				for (MouseListener l : mouseListeners) {
-					l.onButtonRelease(button);
+					l.onMouseRelease(button);
 				}
 			}
 		}

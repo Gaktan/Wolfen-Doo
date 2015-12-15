@@ -3,8 +3,6 @@ package engine.shapes;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
-import engine.game.ShaderProgram;
-
 /**
  * Abstract class used to created any kind of shape (1D, 2D, 3D, meshes, ...)
  * 

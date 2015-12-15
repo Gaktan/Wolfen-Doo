@@ -2,11 +2,13 @@ package engine.weapons;
 
 import org.lwjgl.opengl.GL11;
 
+import engine.BitMapFont;
 import engine.Displayable;
 import engine.DisplayableText;
 import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
-import engine.game.GameWolfen;
+import engine.shapes.ShaderProgram;
+import engine.shapes.ShapeInstancedSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 
@@ -20,22 +22,18 @@ public abstract class Weapon implements Displayable {
 		}
 	}
 
-	// SHOOTING --
-
-	// BOBBING --
 	protected static Vector3 POSITION_CENTER;
 	protected static Vector3 POSITION_LEFT;
 
 	protected static Vector3 POSITION_RIGHT;
-	// 0f, -.25f
-	// TODO: change this
 	static {
 		POSITION_CENTER = new Vector3(0f, -.58f, 0f);
 		POSITION_LEFT = new Vector3(-0.2f, -.58f, 0f);
 		POSITION_RIGHT = new Vector3(0.2f, -.58f, 0f);
 	}
 
-	// RELOADING --
+	// SHOOTING
+	protected boolean firing;
 
 	protected float cooldownTime;
 	protected float currentCooldown;
@@ -43,6 +41,7 @@ public abstract class Weapon implements Displayable {
 	protected int shotsLeft;
 	protected int shotsCapacity;
 
+	// RELOADING
 	protected int totalAmmo;
 	protected float reloadingTime;
 	protected float currentReloading;
@@ -51,13 +50,12 @@ public abstract class Weapon implements Displayable {
 	protected DisplayableText ammoText;
 	protected BobbingState bobbingState;
 
+	// BOBBING
 	protected float timeStamp;
 	protected float bobbingTime;
-
 	protected Vector3 bendingCurve;
 
 	protected Vector3 lastKnownPosition;
-
 	protected boolean moving;
 
 	// WEAPON_SPRITE
@@ -75,8 +73,11 @@ public abstract class Weapon implements Displayable {
 		shotsLeft = shotsCapacity;
 		currentReloading = reloadingTime;
 
-		reloadingText = GameWolfen.getInstance().bmf.createString(new Vector3(0, 0, 0), "", 1f, TextPosition.CENTER);
-		ammoText = GameWolfen.getInstance().bmf.createString(new Vector3(1f, -1f, 0), "", 1f, TextPosition.RIGHT);
+		BitMapFont bmf = new BitMapFont(new ShapeInstancedSprite(ShaderProgram.getProgram("texture_camera_instanced"),
+				"char.png", 256, 256, 16, 16));
+
+		reloadingText = bmf.createString(new Vector3(0, 0, 0), "", 1f, TextPosition.CENTER);
+		ammoText = bmf.createString(new Vector3(1f, -1f, 0), "", 1f, TextPosition.RIGHT);
 		updateAmmoText();
 
 		bobbingState = BobbingState.IDLE;
@@ -126,11 +127,6 @@ public abstract class Weapon implements Displayable {
 	}
 
 	@Override
-	public int size() {
-		return reloadingText.size() + ammoText.size() + weaponSprite.size();
-	}
-
-	@Override
 	public boolean update(float dt) {
 		currentCooldown -= dt;
 
@@ -141,7 +137,8 @@ public abstract class Weapon implements Displayable {
 
 			if (timeStamp > bobbingTime) {
 				bobbingState = BobbingState.TO_LEFT;
-				lastKnownPosition = POSITION_RIGHT;
+				lastKnownPosition.set(POSITION_RIGHT);
+				weaponSprite.position.set(POSITION_RIGHT);
 				timeStamp = 0f;
 			}
 		}
@@ -150,7 +147,8 @@ public abstract class Weapon implements Displayable {
 
 			if (timeStamp > bobbingTime) {
 				bobbingState = BobbingState.TO_RIGHT;
-				lastKnownPosition = POSITION_LEFT;
+				lastKnownPosition.set(POSITION_LEFT);
+				weaponSprite.position.set(POSITION_LEFT);
 				timeStamp = 0f;
 			}
 		}
@@ -158,7 +156,8 @@ public abstract class Weapon implements Displayable {
 			moveToPosition(lastKnownPosition, POSITION_CENTER);
 
 			if (timeStamp > bobbingTime) {
-				lastKnownPosition = POSITION_CENTER;
+				lastKnownPosition.set(POSITION_CENTER);
+				weaponSprite.position.set(POSITION_CENTER);
 				timeStamp = 0f;
 
 				if (!moving)
@@ -170,6 +169,10 @@ public abstract class Weapon implements Displayable {
 
 		if (shotsLeft <= 0 && currentCooldown < 0) {
 			reload(dt);
+		}
+
+		else if (firing) {
+			fire();
 		}
 
 		weaponSprite.update(dt);
@@ -241,5 +244,13 @@ public abstract class Weapon implements Displayable {
 
 	protected void updateAmmoText() {
 		ammoText.setText(shotsLeft + "/" + totalAmmo);
+	}
+
+	public void setFiring(boolean firing) {
+		this.firing = firing;
+	}
+
+	public boolean isFiring() {
+		return firing;
 	}
 }

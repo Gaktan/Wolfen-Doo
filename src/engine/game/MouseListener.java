@@ -4,7 +4,7 @@ public interface MouseListener {
 
 	public void onMouseMoved(int x, int y);
 
-	public void onButtonRelease(int button);
+	public void onMouseRelease(int button);
 
-	public void onButtonPress(int button);
+	public void onMousePress(int button);
 }

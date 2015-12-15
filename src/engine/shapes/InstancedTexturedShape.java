@@ -4,8 +4,6 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL15;
 
-import engine.game.ShaderProgram;
-
 public abstract class InstancedTexturedShape extends TexturedShape {
 
 	protected int instancedVBO;

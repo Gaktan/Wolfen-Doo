@@ -2,9 +2,9 @@ package game.particles;
 
 import org.newdawn.slick.Color;
 
-import engine.game.ShaderProgram;
 import engine.particles.Particle;
 import engine.particles.ParticleSystem;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.util.MathUtil;
 import engine.util.Vector3;
@@ -41,21 +41,21 @@ public class ParticleSystemImpact extends ParticleSystem {
 			p.velocity.setY(MathUtil.random(0.1f, 1.1f));
 			// p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f,
 			// 2.f));
-			p.velocity.setZ(p.velocity.getZ() * MathUtil.randomNegative(-.2f, 1.f));
+			p.velocity.setZ(p.velocity.getZ() * MathUtil.random(-.2f, 1.f));
 		}
 
 		else if (impactNormal.getZ() != 0) {
 			p.velocity.setZ(-direction.getZ());
 
 			p.velocity.setY(MathUtil.random(0.1f, 1.1f));
-			p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f, 1.f));
+			p.velocity.setX(p.velocity.getX() * MathUtil.random(-.2f, 1.f));
 		}
 
 		else if (impactNormal.getY() != 0) {
 			p.velocity.setY(-direction.getY());
 
-			p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f, 1.f));
-			p.velocity.setZ(p.velocity.getZ() * MathUtil.randomNegative(-.2f, 1.f));
+			p.velocity.setX(p.velocity.getX() * MathUtil.random(-.2f, 1.f));
+			p.velocity.setZ(p.velocity.getZ() * MathUtil.random(-.2f, 1.f));
 		}
 
 		if (impactNormal.getY() > 0) {

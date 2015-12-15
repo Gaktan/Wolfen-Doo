@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
-import engine.game.ShaderProgram;
 import engine.util.TextureUtil;
 
 public abstract class TexturedShape extends Shape {

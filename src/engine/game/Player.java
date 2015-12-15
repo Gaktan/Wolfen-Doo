@@ -13,13 +13,18 @@ import static org.lwjgl.input.Keyboard.KEY_Z;
 import engine.entities.AABBRectangle;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
+import engine.weapons.Weapon;
+import game.weapons.WeaponRevolver;
 
 public class Player extends EntityActor implements ControlsListener, MouseListener {
+
+	protected static Player instance;
 
 	protected static float slipperyLevel = 100.0f;
 	protected static float mouseSensitivity = 0.2f;
@@ -47,6 +52,8 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 	protected float forwardGoal;
 	protected float backwardGoal;
 
+	protected Weapon currentWeapon;
+
 	public Player(Camera camera) {
 		super(new ShapeQuadTexture(ShaderProgram.getProgram("texture"), "wall.png"));
 
@@ -68,16 +75,23 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 			k_forward = KEY_Z;
 			k_left = KEY_Q;
 		}
+
+		currentWeapon = new WeaponRevolver(this);
+
+		instance = this;
 	}
 
 	@Override
-	public void onButtonRelease(int button) {
-	}
-
-	@Override
-	public void onButtonPress(int button) {
+	public void onMouseRelease(int button) {
 		if (button == 0) {
-			GameWolfen.getInstance().currentWeapon.fire();
+			currentWeapon.setFiring(false);
+		}
+	}
+
+	@Override
+	public void onMousePress(int button) {
+		if (button == 0) {
+			currentWeapon.setFiring(true);
 		}
 	}
 
@@ -134,7 +148,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 			velocity.setY(0);
 		}
 		else if (key == KEY_R) {
-			GameWolfen.getInstance().currentWeapon.forceReload();
+			currentWeapon.forceReload();
 		}
 		else if (key == KEY_ESCAPE) {
 			GameWolfen.end();
@@ -157,7 +171,8 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 
 	@Override
 	public boolean update(float elapsedTime) {
-		GameWolfen.getInstance().currentWeapon.setMoving(movingKeyPressed != 0);
+		currentWeapon.setMoving(movingKeyPressed != 0);
+		currentWeapon.update(elapsedTime);
 
 		movementGoal.set(leftGoal + rightGoal, 0, forwardGoal + backwardGoal);
 
@@ -186,7 +201,17 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		return result;
 	}
 
+	@Override
+	public void render() {
+		super.render();
+		currentWeapon.render();
+	}
+
 	public EAngle getViewAngle() {
 		return camera.getViewAngle();
+	}
+
+	public static Player getInstance() {
+		return instance;
 	}
 }

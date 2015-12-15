@@ -2,7 +2,7 @@ package game.animations;
 
 import engine.animations.AnimatedActor;
 import engine.entities.EntityLine;
-import engine.game.GameWolfen;
+import engine.game.states.GameStateManager;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
@@ -42,7 +42,7 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		dirLine.update(dt);
 		lookingPoint.set(position.getAdd(lookingDirection));
 
-		Vector3 vec1 = GameWolfen.getInstance().current_camera.getViewAngle().toVector();
+		Vector3 vec1 = GameStateManager.getCurrentGameState().current_camera.getViewAngle().toVector();
 
 		float angle = (float) (Math.atan2(lookingDirection.getZ(), lookingDirection.getX()) - Math.atan2(vec1.getZ(),
 				vec1.getX())) + PI_OVER_2 / 2f;

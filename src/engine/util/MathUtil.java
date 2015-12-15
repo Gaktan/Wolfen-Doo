@@ -122,18 +122,6 @@ public final class MathUtil {
 	}
 
 	/**
-	 * Gets a random number from a negative minimum and a positive maximum
-	 *
-	 * @param min
-	 *            Must be negative
-	 * @param max
-	 *            Must be positive
-	 */
-	public static float randomNegative(float min, float max) {
-		return random.nextFloat() * max + (min / 2);
-	}
-
-	/**
 	 * Round to certain number of decimals
 	 *
 	 * @param f

@@ -1,8 +1,8 @@
 package engine.generator;
 
 import engine.entities.EntityActor;
-import engine.game.ShaderProgram;
 import engine.shapes.Orientation;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.FileUtil;
 import engine.util.MathUtil;

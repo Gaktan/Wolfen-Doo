@@ -2,7 +2,7 @@ package engine;
 
 /**
  * Highest interface of the engine. Allows you to update and render any object
- * 
+ *
  * @author Gaktan
  */
 public interface Displayable {
@@ -14,21 +14,14 @@ public interface Displayable {
 
 	/**
 	 * Used to render an object
-	 * 
+	 *
 	 * @param camera
 	 */
 	public void render();
 
 	/**
-	 * Should be used to get the size of the object
-	 * 
-	 * @return The amount of Displayable the object contains
-	 */
-	public int size();
-
-	/**
 	 * Used to update an object's logic
-	 * 
+	 *
 	 * @param dt
 	 *            Delta time
 	 * @return false if you want to delete the object

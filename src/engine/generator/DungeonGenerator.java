@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Random;
 
 import engine.entities.EntityActor;
-import engine.game.ShaderProgram;
 import engine.shapes.Orientation;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.Vector3;
 
