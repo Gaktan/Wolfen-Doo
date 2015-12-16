@@ -1,4 +1,4 @@
-package game.entities;
+package game.menu;
 
 import engine.BitMapFont;
 import engine.DisplayableText;
@@ -8,6 +8,8 @@ import engine.shapes.Shape;
 import engine.util.Vector3;
 
 public class MenuButton extends EntityActor {
+
+	public static final int TEXT_LIMIT = 25;
 
 	public interface ButtonPress {
 		public void onButtonPress();
@@ -65,5 +67,25 @@ public class MenuButton extends EntityActor {
 	public boolean update(float dt) {
 		text.update(dt);
 		return super.update(dt);
+	}
+
+	public DisplayableText getText() {
+		return text;
+	}
+
+	public void setText(String newText) {
+		if (newText.length() > TEXT_LIMIT) {
+			newText = newText.substring(0, TEXT_LIMIT);
+		}
+
+		float value = (scale.getX() / (newText.length() * 0.1f)) * 1.2f;
+
+		text.setTextSize(value);
+		text.setText(newText);
+
+		if (text.getTextSize() > scale.getX()) {
+			text.setTextSize(scale.getX());
+		}
+		text.updateText();
 	}
 }

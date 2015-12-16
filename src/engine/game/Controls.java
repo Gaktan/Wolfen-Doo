@@ -14,8 +14,27 @@ import org.lwjgl.input.Mouse;
  */
 public class Controls {
 
+	public interface ControlsListener {
+		public void onKeyPress(int key);
+
+		public void onKeyRelease(int key);
+	}
+
+	public interface ControlsCharListener {
+		public void onKeyPress(char key);
+	}
+
+	public interface MouseListener {
+		public void onMouseMoved(int x, int y);
+
+		public void onMousePress(int button);
+
+		public void onMouseRelease(int button);
+	}
+
 	protected static ArrayList<ControlsListener> controlsListeners;
 	protected static ArrayList<MouseListener> mouseListeners;
+	protected static ArrayList<ControlsCharListener> controlsCharListener;
 
 	protected static String locale;
 
@@ -26,10 +45,15 @@ public class Controls {
 
 		controlsListeners = new ArrayList<ControlsListener>();
 		mouseListeners = new ArrayList<MouseListener>();
+		controlsCharListener = new ArrayList<ControlsCharListener>();
 
 		Mouse.setGrabbed(true);
 		Mouse.setClipMouseCoordinatesToWindow(false);
 		Mouse.setCursorPosition(0, 0);
+	}
+
+	public static void addControlsCharListener(ControlsCharListener l) {
+		controlsCharListener.add(l);
 	}
 
 	public static void addControlsListener(ControlsListener l) {
@@ -44,6 +68,10 @@ public class Controls {
 		return locale;
 	}
 
+	public static void removeControlsCharListener(ControlsCharListener l) {
+		controlsCharListener.remove(l);
+	}
+
 	public static void removeControlsListener(ControlsListener l) {
 		controlsListeners.remove(l);
 	}
@@ -56,10 +84,15 @@ public class Controls {
 
 		while (Keyboard.next()) {
 			int key = Keyboard.getEventKey();
+			char key_char = Keyboard.getEventCharacter();
 
 			if (Keyboard.getEventKeyState()) {
 				for (ControlsListener l : controlsListeners) {
 					l.onKeyPress(key);
+				}
+
+				for (ControlsCharListener l : controlsCharListener) {
+					l.onKeyPress(key_char);
 				}
 			}
 

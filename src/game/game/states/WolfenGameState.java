@@ -27,7 +27,6 @@ import engine.shapes.ShapeInstancedQuadTexture;
 import engine.shapes.ShapeInstancedSprite;
 import engine.shapes.ShapeQuadTexture;
 import engine.shapes.ShapeSprite;
-import engine.util.MathUtil;
 import engine.util.Vector3;
 import game.animations.CustomAnimatedActorExample;
 import game.entities.RotatingText;
@@ -54,9 +53,14 @@ public class WolfenGameState extends GameState {
 	protected Fps fps;
 	protected long l_fps;
 
+	protected long seed;
 	protected DungeonGenerator generator;
 
 	protected FrameBuffer frameBuffer;
+
+	public WolfenGameState(long seed) {
+		this.seed = seed;
+	}
 
 	public void add(Displayable d) {
 		displayableList.add(d);
@@ -76,8 +80,8 @@ public class WolfenGameState extends GameState {
 
 		frameBuffer.dispose();
 
-		Controls.removeControlsListener(Player.getInstance());
-		Controls.removeMouseListener(Player.getInstance());
+		Controls.removeControlsListener(player);
+		Controls.removeMouseListener(player);
 	}
 
 	public Map getMap() {
@@ -106,6 +110,8 @@ public class WolfenGameState extends GameState {
 		setZfar(current_camera.getzFar());
 
 		player = new Player(current_camera);
+		Controls.addControlsListener(player);
+		Controls.addMouseListener(player);
 
 		displayableList = new DisplayableList();
 
@@ -113,7 +119,7 @@ public class WolfenGameState extends GameState {
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
-		generator = new DungeonGenerator(30, 4, (long) MathUtil.random(0, 10000), 4, false);
+		generator = new DungeonGenerator(30, 4, seed, 4, false);
 
 		map = generator.generate();
 		player.position.set(map.getStartingPoint());
@@ -248,5 +254,9 @@ public class WolfenGameState extends GameState {
 		}
 
 		ShaderProgram.unbind();
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 }

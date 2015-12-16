@@ -25,6 +25,7 @@ public class DisplayableText implements Displayable {
 	protected Vector3 position;
 	protected BitMapFont font;
 	protected float textSize;
+	protected float textLength;
 	protected ShapeInstancedSprite shape;
 
 	protected Color color;
@@ -33,8 +34,6 @@ public class DisplayableText implements Displayable {
 	protected TextPosition textPosition;
 	protected boolean hasDepth;
 	protected boolean delete;
-
-	protected boolean updatedText;
 
 	protected float rotation;
 
@@ -50,7 +49,7 @@ public class DisplayableText implements Displayable {
 		shape = (ShapeInstancedSprite) font.getShape().copy();
 
 		delete = false;
-		updatedText = true;
+		updateText();
 	}
 
 	@Override
@@ -98,15 +97,11 @@ public class DisplayableText implements Displayable {
 		}
 
 		this.text = text;
-		updatedText = true;
+		updateText();
 	}
 
 	@Override
 	public boolean update(float dt) {
-		if (updatedText) {
-			updatedText = false;
-			updateText();
-		}
 		return !delete;
 	}
 
@@ -120,6 +115,8 @@ public class DisplayableText implements Displayable {
 		Vector3 newPosition = new Vector3();
 		Vector3 halfDir = new Vector3(0.08f * textSize, 0, 0);
 		Vector3 startingPosition = new Vector3(position);
+
+		textLength = ((0.1f * textSize) * 0.5f) + (halfDir.getX() * text.length());
 
 		if (textPosition == TextPosition.RIGHT) {
 			startingPosition.addX(-text.length() * 0.085f * textSize);
@@ -176,5 +173,17 @@ public class DisplayableText implements Displayable {
 
 		fb.flip();
 		shape.setData(fb);
+	}
+
+	public float getTextLength() {
+		return textLength;
+	}
+
+	public float getTextSize() {
+		return textSize;
+	}
+
+	public void setTextSize(float size) {
+		textSize = size;
 	}
 }

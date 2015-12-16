@@ -13,6 +13,8 @@ import static org.lwjgl.input.Keyboard.KEY_Z;
 import engine.entities.AABBRectangle;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
+import engine.game.Controls.ControlsListener;
+import engine.game.Controls.MouseListener;
 import engine.game.states.GameStateManager;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeQuadTexture;
@@ -25,8 +27,6 @@ import game.game.states.MenuState;
 import game.weapons.WeaponRevolver;
 
 public class Player extends EntityActor implements ControlsListener, MouseListener {
-
-	protected static Player instance;
 
 	protected static float slipperyLevel = 100.0f;
 	protected static float mouseSensitivity = 0.2f;
@@ -70,17 +70,12 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 
 		collisionRectangle = new AABBRectangle(position, scale);
 
-		Controls.addControlsListener(this);
-		Controls.addMouseListener(this);
-
 		if (Controls.getLocale().startsWith("fr")) {
 			k_forward = KEY_Z;
 			k_left = KEY_Q;
 		}
 
 		currentWeapon = new WeaponRevolver(this);
-
-		instance = this;
 	}
 
 	public EAngle getViewAngle() {
@@ -144,7 +139,12 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		}
 		else if (key == KEY_ESCAPE) {
 			// TODO: Engine/Game dependency
-			GameStateManager.changeGameState(new MenuState());
+			if (GameWolfen.SKIP_MENU) {
+				Game.end();
+			}
+			else {
+				GameStateManager.changeGameState(new MenuState());
+			}
 		}
 	}
 
@@ -212,9 +212,5 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		rotation.setZ((float) Math.toRadians(-camera.getViewAngle().yaw));
 
 		return result;
-	}
-
-	public static Player getInstance() {
-		return instance;
 	}
 }

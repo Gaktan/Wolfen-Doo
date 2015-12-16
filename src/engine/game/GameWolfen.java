@@ -4,16 +4,74 @@ import org.lwjgl.opengl.GL11;
 
 import engine.game.states.GameStateManager;
 import game.game.states.MenuState;
+import game.game.states.WolfenGameState;
 
 public class GameWolfen extends Game {
 
 	protected static final float MAX_DELTA = 40.f;
 
-	public long generationWaitingTime;
+	public static boolean SKIP_MENU;
+
+	public GameWolfen(String... args) {
+		// super();
+
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i].trim();
+
+			if (arg.equals("-skipmenu")) {
+				SKIP_MENU = true;
+				System.out.println("Skipping menu");
+			}
+			else if (arg.equals("-width")) {
+				if (i > args.length - 1) {
+					System.err.println("Error with parameter -width. Usage : -width value.");
+					end();
+				}
+
+				String s_width = args[i + 1];
+				int width = 800;
+
+				try {
+					width = Integer.parseInt(s_width);
+				} catch (NumberFormatException e) {
+					System.err.println("Error with parameter -width. Usage : -width value. Value must be an integer");
+					end();
+				}
+
+				setDisplayMode(width, getHeight());
+			}
+			else if (arg.equals("-height")) {
+				if (i > args.length - 1) {
+					System.err.println("Error with parameter -height. Usage : -height value.");
+					end();
+				}
+
+				String s_height = args[i + 1];
+				int height = 600;
+
+				try {
+					height = Integer.parseInt(s_height);
+				} catch (NumberFormatException e) {
+					System.err.println("Error with parameter -height. Usage : -height value. Value must be an integer");
+					end();
+				}
+
+				setDisplayMode(getWidth(), height);
+			}
+			else if (arg.equals("-fullscreen")) {
+				System.out.println("Fullscreen mode");
+				setFullscreen(true);
+			}
+		}
+
+		gameLoop();
+	}
 
 	@Override
 	public void dispose() {
-		GameStateManager.getCurrentGameState().dispose();
+		if (GameStateManager.getCurrentGameState() != null) {
+			GameStateManager.getCurrentGameState().dispose();
+		}
 	}
 
 	@Override
@@ -37,8 +95,12 @@ public class GameWolfen extends Game {
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glFrontFace(GL11.GL_CW);
 
-		// GameStateManager.changeGameState(new WolfenGameState());
-		GameStateManager.changeGameState(new MenuState());
+		if (SKIP_MENU) {
+			GameStateManager.changeGameState(new WolfenGameState(8));
+		}
+		else {
+			GameStateManager.changeGameState(new MenuState());
+		}
 	}
 
 	@Override

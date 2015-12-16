@@ -19,7 +19,7 @@ public class RotatingText extends DisplayableText {
 
 		rotation += 0.001f * dt;
 
-		updatedText = true;
+		updateText();
 		return super.update(dt);
 	}
 

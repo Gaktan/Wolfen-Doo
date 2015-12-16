@@ -35,7 +35,7 @@ public abstract class Game {
 			else
 				Display.setVSyncEnabled(true);
 
-			gameLoop();
+			// gameLoop();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -78,7 +78,7 @@ public abstract class Game {
 	 */
 	public abstract void update(float f);
 
-	private void gameLoop() {
+	protected void gameLoop() {
 		float lastFrame = getCurrentTime();
 		float thisFrame = getCurrentTime();
 
