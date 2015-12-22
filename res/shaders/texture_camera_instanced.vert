@@ -30,10 +30,10 @@ void main() {
 		float x = mod(spriteNumber, (u_imageInfo.x / u_imageInfo.z));
 		float y = int(spriteNumber / (u_imageInfo.x / u_imageInfo.z));
 
-		int posX = int(position.x > 0);
+		float posX = float(position.x > 0);
 		_texCoord.x = (x + posX) * factorX;
 
-		int posY = int(position.y < 0);
+		float posY = float(position.y < 0);
 		_texCoord.y = (y + posY) * factorY;
 	}
     

@@ -1,4 +1,4 @@
-package engine.game;
+package game.game;
 
 public class MainWolfen {
 

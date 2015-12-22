@@ -7,7 +7,7 @@ import engine.util.MathUtil;
 
 /**
  * Class used to read an animation file
- * 
+ *
  * @author Gaktan
  */
 public class AnimationReader {
@@ -33,13 +33,13 @@ public class AnimationReader {
 
 	/**
 	 * Reads a specific file
-	 * 
+	 *
 	 * @param path
 	 *            Filename (no extension)
 	 * @return HashMap containing all the animations of given file
 	 */
 	public HashMap<String, Animation> readFromFile(String path) {
-		String data = FileUtil.readFromFile("res/animations/" + path + ".animation");
+		String data = FileUtil.readFromFile("res/animations/" + path);
 
 		int start = 0;
 		int end = 0;

@@ -5,14 +5,14 @@ import java.util.HashMap;
 
 /**
  * Manager used to hold all the existing animations from the "animations" folder
- * 
+ *
  * @author Gaktan
  */
 public class AnimationManager {
 
 	/**
 	 * Holds all the animations for a specific file
-	 * 
+	 *
 	 * @author Gaktan
 	 */
 	public class AnimationHolder {
@@ -43,7 +43,7 @@ public class AnimationManager {
 
 	/**
 	 * Gets any animation from any file
-	 * 
+	 *
 	 * @param file
 	 *            Animation file (without the extension)
 	 * @param animation
@@ -52,9 +52,15 @@ public class AnimationManager {
 	 */
 	public Animation getAnimation(String file, String animation) {
 		AnimationHolder holder = holders.get(file);
-		if (holder != null)
-			return holder.get(animation);
+		if (holder != null) {
+			Animation a = holder.get(animation);
+			if (a == null) {
+				System.err.println("Animation \"" + animation + "\" not found in file \"" + file + "\".");
+			}
+			return a;
+		}
 
+		System.err.println("File \"" + file + "\" not found.");
 		return null;
 	}
 
@@ -69,7 +75,7 @@ public class AnimationManager {
 			if (!f.getName().endsWith(".animation"))
 				continue;
 
-			String path = f.getName().replaceAll(".animation", "");
+			String path = f.getName();
 
 			HashMap<String, Animation> animations = new AnimationReader().readFromFile(path);
 

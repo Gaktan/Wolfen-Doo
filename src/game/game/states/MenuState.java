@@ -1,5 +1,7 @@
 package game.game.states;
 
+import org.lwjgl.opengl.GL11;
+
 import engine.BitMapFont;
 import engine.Displayable;
 import engine.DisplayableList;
@@ -37,10 +39,14 @@ public class MenuState extends GameState implements MouseListener {
 	@Override
 	public void dispose() {
 		Controls.removeMouseListener(this);
+
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	@Override
 	public void init() {
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+
 		Controls.addMouseListener(this);
 
 		current_camera = new Camera(45.0f, (float) Game.getInstance().getWidth()
@@ -54,11 +60,11 @@ public class MenuState extends GameState implements MouseListener {
 		ShaderProgram shaderProgramTexCameraInstanced = new ShaderProgram("texture_camera_instanced", "texture",
 				"texture_camera_instanced");
 
-		BitMapFont bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "char.png", 256, 256,
-				16, 16));
+		BitMapFont bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "scumm_font.png",
+				128, 256, 8, 11));
 
-		gameTitle = bmf.createString(new Vector3(0f, 0.75f, 0f), "Wolfen-Doo", 2f, TextPosition.CENTER);
-		seedLabel = bmf.createString(new Vector3(-0.25f, 0.2f, 0f), "Seed :", 1f, TextPosition.CENTER);
+		gameTitle = bmf.createString(new Vector3(0f, 0.75f, 0f), "Wolfen-Doo", 2f, TextPosition.CENTER, true);
+		seedLabel = bmf.createString(new Vector3(-0.25f, 0.2f, 0f), "Seed:", 1f, TextPosition.CENTER, true);
 
 		// BUTTONS --
 
@@ -66,8 +72,8 @@ public class MenuState extends GameState implements MouseListener {
 
 		ShapeQuadTexture buttonShape = new ShapeQuadTexture(screenProgram, "menu/button.png");
 
-		final MenuTextField seedField = new MenuTextField(buttonShape, "", new Vector3(0.25f, 0.2f, 0f), 0.9f, bmf);
-		seedField.scale.setX(0.5f * 0.8f);
+		final MenuTextField seedField = new MenuTextField(buttonShape, "", new Vector3(0.25f, 0.2f, 0f), 1f, bmf);
+		seedField.scale.setX(0.5f);
 		seedField.setOnButtonRelease(new ButtonRelease() {
 
 			@Override
@@ -109,7 +115,7 @@ public class MenuState extends GameState implements MouseListener {
 		});
 		buttons.add(seedField);
 
-		final MenuButton playButton = new MenuButton(buttonShape, "Generate map", new Vector3(0f, -0.1f, 0f), 0.9f, bmf);
+		final MenuButton playButton = new MenuButton(buttonShape, "Generate map", new Vector3(0f, -0.1f, 0f), 1.f, bmf);
 		playButton.setOnButtonRelease(new ButtonRelease() {
 
 			@Override
@@ -128,7 +134,7 @@ public class MenuState extends GameState implements MouseListener {
 		});
 		buttons.add(playButton);
 
-		final MenuButton quitButton = new MenuButton(buttonShape, "Quit", new Vector3(0f, -0.6f, 0f), 0.9f, bmf);
+		final MenuButton quitButton = new MenuButton(buttonShape, "Quit", new Vector3(0f, -0.6f, 0f), 1f, bmf);
 		quitButton.setOnButtonRelease(new ButtonRelease() {
 
 			@Override
@@ -201,9 +207,9 @@ public class MenuState extends GameState implements MouseListener {
 	public void render() {
 		gameTitle.render();
 		seedLabel.render();
-		mouseCursor.render();
 
 		buttons.render();
+		mouseCursor.render();
 	}
 
 	@Override

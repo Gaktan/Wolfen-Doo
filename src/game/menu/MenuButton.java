@@ -30,7 +30,8 @@ public class MenuButton extends EntityActor {
 		this.scale.set(1f, 0.25f, 1f);
 		this.scale.scale(scale);
 
-		this.text = font.createString(position, text, scale, TextPosition.CENTER);
+		this.text = font.createString(position, "", scale, TextPosition.CENTER, true);
+		setText(text);
 	}
 
 	public void onButtonPress() {
@@ -78,13 +79,13 @@ public class MenuButton extends EntityActor {
 			newText = newText.substring(0, TEXT_LIMIT);
 		}
 
-		float value = (scale.getX() / (newText.length() * 0.1f)) * 1.2f;
+		float value = (scale.getX() / (newText.length() * 0.1f)) * 0.95f;
 
 		text.setTextSize(value);
 		text.setText(newText);
 
-		if (text.getTextSize() > scale.getX()) {
-			text.setTextSize(scale.getX());
+		if (text.getTextSize() > scale.getZ()) {
+			text.setTextSize(scale.getZ());
 		}
 		text.updateText();
 	}

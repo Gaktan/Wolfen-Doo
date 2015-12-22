@@ -5,16 +5,17 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 /**
- * 
+ *
  * TextureUtil is a class used to hold static methods used to manipulate
  * textures
- * 
+ *
  * @author Gaktan
  *
  */
@@ -38,7 +39,7 @@ public final class TextureUtil {
 
 	/**
 	 * Loads a texture from a file
-	 * 
+	 *
 	 * @param path
 	 *            name of the texture. No need to specify extension, but must be
 	 *            a png
@@ -50,8 +51,14 @@ public final class TextureUtil {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 
 		// Init the textures
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+		// GL11.GL_REPEAT, GL14.GL_MIRRORED_REPEAT, GL12.GL_CLAMP_TO_EDGE,
+		// GL13.GL_CLAMP_TO_BORDER
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL13.GL_CLAMP_TO_BORDER);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL13.GL_CLAMP_TO_BORDER);
+
+		// GL11.GL_LINEAR, GL11.GL_NEAREST
+
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 

@@ -22,10 +22,9 @@ public class DisplayableText implements Displayable {
 	}
 
 	protected String text;
-	protected Vector3 position;
+	public Vector3 position;
 	protected BitMapFont font;
 	protected float textSize;
-	protected float textLength;
 	protected ShapeInstancedSprite shape;
 
 	protected Color color;
@@ -113,18 +112,16 @@ public class DisplayableText implements Displayable {
 		FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * (3 + 16 + 1));
 
 		Vector3 newPosition = new Vector3();
-		Vector3 halfDir = new Vector3(0.08f * textSize, 0, 0);
+		Vector3 halfDir = new Vector3(0.1f * textSize, 0, 0);
 		Vector3 startingPosition = new Vector3(position);
 
-		textLength = ((0.1f * textSize) * 0.5f) + (halfDir.getX() * text.length());
-
 		if (textPosition == TextPosition.RIGHT) {
-			startingPosition.addX(-text.length() * 0.085f * textSize);
+			startingPosition.addX(-text.length() * 0.15f * textSize);
 			startingPosition.addY(0.09f * textSize);
 		}
 		else if (textPosition == TextPosition.CENTER) {
-			startingPosition.addX((-text.length() * 0.08f * textSize) * 0.5f);
-			startingPosition.addY((0.08f * textSize) * 0.5f);
+			startingPosition.addX((-text.length() * 0.1f * textSize) * 0.5f);
+			startingPosition.addY((0.1f * textSize) * 0.5f);
 		}
 
 		charCount = 0;
@@ -132,7 +129,7 @@ public class DisplayableText implements Displayable {
 		for (char c : text.toCharArray()) {
 			if (c == '\n') {
 				newPosition.set(0f, 0f, 0f);
-				startingPosition.addY(-0.09f * textSize);
+				startingPosition.addY(-0.11f * textSize);
 				continue;
 			}
 
@@ -173,10 +170,6 @@ public class DisplayableText implements Displayable {
 
 		fb.flip();
 		shape.setData(fb);
-	}
-
-	public float getTextLength() {
-		return textLength;
 	}
 
 	public float getTextSize() {

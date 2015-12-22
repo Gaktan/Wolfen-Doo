@@ -33,7 +33,8 @@ public class AnimatedParticleSystemExplosion extends ParticleSystem {
 		p.position.add(p.velocity);
 
 		p.setPaused(true);
-		p.setAnimation("test", "a_explosion");
+		// TODO: change "guybrush"
+		p.setAnimation("guybrush.animation", "a_explosion");
 
 		return p;
 	}

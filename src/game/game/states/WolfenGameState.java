@@ -115,7 +115,7 @@ public class WolfenGameState extends GameState {
 
 		displayableList = new DisplayableList();
 
-		ShapeSprite shapeAnimatedSmurf = new ShapeSprite(shaderProgramTexBill, "mul_test.png", 256, 256, 64, 64);
+		ShapeSprite shapeAnimatedSmurf = new ShapeSprite(shaderProgramTexBill, "mul_test.png", 512, 512, 32, 48);
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
@@ -128,40 +128,41 @@ public class WolfenGameState extends GameState {
 		// map = mr.createMap("01.map");
 		add(map);
 
-		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "test", "a_running_front");
+		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
+				"a_running_front");
 		animatedActorTest.position.set(3, 0, 5);
 		add(animatedActorTest);
 
-		bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "char.png", 256, 256, 16, 16));
+		bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "scumm_font.png", 128, 256, 8,
+				11));
 
 		textPos = bmf.createString(new Vector3(-1f, 1f, 0), "", 0.85f);
 		textFps = bmf.createString(new Vector3(-1f, .9f, 0), "", 0.85f);
-		textMemory = bmf.createString(new Vector3(-1f, 0.7f, 0), "", 0.6f, new Color(0f, 0f, 0f));
+		textMemory = bmf.createString(new Vector3(-1f, 0.7f, 0), "", 0.6f);
 
-		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "char.png", 256, 256,
-				16, 16));
+		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "scumm_font.png",
+				128, 256, 8, 11));
 
 		String welcomeText = "Hello and welcome to Wolfen-doo. You can't do much right now,\n"
 				+ "but it will come, don't worry.\n" + "Use WASD to move around, mouse to look and shoot,\n"
 				+ "'E' to open doors, 'R' to reload.";
 
-		String rotatedText = "Woah ! You can even rotate text !";
+		String rotatedText = "Woah! You can even rotate text!";
 
 		Vector3 worldTextPos = map.getStartingPoint().getAdd(new Vector3(-1.5f, 0.4f, 0f));
 
-		DisplayableText worldText = worldFont.createString(worldTextPos, rotatedText, 0.45f, new Color(0f, 0f, 0f),
-				true);
+		DisplayableText worldText = worldFont.createString(worldTextPos, rotatedText, 0.45f, true);
 		worldText.setRotation(90f);
 		worldText.updateText();
 		add(worldText);
 
 		worldTextPos = map.getStartingPoint().getAdd(new Vector3(-1.5f, 0.4f, -1.5f));
 
-		worldText = worldFont.createString(worldTextPos, welcomeText, 0.45f, new Color(0f, 0f, 0f), true);
+		worldText = worldFont.createString(worldTextPos, welcomeText, 0.45f, true);
 		add(worldText);
 
-		RotatingText rotatingText = new RotatingText(new Vector3(9, 0.25f, 3), "WELCOME !", worldFont, 1f, new Color(
-				1f, 0f, 1f), TextPosition.CENTER, true);
+		RotatingText rotatingText = new RotatingText(new Vector3(9, 0.25f, 3), "WELCOME!", worldFont, 1f, new Color(1f,
+				0f, 1f), TextPosition.CENTER, true);
 		add(rotatingText);
 
 		Item item = new Item(new ShapeQuadTexture(shaderProgramTex, "wall.png"));
@@ -190,6 +191,12 @@ public class WolfenGameState extends GameState {
 				"bullet_impact.png"), false);
 
 		add(bulletHoles);
+
+		for (char c = 0; c < 256; c++) {
+			System.out.print(c);
+			if ((c + 1) % 16 == 0)
+				System.out.println();
+		}
 	}
 
 	@Override

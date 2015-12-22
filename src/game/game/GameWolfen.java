@@ -1,7 +1,10 @@
-package engine.game;
+package game.game;
 
 import org.lwjgl.opengl.GL11;
 
+import engine.entities.Camera;
+import engine.game.Controls;
+import engine.game.Game;
 import engine.game.states.GameStateManager;
 import game.game.states.MenuState;
 import game.game.states.WolfenGameState;
@@ -62,6 +65,9 @@ public class GameWolfen extends Game {
 				System.out.println("Fullscreen mode");
 				setFullscreen(true);
 			}
+			else {
+				System.err.println("Unknown parameter " + arg + ".");
+			}
 		}
 
 		gameLoop();
@@ -118,11 +124,14 @@ public class GameWolfen extends Game {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 
-		// TODO
-		/*
-		if (current_camera != null)
-			current_camera.setAspect(getWidth() / getHeight());
-		*/
+		if (GameStateManager.getCurrentGameState() == null) {
+			return;
+		}
+
+		Camera camera = GameStateManager.getCurrentGameState().current_camera;
+		if (camera != null) {
+			camera.setAspect(getWidth() / getHeight());
+		}
 	}
 
 	@Override

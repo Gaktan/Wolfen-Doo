@@ -23,6 +23,7 @@ import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 import engine.weapons.Weapon;
+import game.game.GameWolfen;
 import game.game.states.MenuState;
 import game.weapons.WeaponRevolver;
 

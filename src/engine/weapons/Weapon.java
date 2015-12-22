@@ -74,7 +74,7 @@ public abstract class Weapon implements Displayable {
 		currentReloading = reloadingTime;
 
 		BitMapFont bmf = new BitMapFont(new ShapeInstancedSprite(ShaderProgram.getProgram("texture_camera_instanced"),
-				"char.png", 256, 256, 16, 16));
+				"scumm_font.png", 128, 256, 8, 11));
 
 		reloadingText = bmf.createString(new Vector3(0, 0, 0), "", 1f, TextPosition.CENTER);
 		ammoText = bmf.createString(new Vector3(1f, -1f, 0), "", 1f, TextPosition.RIGHT);

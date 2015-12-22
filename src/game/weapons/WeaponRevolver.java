@@ -26,7 +26,7 @@ public class WeaponRevolver extends Weapon {
 		ShapeSprite revolverShape = new ShapeSprite(ShaderProgram.getProgram("texture_camera"), "revolver.png", 256,
 				32, 32, 32);
 
-		weaponSprite = new AnimatedActor(revolverShape, "revolver", "a_idle");
+		weaponSprite = new AnimatedActor(revolverShape, "revolver.animation", "a_idle");
 		weaponSprite.position.set(POSITION_CENTER);
 		weaponSprite.scale.set(.85f);
 

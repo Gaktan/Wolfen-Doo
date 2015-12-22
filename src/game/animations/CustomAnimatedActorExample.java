@@ -50,7 +50,7 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		if (angle < 0)
 			angle += 2 * Math.PI;
 
-		if (angle < PI_OVER_2) {
+		if (angle < PI_OVER_2 || angle > PI_OVER_2 * 4.f) {
 			changeOrientation(Orientation.EAST);
 		}
 		else if (angle >= PI_OVER_2 && angle < Math.PI) {
