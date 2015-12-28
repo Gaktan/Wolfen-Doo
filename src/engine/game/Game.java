@@ -15,17 +15,17 @@ public abstract class Game {
 	private int limitFPS = -1;
 
 	public Game() {
-		this(800, 600);
+		this(800, 600, false);
 	}
 
 	/**
 	 * A basic game.
 	 */
-	public Game(int width, int height) {
+	public Game(int width, int height, boolean fullScreen) {
 		try {
 			instance = this;
 			Display.create();
-			setDisplayMode(width, height);
+			setDisplayMode(width, height, fullScreen);
 			Display.setResizable(true);
 
 			// setFullscreen(true);
@@ -35,7 +35,7 @@ public abstract class Game {
 			else
 				Display.setVSyncEnabled(true);
 
-			// gameLoop();
+			gameLoop();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(-1);

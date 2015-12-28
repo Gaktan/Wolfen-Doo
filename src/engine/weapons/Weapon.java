@@ -22,10 +22,12 @@ public abstract class Weapon implements Displayable {
 		}
 	}
 
+	protected static final String TEXT_RELOADING = "Reloading...";
+
 	protected static Vector3 POSITION_CENTER;
 	protected static Vector3 POSITION_LEFT;
-
 	protected static Vector3 POSITION_RIGHT;
+
 	static {
 		POSITION_CENTER = new Vector3(0f, -.58f, 0f);
 		POSITION_LEFT = new Vector3(-0.2f, -.58f, 0f);
@@ -49,6 +51,7 @@ public abstract class Weapon implements Displayable {
 	protected DisplayableText reloadingText;
 	protected DisplayableText ammoText;
 	protected BobbingState bobbingState;
+	protected boolean reloading;
 
 	// BOBBING
 	protected float timeStamp;
@@ -76,8 +79,8 @@ public abstract class Weapon implements Displayable {
 		BitMapFont bmf = new BitMapFont(new ShapeInstancedSprite(ShaderProgram.getProgram("texture_camera_instanced"),
 				"scumm_font.png", 128, 256, 8, 11));
 
-		reloadingText = bmf.createString(new Vector3(0, 0, 0), "", 1f, TextPosition.CENTER);
-		ammoText = bmf.createString(new Vector3(1f, -1f, 0), "", 1f, TextPosition.RIGHT);
+		reloadingText = bmf.createString(new Vector3(0f), TEXT_RELOADING, 1f, TextPosition.CENTER);
+		ammoText = bmf.createString(new Vector3(1f, -1f, 0f), "", 1f, TextPosition.RIGHT);
 		updateAmmoText();
 
 		bobbingState = BobbingState.IDLE;
@@ -110,7 +113,9 @@ public abstract class Weapon implements Displayable {
 		weaponSprite.render();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-		reloadingText.render();
+		if (reloading) {
+			reloadingText.render();
+		}
 		ammoText.render();
 	}
 
@@ -186,6 +191,7 @@ public abstract class Weapon implements Displayable {
 		weaponSprite.update(dt);
 		ammoText.update(dt);
 		reloadingText.update(dt);
+
 		return true;
 	}
 
@@ -223,13 +229,12 @@ public abstract class Weapon implements Displayable {
 
 	protected void reload(float dt) {
 		if (totalAmmo == 0) {
-			reloadingText.setText("no ammo...");
 			return;
 		}
 
 		currentReloading -= dt;
 
-		reloadingText.setText("reloading...");
+		reloading = true;
 
 		if (currentReloading > 0f)
 			return;
@@ -246,7 +251,7 @@ public abstract class Weapon implements Displayable {
 			shotsLeft = shotsCapacity;
 		}
 
-		reloadingText.setText("");
+		reloading = false;
 		updateAmmoText();
 	}
 

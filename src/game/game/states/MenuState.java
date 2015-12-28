@@ -111,6 +111,10 @@ public class MenuState extends GameState implements MouseListener {
 				if (key >= '0' && key <= '9') {
 					seedField.setText(text + key);
 				}
+
+				if (seedField.getText().getText().length() == 0 && key == '-') {
+					seedField.setText("" + key);
+				}
 			}
 		});
 		buttons.add(seedField);
@@ -121,7 +125,7 @@ public class MenuState extends GameState implements MouseListener {
 			@Override
 			public void onButtonRelease(boolean mouseInside) {
 				if (mouseInside) {
-					String s_seed = seedField.getText().getText();
+					String s_seed = seedField.getText().getText().replace(MenuTextField.CURSOR_CHAR, "");
 					long seed = 0;
 
 					if (s_seed.length() > 0) {

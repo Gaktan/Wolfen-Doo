@@ -19,7 +19,6 @@ import engine.game.FrameBuffer;
 import engine.game.Game;
 import engine.game.Player;
 import engine.game.states.GameState;
-import engine.generator.DungeonGenerator;
 import engine.generator.Map;
 import engine.particles.ParticleSystem;
 import engine.shapes.ShaderProgram;
@@ -30,6 +29,7 @@ import engine.shapes.ShapeSprite;
 import engine.util.Vector3;
 import game.animations.CustomAnimatedActorExample;
 import game.entities.RotatingText;
+import game.generator.DungeonGenerator;
 import game.particles.AnimatedParticleSystemExplosion;
 
 public class WolfenGameState extends GameState {
@@ -119,7 +119,7 @@ public class WolfenGameState extends GameState {
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
-		generator = new DungeonGenerator(30, 4, seed, 4, false);
+		generator = new DungeonGenerator().setSizeX(30).setSizeY(4).setRoomSize(3).setSeed(seed).setIntersections(true);
 
 		map = generator.generate();
 		player.position.set(map.getStartingPoint());
@@ -191,12 +191,6 @@ public class WolfenGameState extends GameState {
 				"bullet_impact.png"), false);
 
 		add(bulletHoles);
-
-		for (char c = 0; c < 256; c++) {
-			System.out.print(c);
-			if ((c + 1) % 16 == 0)
-				System.out.println();
-		}
 	}
 
 	@Override

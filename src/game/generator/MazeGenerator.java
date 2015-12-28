@@ -1,4 +1,4 @@
-package engine.generator;
+package game.generator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +7,8 @@ import java.util.Stack;
 import org.lwjgl.util.vector.Vector2f;
 
 import engine.entities.EntityActor;
+import engine.generator.Generator;
+import engine.generator.Map;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.Vector3;
@@ -14,7 +16,7 @@ import engine.util.Vector3;
 /**
  * Generator used to create 1 unit wide corridor mazes using simple labyrinth
  * algorythm
- * 
+ *
  * @author Gaktan
  */
 public class MazeGenerator extends Generator {
@@ -112,8 +114,7 @@ public class MazeGenerator extends Generator {
 		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
 				downColor);
 
-		mapR.sky = new EntityActor(skyShape);
-		;
+		mapR.setSky(new EntityActor(skyShape));
 
 		mapR.buildMapFromString(map.toString());
 		return mapR;

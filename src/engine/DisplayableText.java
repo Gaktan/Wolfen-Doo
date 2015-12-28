@@ -116,7 +116,7 @@ public class DisplayableText implements Displayable {
 		Vector3 startingPosition = new Vector3(position);
 
 		if (textPosition == TextPosition.RIGHT) {
-			startingPosition.addX(-text.length() * 0.15f * textSize);
+			startingPosition.addX(-text.length() * 0.1f * textSize);
 			startingPosition.addY(0.09f * textSize);
 		}
 		else if (textPosition == TextPosition.CENTER) {
