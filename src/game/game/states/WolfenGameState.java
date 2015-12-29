@@ -19,7 +19,9 @@ import engine.game.FrameBuffer;
 import engine.game.Game;
 import engine.game.Player;
 import engine.game.states.GameState;
+import engine.generator.Generator;
 import engine.generator.Map;
+import engine.generator.MapReader;
 import engine.particles.ParticleSystem;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedQuadTexture;
@@ -54,12 +56,17 @@ public class WolfenGameState extends GameState {
 	protected long l_fps;
 
 	protected long seed;
-	protected DungeonGenerator generator;
+	protected String mapName;
 
 	protected FrameBuffer frameBuffer;
 
 	public WolfenGameState(long seed) {
 		this.seed = seed;
+		mapName = null;
+	}
+
+	public WolfenGameState(String mapName) {
+		this.mapName = mapName;
 	}
 
 	public void add(Displayable d) {
@@ -119,9 +126,17 @@ public class WolfenGameState extends GameState {
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
-		generator = new DungeonGenerator().setSizeX(30).setSizeY(4).setRoomSize(3).setSeed(seed).setIntersections(true);
+		if (mapName == null) {
 
-		map = generator.generate();
+			Generator generator = new DungeonGenerator().setSizeX(30).setSizeY(4).setRoomSize(3).setSeed(seed)
+					.setIntersections(true);
+
+			map = generator.generate();
+		}
+		else {
+			map = new MapReader().createMap(mapName);
+		}
+
 		player.position.set(map.getStartingPoint());
 
 		// MapReader mr = new MapReader();
@@ -222,6 +237,7 @@ public class WolfenGameState extends GameState {
 
 	@Override
 	public void update(float dt) {
+
 		current_camera.update(dt);
 		player.update(dt);
 

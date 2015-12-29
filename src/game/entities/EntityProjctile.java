@@ -3,8 +3,6 @@ package game.entities;
 import org.newdawn.slick.Color;
 
 import engine.entities.EntityActor;
-import engine.entities.EntityDoor;
-import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
 import engine.generator.Map;
@@ -24,7 +22,7 @@ public class EntityProjctile extends EntityLine {
 
 	protected static final float SPEED;
 	static {
-		SPEED = 2.2f;
+		SPEED = 3.5f;
 	}
 
 	protected Map map;
@@ -46,11 +44,12 @@ public class EntityProjctile extends EntityLine {
 	public boolean update(float dt) {
 
 		boolean b = false;
-		boolean drawImpact = true;
 
-		boolean result = super.update(dt);
+		position.addX(velocity.getX() * (dt / 100.0f));
+		position.addY(velocity.getY() * (dt / 100.0f));
+		position.addZ(velocity.getZ() * (dt / 100.0f));
 
-		positionB = position.getAdd(velocity);
+		positionB = position.getAdd(velocity.getNormalize().getScale(2.0f));
 		// Vector3.add(position, velocity, positionB);
 
 		if (position.getX() < 0 || position.getZ() < 0 || position.getX() > map.getSizeX()
@@ -66,7 +65,7 @@ public class EntityProjctile extends EntityLine {
 
 		int oldX = -1, oldZ = -1;
 
-		for (float i = 0f; i < 1f; i += 0.025f) {
+		for (float i = 0f; i < 0.25f; i += 0.025f) {
 			if (position.getY() + (velocity.getY() * i) < -0.5f) {
 				b = true;
 				normal.setY(1f);
@@ -76,6 +75,7 @@ public class EntityProjctile extends EntityLine {
 				break;
 			}
 			if (position.getY() + (velocity.getY() * i) > 0.5f) {
+				b = true;
 				normal.setY(-1f);
 				impactPosition.setY(0f);
 				impactPosition.setX(position.getX() + (velocity.getX() * i));
@@ -100,11 +100,12 @@ public class EntityProjctile extends EntityLine {
 					continue;
 
 				if (info instanceof DoorShapeInfo) {
+					/*
 					EntityDoor door = (EntityDoor) map.getActor(x, z);
 					if (door.getState() != DoorState.OPEN) {
 						return false;
 					}
-
+					*/
 					continue;
 				}
 
@@ -137,7 +138,7 @@ public class EntityProjctile extends EntityLine {
 			if (normal.length() != 0)
 				normal.normalize();
 
-			if (bounces != 0) {
+			if (bounces > 0) {
 				if (normal.getX() != 0) {
 					velocity.setX(-velocity.getX());
 				}
@@ -155,14 +156,13 @@ public class EntityProjctile extends EntityLine {
 				bounces--;
 			}
 
-			else if (drawImpact) {
+			else {
 				createImpact(impactPosition, normal);
+				return false;
 			}
-
-			return false;
 		}
 
-		return result;
+		return !delete;
 	}
 
 	protected void createImpact(Vector3 impactPosition, Vector3 normal) {

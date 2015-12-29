@@ -6,7 +6,7 @@ import engine.entities.Camera;
 import engine.game.Controls;
 import engine.game.Game;
 import engine.game.states.GameStateManager;
-import game.game.states.MenuState;
+import game.game.states.MainMenuState;
 import game.game.states.WolfenGameState;
 
 public class GameWolfen extends Game {
@@ -51,7 +51,7 @@ public class GameWolfen extends Game {
 			GameStateManager.changeGameState(new WolfenGameState(8));
 		}
 		else {
-			GameStateManager.changeGameState(new MenuState());
+			GameStateManager.changeGameState(new MainMenuState());
 		}
 	}
 

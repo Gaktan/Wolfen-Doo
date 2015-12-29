@@ -13,8 +13,8 @@ public abstract class Entity implements Displayable {
 	public Vector3 position;
 	public Vector3 velocity;
 	public Vector3 scale;
-	private boolean solid;
-	private boolean delete;
+	protected boolean solid;
+	protected boolean delete;
 
 	public Entity() {
 		position = new Vector3();

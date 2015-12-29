@@ -1,10 +1,7 @@
 package engine.entities;
 
-import org.newdawn.slick.Color;
-
 import engine.shapes.Shape;
 import engine.util.Matrix4;
-import engine.util.TextureUtil;
 import engine.util.Vector3;
 
 /**
@@ -15,7 +12,7 @@ import engine.util.Vector3;
 public class EntityActor extends Entity {
 
 	public Shape shape;
-	public Color color;
+	public Vector3 color;
 	public Vector3 rotation;
 
 	public EntityActor(Shape shape) {
@@ -25,7 +22,7 @@ public class EntityActor extends Entity {
 
 		this.shape = shape;
 
-		color = new Color(Color.white);
+		color = new Vector3(1f);
 	}
 
 	@Override
@@ -42,7 +39,7 @@ public class EntityActor extends Entity {
 	 * Sets the uniforms to be used in the shader. Do not call this
 	 */
 	public void setUniforms() {
-		shape.getShaderProgram().setUniform("u_color", TextureUtil.colorToVector3(color));
+		shape.getShaderProgram().setUniform("u_color", color);
 
 		Matrix4 model = Matrix4.createModelMatrix(position, rotation, scale);
 

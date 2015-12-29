@@ -1,0 +1,58 @@
+name{coucou}
+width{40}
+height{40}
+start{28, 4}
+
+sky{237 157 95, 252 231 227}
+
+wall{O, wall.png, 1}
+wall{U, wall_portrait.png, 1}
+billboard{X, pillar.png, 0}
+wall{A, wall_hole.png, 0}
+animation{W, mul_test.png, 1}
+door{-, door.png, 0 0 -0.9, 1, 1000}
+door{|, door.png, 0.9 0 0, 0, 350}
+door{_, pillar.png, 0 -0.9 0, 1, 1000}
+
+map{
+OOOOOOOOOOOOOOOOOOOOOOOOOOO             
+OX                         OOO          
+O     OO  OO  OO              OO        
+O     OO  OO  OO                O       
+O     O        O                 O      
+O X   |   XX   OX XO              OO    
+OOO-O-OO OOOO OOO_OOO               O   
+O               X XO O               O  
+O                  O  O              O  
+O    A             O   O             O  
+U    O    OXO  O   OOOOOUOOOOOOOO  OOO  
+O         O    O   O            O  O    
+O         OOOAAO   O            O  O    
+U     X            O            O  O    
+O                  O            O  O    
+O          X X  O  O            O  O    
+U   W       X OOOO O            O  O    
+O           X   O  O            O  O    
+O                  O            O  O    
+O                  O            O  O    
+OOOO      OOOOO   OOOOOOOOOOOOOOO  OOOOO
+OX                 |          OOO  O  OO
+O     OO  OO  OO   O               O   O
+O     OO  OO  OO   O OOOOO   OOOOOOO  OO
+O     O        O   O                   O
+O X   |   XX   OX XO                   O
+OOO-O-OO OOOO OOO_OO                   O
+O                  O                   O
+O                  |                   O
+O                  O                   O
+OOOOOOOOOOOOOOOOOOOOOOOO  OOOOOO-OOOOOOO
+                    O         O    O   O
+                    O         OOOAAO   O
+                    U     X            O
+                    O                  O
+                    O          X X  O  O
+                    U   W       X OOOO O
+                    OOO         X   O  O
+                    O O                O
+                    OOOOOUOOOOOOOOOOOOOO
+}

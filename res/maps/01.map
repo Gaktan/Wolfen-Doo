@@ -1,6 +1,7 @@
 name{coucou}
 width{20}
 height{20}
+start{3, 2}
 
 sky{237 157 95, 252 231 227}
 

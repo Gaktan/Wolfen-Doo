@@ -1,5 +1,7 @@
 package engine.util;
 
+import java.nio.FloatBuffer;
+
 /**
  * 3D Vector class
  *
@@ -337,5 +339,13 @@ public class Vector3 {
 	@Override
 	public String toString() {
 		return "Vector3 [x=" + x + ", y=" + y + ", z=" + z + "]";
+	}
+
+	/**
+	 * Puts the vector inside a floatBuffer <br>
+	 * Warning. Buffer must have room
+	 */
+	public void store(FloatBuffer fb) {
+		fb.put(new float[] { x, y, z });
 	}
 }

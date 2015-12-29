@@ -24,7 +24,7 @@ import engine.util.Matrix4;
 import engine.util.Vector3;
 import engine.weapons.Weapon;
 import game.game.GameWolfen;
-import game.game.states.MenuState;
+import game.game.states.MainMenuState;
 import game.weapons.WeaponRevolver;
 
 public class Player extends EntityActor implements ControlsListener, MouseListener {
@@ -144,7 +144,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 				Game.end();
 			}
 			else {
-				GameStateManager.changeGameState(new MenuState());
+				GameStateManager.changeGameState(new MainMenuState());
 			}
 		}
 	}

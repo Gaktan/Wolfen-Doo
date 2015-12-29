@@ -386,8 +386,8 @@ public class DungeonGenerator extends Generator {
 			sb.append(cc);
 		}
 
-		Vector3 downColor = new Vector3(0f, 1f, 0f);
-		Vector3 upColor = new Vector3(1f, 0f, 0f);
+		Vector3 downColor = new Vector3(237f, 157f, 95f).getScale(1f / 256f);
+		Vector3 upColor = new Vector3(252f, 231f, 227f).getScale(1f / 256f);
 		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
 				downColor);
 		EntityActor sky = new EntityActor(skyShape);

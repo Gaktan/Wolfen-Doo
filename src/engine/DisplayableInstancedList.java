@@ -57,11 +57,7 @@ public class DisplayableInstancedList extends DisplayableList {
 
 				EntityActor a = (EntityActor) d;
 
-				float[] array = new float[3];
-				array[0] = a.color.r;
-				array[1] = a.color.g;
-				array[2] = a.color.b;
-				fb1.put(array);
+				a.color.store(fb1);
 
 				Matrix4 model = Matrix4.createModelMatrix(a.position, a.rotation, a.scale);
 				model.store(fb1);

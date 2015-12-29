@@ -10,9 +10,9 @@ import engine.util.Vector3;
 
 /**
  * NewMapReader class is used to read a map from a .map file
- * 
+ *
  * For an example, see res/maps/map.example
- * 
+ *
  * @author Gaktan
  */
 public class MapReader {
@@ -24,20 +24,18 @@ public class MapReader {
 	protected static final String COMMAND_BILLBOARD = "billboard";
 	protected static final String COMMAND_WALL = "wall";
 	protected static final String COMMAND_ANIMATION = "animation";
-
 	protected static final String COMMAND_DOOR = "door";
-
 	protected static final String COMMAND_MAP = "map";
-
 	protected static final String COMMAND_SKY = "sky";
+	protected static final String COMMAND_START = "start";
 
 	protected String mapData;
-
 	protected String name;
 
 	protected int width;
-
 	protected int height;
+
+	protected Vector3 startingPoint;
 
 	protected Map map;
 	protected EntityActor sky;
@@ -47,14 +45,19 @@ public class MapReader {
 
 	/**
 	 * Starts the process of reading the map
-	 * 
+	 *
 	 * @return Map created from designated file
 	 */
 	public Map createMap(String path) {
 		map = new Map();
+
+		startingPoint = new Vector3();
+
 		readFile(path);
+
 		map.setSize(width, height);
 		map.buildMapFromString(mapData);
+		map.setStartingPoint(startingPoint);
 
 		if (sky != null)
 			map.setSky(sky);
@@ -123,6 +126,9 @@ public class MapReader {
 		else if (command.equals(COMMAND_SKY))
 			setSky(value);
 
+		else if (command.equals(COMMAND_START))
+			setStartingPosition(value);
+
 	}
 
 	protected void readFile(String path) {
@@ -144,7 +150,7 @@ public class MapReader {
 				String value;
 
 				if (!command.equals(COMMAND_MAP))
-					value = data.substring(start, end).trim().toLowerCase();
+					value = data.substring(start, end).trim();
 				else
 					value = data.substring(start, end);
 
@@ -161,6 +167,11 @@ public class MapReader {
 	protected Vector3 readVector3(String value) {
 		String[] v = value.split(" ");
 
+		if (v.length != 3) {
+			System.err.println("Error with value \"" + value + "\". Usage : \"x y z\".");
+			return new Vector3();
+		}
+
 		float x = MathUtil.parseFloat(v[0]);
 		float y = MathUtil.parseFloat(v[1]);
 		float z = MathUtil.parseFloat(v[2]);
@@ -168,10 +179,31 @@ public class MapReader {
 		return new Vector3(x, y, z);
 	}
 
+	protected void setStartingPosition(String value) {
+		String[] v = value.split(",");
+
+		if (v.length != 2) {
+			System.err.println("Error with command \"" + COMMAND_START + "\". Usage : " + COMMAND_START + "{x, y}");
+			return;
+		}
+
+		float x = MathUtil.parseFloat(v[0]);
+		float y = MathUtil.parseFloat(v[1]);
+
+		startingPoint.set(x, 0f, y);
+	}
+
 	protected void setSky(String value) {
-		String[] values = value.split(", ");
-		Vector3 downColor = readVector3(values[0]);
-		Vector3 upColor = readVector3(values[1]);
+		String[] values = value.split(",");
+
+		if (values.length != 2) {
+			System.err.println("Error with command \"" + COMMAND_START + "\". Usage : " + COMMAND_START
+					+ "{r1 g1 b1, r2 g2 b2}");
+			return;
+		}
+
+		Vector3 downColor = readVector3(values[0].trim());
+		Vector3 upColor = readVector3(values[1].trim());
 
 		downColor.scale(1.0f / 256);
 		upColor.scale(1.0f / 256);

@@ -301,7 +301,8 @@ public class Map implements Displayable {
 
 	@Override
 	public void render() {
-		sky.render();
+		if (sky != null)
+			sky.render();
 
 		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
 			ShapeInfo info = entry.getValue();

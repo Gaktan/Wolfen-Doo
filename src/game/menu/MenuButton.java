@@ -39,7 +39,7 @@ public class MenuButton extends EntityActor {
 			buttonPress.onButtonPress();
 		}
 
-		color.r = 0f;
+		color.setX(0f);
 	}
 
 	public void onButtonRelease(boolean mouseInside) {
@@ -47,7 +47,7 @@ public class MenuButton extends EntityActor {
 			buttonRelease.onButtonRelease(mouseInside);
 		}
 
-		color.r = 1f;
+		color.setX(1f);
 	}
 
 	@Override
