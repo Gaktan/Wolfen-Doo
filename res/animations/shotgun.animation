@@ -1,0 +1,11 @@
+animation{
+  name[a_idle]
+  frames[0]
+  delays[1000000]
+}
+
+animation{
+  name[a_fire]
+  frames[1, 2, 3, 4, 5, 4, 3, 0]
+  delays[100, 100, 100, 150, 200, 250, 200, 300]
+}

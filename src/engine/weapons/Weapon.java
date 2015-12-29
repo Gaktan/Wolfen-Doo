@@ -7,6 +7,7 @@ import engine.Displayable;
 import engine.DisplayableText;
 import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
+import engine.game.Player;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedSprite;
 import engine.util.MathUtil;
@@ -33,6 +34,8 @@ public abstract class Weapon implements Displayable {
 		POSITION_LEFT = new Vector3(-0.2f, -.58f, 0f);
 		POSITION_RIGHT = new Vector3(0.2f, -.58f, 0f);
 	}
+
+	protected Player player;
 
 	// SHOOTING
 	protected boolean firing;
@@ -64,13 +67,9 @@ public abstract class Weapon implements Displayable {
 	// WEAPON_SPRITE
 	protected AnimatedActor weaponSprite;
 
-	public Weapon(float coolDownTime, int shotsCapacity, float reloadingTime, int totalAmmo, float bobbingTime) {
+	public Weapon(Player player) {
 
-		cooldownTime = coolDownTime;
-		this.shotsCapacity = shotsCapacity;
-		this.reloadingTime = reloadingTime;
-		this.totalAmmo = totalAmmo;
-		this.bobbingTime = bobbingTime;
+		this.player = player;
 
 		currentCooldown = 0f;
 		shotsLeft = shotsCapacity;
@@ -94,7 +93,7 @@ public abstract class Weapon implements Displayable {
 	public void delete() {
 	}
 
-	public abstract void fire();
+	protected abstract void fire();
 
 	public void forceReload() {
 		if (shotsLeft > 0 && shotsLeft < shotsCapacity && totalAmmo > 0) {
@@ -257,5 +256,27 @@ public abstract class Weapon implements Displayable {
 
 	protected void updateAmmoText() {
 		ammoText.setText(shotsLeft + "/" + totalAmmo);
+	}
+
+	protected void setCooldownTime(float cooldown) {
+		cooldownTime = cooldown;
+	}
+
+	protected void setShotsCapacity(int shotsCapacity) {
+		this.shotsCapacity = shotsCapacity;
+		shotsLeft = shotsCapacity;
+	}
+
+	protected void setReloadingTime(float reloadingTime) {
+		this.reloadingTime = reloadingTime;
+		currentReloading = reloadingTime;
+	}
+
+	protected void addAmmo(int ammo) {
+		totalAmmo += ammo;
+	}
+
+	protected void setBobbingTime(float bobbingTime) {
+		this.bobbingTime = bobbingTime;
 	}
 }

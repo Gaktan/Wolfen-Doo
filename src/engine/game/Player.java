@@ -10,6 +10,11 @@ import static org.lwjgl.input.Keyboard.KEY_S;
 import static org.lwjgl.input.Keyboard.KEY_SPACE;
 import static org.lwjgl.input.Keyboard.KEY_W;
 import static org.lwjgl.input.Keyboard.KEY_Z;
+
+import java.util.ArrayList;
+
+import org.lwjgl.input.Keyboard;
+
 import engine.entities.AABBRectangle;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
@@ -26,6 +31,7 @@ import engine.weapons.Weapon;
 import game.game.GameWolfen;
 import game.game.states.MainMenuState;
 import game.weapons.WeaponRevolver;
+import game.weapons.WeaponShotgun;
 
 public class Player extends EntityActor implements ControlsListener, MouseListener {
 
@@ -56,9 +62,13 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 	protected float backwardGoal;
 
 	protected Weapon currentWeapon;
+	protected int weaponIndex;
+	protected ArrayList<Weapon> weaponList;
 
 	public Player(Camera camera) {
 		super(new ShapeQuadTexture(ShaderProgram.getProgram("texture"), "wall.png"));
+
+		weaponList = new ArrayList<Weapon>();
 
 		movementGoal = new Vector3();
 		movement = new Vector3();
@@ -76,7 +86,13 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 			k_left = KEY_Q;
 		}
 
-		currentWeapon = new WeaponRevolver(this);
+		// TODO: Game/engine dependency
+		weaponList.add(new WeaponRevolver(this));
+		weaponList.add(new WeaponShotgun(this));
+
+		weaponIndex = 0;
+
+		currentWeapon = weaponList.get(weaponIndex);
 	}
 
 	public EAngle getViewAngle() {
@@ -145,6 +161,15 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 			}
 			else {
 				GameStateManager.changeGameState(new MainMenuState());
+			}
+		}
+		else if (key >= Keyboard.KEY_1 && key <= Keyboard.KEY_0) {
+
+			int weaponIndex = key - 2;
+
+			if (weaponIndex != this.weaponIndex && weaponIndex < weaponList.size()) {
+				this.weaponIndex = weaponIndex;
+				currentWeapon = weaponList.get(this.weaponIndex);
 			}
 		}
 	}

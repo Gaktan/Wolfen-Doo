@@ -160,7 +160,7 @@ public class WolfenGameState extends GameState {
 
 		String welcomeText = "Hello and welcome to Wolfen-doo. You can't do much right now,\n"
 				+ "but it will come, don't worry.\n" + "Use WASD to move around, mouse to look and shoot,\n"
-				+ "'E' to open doors, 'R' to reload.";
+				+ "'E' to open doors, 'R' to reload. '1-2' to change weapon.";
 
 		String rotatedText = "Woah! You can even rotate text!";
 

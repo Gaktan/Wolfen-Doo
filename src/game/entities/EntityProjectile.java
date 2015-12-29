@@ -18,7 +18,7 @@ import game.particles.ParticleSystemImpact;
  *
  * @author Gaktan
  */
-public class EntityProjctile extends EntityLine {
+public class EntityProjectile extends EntityLine {
 
 	protected static final float SPEED;
 	static {
@@ -29,7 +29,7 @@ public class EntityProjctile extends EntityLine {
 
 	protected int bounces;
 
-	public EntityProjctile(Vector3 position, Vector3 direction, Map map) {
+	public EntityProjectile(Vector3 position, Vector3 direction, Map map) {
 		super(position, new Vector3(), new Color(0xffff4c), new Color(0xffde4c));
 
 		this.map = map;

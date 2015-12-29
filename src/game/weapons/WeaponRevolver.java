@@ -9,17 +9,19 @@ import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 import engine.weapons.Weapon;
-import game.entities.EntityProjctile;
+import game.entities.EntityProjectile;
 import game.game.states.WolfenGameState;
 
 public class WeaponRevolver extends Weapon {
 
-	protected Player player;
-
 	public WeaponRevolver(Player player) {
-		super(400f, 6, 1000f, 40, 600f);
+		super(player);
 
-		this.player = player;
+		setCooldownTime(400f);
+		setShotsCapacity(6);
+		setReloadingTime(1000f);
+		addAmmo(40);
+		setBobbingTime(600f);
 
 		updateAmmoText();
 
@@ -48,12 +50,12 @@ public class WeaponRevolver extends Weapon {
 		angle.yaw -= 90;
 		angle.pitch = -angle.pitch;
 
-		angle.yaw += MathUtil.random(-3f, 3f);
+		angle.yaw += MathUtil.random(-1f, 1f);
 
 		Vector3 lineVector = angle.toVector();
 		lineVector.normalize();
 
-		((WolfenGameState) GameStateManager.getCurrentGameState()).add(new EntityProjctile(linePosition, lineVector,
+		((WolfenGameState) GameStateManager.getCurrentGameState()).add(new EntityProjectile(linePosition, lineVector,
 				((WolfenGameState) GameStateManager.getCurrentGameState()).getMap()));
 
 		weaponSprite.setAnimation("a_fire");
@@ -61,7 +63,6 @@ public class WeaponRevolver extends Weapon {
 
 	@Override
 	public boolean update(float dt) {
-
 		super.update(dt);
 
 		if (currentCooldown < 0) {
