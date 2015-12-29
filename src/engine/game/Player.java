@@ -30,18 +30,23 @@ import engine.util.Vector3;
 import engine.weapons.Weapon;
 import game.game.GameWolfen;
 import game.game.states.MainMenuState;
+import game.weapons.WeaponFist;
 import game.weapons.WeaponRevolver;
 import game.weapons.WeaponShotgun;
 
 public class Player extends EntityActor implements ControlsListener, MouseListener {
 
-	protected static float slipperyLevel = 100.0f;
+	public static final int WEAPON_FIST = 0;
+	public static final int WEAPON_REVOLVER = 1;
+	public static final int WEAPON_SHOTGUN = 2;
+
+	protected static final float SLIPPERY_LEVEL = 100.0f;
 	protected static float mouseSensitivity = 0.2f;
 	// Controls
 	protected static final float FORWARD_SPEED = 0.4f;
 
 	protected static final float SIDEWAYS_SPEED = 0.3f;
-	protected static float UPDOWN_SPEED = 0.6f;
+	protected static final float UPDOWN_SPEED = 0.6f;
 	protected static int k_forward = KEY_W;
 	protected static int k_left = KEY_A;
 	protected static int k_back = KEY_S;
@@ -87,6 +92,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		}
 
 		// TODO: Game/engine dependency
+		weaponList.add(new WeaponFist(this));
 		weaponList.add(new WeaponRevolver(this));
 		weaponList.add(new WeaponShotgun(this));
 
@@ -169,6 +175,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 
 			if (weaponIndex != this.weaponIndex && weaponIndex < weaponList.size()) {
 				this.weaponIndex = weaponIndex;
+				currentWeapon.setFiring(false);
 				currentWeapon = weaponList.get(this.weaponIndex);
 			}
 		}
@@ -217,7 +224,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 
 		boolean result = super.update(elapsedTime);
 
-		float dt = elapsedTime / slipperyLevel;
+		float dt = elapsedTime / SLIPPERY_LEVEL;
 
 		movement = MathUtil.approach(movement, movementGoal, dt);
 

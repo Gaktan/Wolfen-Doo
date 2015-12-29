@@ -12,23 +12,23 @@ import engine.weapons.Weapon;
 import game.entities.EntityProjectile;
 import game.game.states.WolfenGameState;
 
-public class WeaponRevolver extends Weapon {
+public class WeaponFist extends Weapon {
 
-	public WeaponRevolver(Player player) {
+	public WeaponFist(Player player) {
 		super(player);
 
-		setCooldownTime(400f);
-		setShotsCapacity(6);
+		setCooldownTime(450f);
+		setShotsCapacity(100);
 		setReloadingTime(1000f);
-		addAmmo(40);
-		setBobbingTime(600f);
+		addAmmo(0);
+		setBobbingTime(500f);
 
 		updateAmmoText();
 
-		ShapeSprite revolverShape = new ShapeSprite(ShaderProgram.getProgram("texture_camera"), "revolver.png", 256,
-				32, 32, 32);
+		ShapeSprite revolverShape = new ShapeSprite(ShaderProgram.getProgram("texture_camera"), "fist.png", 256, 32,
+				64, 32);
 
-		weaponSprite = new AnimatedActor(revolverShape, "weapons.animation", "revolver_idle");
+		weaponSprite = new AnimatedActor(revolverShape, "weapons.animation", "fist_idle");
 		weaponSprite.position.set(POSITION_CENTER);
 		weaponSprite.scale.set(.85f);
 
@@ -37,6 +37,10 @@ public class WeaponRevolver extends Weapon {
 
 	@Override
 	public void fire() {
+
+		if (shotsLeft - 9 < 0) {
+			return;
+		}
 
 		if (!canFire())
 			return;
@@ -55,10 +59,21 @@ public class WeaponRevolver extends Weapon {
 		Vector3 lineVector = angle.toVector();
 		lineVector.normalize();
 
-		((WolfenGameState) GameStateManager.getCurrentGameState()).add(new EntityProjectile(linePosition, lineVector,
-				((WolfenGameState) GameStateManager.getCurrentGameState()).getMap()));
+		EntityProjectile proj = new EntityProjectile(linePosition, lineVector,
+				((WolfenGameState) GameStateManager.getCurrentGameState()).getMap());
 
-		weaponSprite.setAnimation("revolver_fire");
+		// hack
+		proj.update(16f);
+
+		shotsLeft -= 9;
+
+		/*
+		if (shotsLeft < 0) {
+			shotsLeft = 0;
+		}
+		*/
+
+		weaponSprite.setAnimation("fist_fire");
 	}
 
 	@Override
@@ -66,7 +81,12 @@ public class WeaponRevolver extends Weapon {
 		super.update(dt);
 
 		if (currentCooldown < 0) {
-			weaponSprite.setAnimation("revolver_idle");
+			weaponSprite.setAnimation("fist_idle");
+		}
+
+		if (shotsLeft < 100 && Math.abs(currentCooldown % 200) < 3) {
+			shotsLeft += 1;
+			updateAmmoText();
 		}
 
 		return true;

@@ -76,10 +76,19 @@ public class MapReader {
 		String s_image = values[1];
 
 		if (command.equals(COMMAND_ANIMATION)) {
+			// TODO
 			return;
 		}
 
 		else if (command.equals(COMMAND_BILLBOARD)) {
+
+			if (values.length != 3) {
+				System.err.println("Error with command \"" + command + "\". Usage : " + command
+						+ "{char, texture, solidity (0 for not solid, 1 for solid)}");
+				System.err.println("Values given : {" + value + "}.");
+				return;
+			}
+
 			String s_solid = values[2];
 
 			boolean solid = (MathUtil.parseInt(s_solid) == 1);
@@ -88,6 +97,14 @@ public class MapReader {
 		}
 
 		else if (command.equals(COMMAND_WALL)) {
+
+			if (values.length != 3) {
+				System.err.println("Error with command \"" + command + "\". Usage : " + command
+						+ "{char, texture, solidity (0 for not solid, 1 for solid)}");
+				System.err.println("Values given : {" + value + "}.");
+				return;
+			}
+
 			String s_solid = values[2];
 
 			boolean solid = (MathUtil.parseInt(s_solid) == 1);
@@ -97,11 +114,20 @@ public class MapReader {
 
 		else if (command.equals(COMMAND_DOOR)) {
 
-			Vector3 openingPosition = readVector3(values[2]);
-			int orientation = ((MathUtil.parseInt(values[3]) == 1) ? Orientation.NORTH : Orientation.WEST);
-			float openingTime = MathUtil.parseFloat(values[4]);
+			if (values.length != 6) {
+				System.err.println("Error with command \"" + command + "\". Usage : " + command
+						+ "{char, texture, sideTexture, opening direction (x y z), "
+						+ " orientation (0 for vertical, 1 for horizontal), opening time}");
+				System.err.println("Values given : {" + value + "}.");
+				return;
+			}
 
-			map.newDoor(ch, s_image, openingPosition, orientation, openingTime);
+			String side_image = values[2];
+			Vector3 openingPosition = readVector3(values[3]);
+			int orientation = ((MathUtil.parseInt(values[4]) == 1) ? Orientation.NORTH : Orientation.WEST);
+			float openingTime = MathUtil.parseFloat(values[5]);
+
+			map.newDoor(ch, s_image, side_image, openingPosition, orientation, openingTime);
 		}
 	}
 

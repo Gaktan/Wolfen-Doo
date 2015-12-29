@@ -12,11 +12,8 @@ import org.lwjgl.opengl.GL30;
 public class ShapeCubeTexture extends TexturedShape {
 
 	protected static IntBuffer i_n;
-
 	protected static IntBuffer i_s;
-
 	protected static IntBuffer i_e;
-
 	protected static IntBuffer i_w;
 
 	protected int orientation;

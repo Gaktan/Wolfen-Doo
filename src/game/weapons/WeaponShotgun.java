@@ -28,7 +28,7 @@ public class WeaponShotgun extends Weapon {
 		ShapeSprite shotgunShape = new ShapeSprite(ShaderProgram.getProgram("texture_camera"), "shotgun.png", 256, 32,
 				32, 32);
 
-		weaponSprite = new AnimatedActor(shotgunShape, "shotgun.animation", "a_idle");
+		weaponSprite = new AnimatedActor(shotgunShape, "weapons.animation", "shotgun_idle");
 		weaponSprite.position.set(POSITION_CENTER);
 		weaponSprite.scale.set(.95f);
 
@@ -61,7 +61,7 @@ public class WeaponShotgun extends Weapon {
 					lineVector, ((WolfenGameState) GameStateManager.getCurrentGameState()).getMap()));
 		}
 
-		weaponSprite.setAnimation("a_fire");
+		weaponSprite.setAnimation("shotgun_fire");
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class WeaponShotgun extends Weapon {
 		super.update(dt);
 
 		if (currentCooldown < 0) {
-			weaponSprite.setAnimation("a_idle");
+			weaponSprite.setAnimation("shotgun_idle");
 		}
 
 		return true;

@@ -15,13 +15,11 @@ public class FrameBuffer {
 	public static final boolean ENABLED;
 
 	static {
-		ENABLED = false;
+		ENABLED = true;
 	}
 
 	protected int frameBuffer;
-
 	protected int textureID;
-
 	protected ShapeQuadTexture screenShape;
 
 	public void bind() {
@@ -29,6 +27,7 @@ public class FrameBuffer {
 			return;
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
 	public void dispose() {
@@ -82,7 +81,7 @@ public class FrameBuffer {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		screenShape.preRender();

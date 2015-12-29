@@ -377,8 +377,8 @@ public class DungeonGenerator extends Generator {
 
 		map.newWall(WALL, "wall.png", true);
 		map.newWall(PORTRAIT, "wall_portrait.png", true);
-		map.newDoor(DOOR_EAST, "door.png", new Vector3(-0.95f, 0, 0), Orientation.EAST, 800f);
-		map.newDoor(DOOR_NORTH, "door.png", new Vector3(0, 0, 0.95f), Orientation.NORTH, 800f);
+		map.newDoor(DOOR_EAST, "door.png", "door_side.png", new Vector3(-0.95f, 0, 0), Orientation.EAST, 800f);
+		map.newDoor(DOOR_NORTH, "door.png", "door_side.png", new Vector3(0, 0, 0.95f), Orientation.NORTH, 800f);
 
 		StringBuilder sb = new StringBuilder();
 

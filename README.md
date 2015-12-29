@@ -28,11 +28,12 @@ But ultimately I wanted to make a real game out of this, in the spirit of (and y
 Download the whole repo and double click 'start.bat' (Java is required by the way) (Windows only ATM).
 Controls are WASD to move around, left click shoots and middle click frees the cursor.
 E open doors and R reloads.
+1-3 to change weapon
 
 # Game arguments
  * -skipmenu Skips the menu and automatically generates map with seed 8 (Because this seed is nice)
- * -width Sets screen width
- * -height Sets screen height
+ * -width x Sets screen width (where x is an integer)
+ * -height y Sets screen height (where y is an integer)
  * -fullscreen Sets fullscreen
 
 

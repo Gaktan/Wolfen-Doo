@@ -106,7 +106,7 @@ public class WolfenGameState extends GameState {
 		ShaderProgram shaderProgramTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture",
 				"texture_billboard_instanced");
 		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", "texture_instanced");
-		new ShaderProgram("texture_camera", "screen", "screen");
+		new ShaderProgram("texture_camera", "texture", "screen");
 
 		frameBuffer = new FrameBuffer();
 		frameBuffer.init("screen");
@@ -127,7 +127,6 @@ public class WolfenGameState extends GameState {
 				256, 64, 64);
 
 		if (mapName == null) {
-
 			Generator generator = new DungeonGenerator().setSizeX(30).setSizeY(4).setRoomSize(3).setSeed(seed)
 					.setIntersections(true);
 
@@ -160,7 +159,7 @@ public class WolfenGameState extends GameState {
 
 		String welcomeText = "Hello and welcome to Wolfen-doo. You can't do much right now,\n"
 				+ "but it will come, don't worry.\n" + "Use WASD to move around, mouse to look and shoot,\n"
-				+ "'E' to open doors, 'R' to reload. '1-2' to change weapon.";
+				+ "'E' to open doors, 'R' to reload. '1-3' to change weapon.";
 
 		String rotatedText = "Woah! You can even rotate text!";
 

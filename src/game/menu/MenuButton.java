@@ -9,7 +9,7 @@ import engine.util.Vector3;
 
 public class MenuButton extends EntityActor {
 
-	public static final int TEXT_LIMIT = 25;
+	public static final int TEXT_LIMIT = 15;
 
 	public interface ButtonPress {
 		public void onButtonPress();

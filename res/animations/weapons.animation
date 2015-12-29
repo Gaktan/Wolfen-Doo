@@ -1,0 +1,35 @@
+animation{
+  name[fist_idle]
+  frames[0]
+  delays[1000000]
+}
+
+animation{
+  name[fist_fire]
+  frames[1, 2, 3, 2, 1, 0]
+  delays[75, 75, 75, 75, 75, 100]
+}
+
+animation{
+  name[revolver_idle]
+  frames[0]
+  delays[1000000]
+}
+
+animation{
+  name[revolver_fire]
+  frames[1, 2, 3, 4, 0]
+  delays[75, 75, 75, 75, 100]
+}
+
+animation{
+  name[shotgun_idle]
+  frames[0]
+  delays[1000000]
+}
+
+animation{
+  name[shotgun_fire]
+  frames[1, 2, 3, 4, 5, 4, 3, 0]
+  delays[100, 100, 100, 150, 200, 250, 200, 300]
+}
