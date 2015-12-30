@@ -12,7 +12,6 @@ import engine.DisplayableText;
 import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
-import engine.entities.Item;
 import engine.game.Controls;
 import engine.game.Fps;
 import engine.game.FrameBuffer;
@@ -26,10 +25,11 @@ import engine.particles.ParticleSystem;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.shapes.ShapeInstancedSprite;
-import engine.shapes.ShapeQuadTexture;
 import engine.shapes.ShapeSprite;
 import engine.util.Vector3;
 import game.animations.CustomAnimatedActorExample;
+import game.entities.Item;
+import game.entities.ItemList;
 import game.entities.RotatingText;
 import game.generator.DungeonGenerator;
 import game.particles.AnimatedParticleSystemExplosion;
@@ -44,6 +44,9 @@ public class WolfenGameState extends GameState {
 	protected DisplayableList displayableList;
 	protected Map map;
 	protected DisplayableInstancedList bulletHoles;
+
+	protected ShapeSprite itemShape;
+	protected DisplayableList itemList;
 
 	/* TEMP STUFF */
 
@@ -97,7 +100,7 @@ public class WolfenGameState extends GameState {
 
 	@Override
 	public void init() {
-		ShaderProgram shaderProgramTex = new ShaderProgram("texture");
+		new ShaderProgram("texture");
 		new ShaderProgram("color");
 		ShaderProgram shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
 		new ShaderProgram("texture_camera", "texture", "texture_camera");
@@ -126,6 +129,17 @@ public class WolfenGameState extends GameState {
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
+		// Items
+		itemShape = new ShapeSprite(shaderProgramTexBill, "items.png", 128, 64, 32, 32);
+		itemList = new ItemList(player);
+
+		addItem(new Vector3(9, 0, 3), 0, 100);
+		addItem(new Vector3(10, 0, 3), 1, 100);
+		addItem(new Vector3(11, 0, 3), 2, 100);
+		addItem(new Vector3(12, 0, 3), 3, 100);
+
+		add(itemList);
+
 		if (mapName == null) {
 			Generator generator = new DungeonGenerator().setSizeX(30).setSizeY(4).setRoomSize(3).setSeed(seed)
 					.setIntersections(true);
@@ -138,8 +152,6 @@ public class WolfenGameState extends GameState {
 
 		player.position.set(map.getStartingPoint());
 
-		// MapReader mr = new MapReader();
-		// map = mr.createMap("01.map");
 		add(map);
 
 		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
@@ -178,10 +190,6 @@ public class WolfenGameState extends GameState {
 		RotatingText rotatingText = new RotatingText(new Vector3(9, 0.25f, 3), "WELCOME!", worldFont, 1f, new Color(1f,
 				0f, 1f), TextPosition.CENTER, true);
 		add(rotatingText);
-
-		Item item = new Item(new ShapeQuadTexture(shaderProgramTex, "wall.png"));
-		item.position.set(9, 0, 3);
-		add(item);
 
 		/*
 		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
@@ -257,6 +265,11 @@ public class WolfenGameState extends GameState {
 		textMemory.update(dt);
 
 		l_fps = fps.update();
+	}
+
+	public void addItem(Vector3 position, int itemNumber, int value) {
+		Item item = new Item(itemShape, position, itemNumber, value);
+		itemList.add(item);
 	}
 
 	protected void setZfar(float zFar) {

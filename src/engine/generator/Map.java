@@ -8,56 +8,24 @@ import org.lwjgl.BufferUtils;
 
 import engine.Displayable;
 import engine.DisplayableList;
+import engine.entities.AABB;
 import engine.entities.AABBRectangle;
+import engine.entities.AABBSphere;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.game.states.GameStateManager;
+import engine.generator.MapUtil.DoorShapeInfo;
+import engine.generator.MapUtil.ShapeInfo;
 import engine.shapes.InstancedTexturedShape;
 import engine.shapes.Orientation;
-import engine.shapes.ShaderProgram;
 import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
-import engine.shapes.ShapeInstancedQuadTexture;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 import game.game.states.WolfenGameState;
 
 public class Map implements Displayable {
-
-	public class DoorShapeInfo extends ShapeInfo {
-
-		protected InstancedTexturedShape sideShape;
-		protected Vector3 openingPosition;
-		protected int orientation;
-		protected float time;
-
-		public DoorShapeInfo(Shape shape, InstancedTexturedShape sideShape, boolean solid, Vector3 openingPosition,
-				int orientation, float time) {
-			super(shape, solid);
-			this.sideShape = sideShape;
-			this.openingPosition = openingPosition;
-			this.orientation = orientation;
-			this.time = time;
-		}
-	}
-
-	public class ShapeInfo {
-
-		protected Shape shape;
-		protected int amount;
-		protected boolean solid;
-
-		public ShapeInfo(Shape shape, boolean solid) {
-			this.shape = shape;
-			this.solid = solid;
-			amount = 0;
-		}
-
-		public boolean isSolid() {
-			return solid;
-		}
-	}
 
 	private int sizeX;
 	private int sizeY;
@@ -111,10 +79,10 @@ public class Map implements Displayable {
 			if (info instanceof DoorShapeInfo) {
 
 				DoorShapeInfo doorInfo = (DoorShapeInfo) info;
-				EntityDoor door = new EntityDoor((ShapeCubeTexture) info.shape);
+				EntityDoor door = new EntityDoor((ShapeCubeTexture) doorInfo.getShape());
 
 				door.position = new Vector3(x, 0, y);
-				if ((doorInfo.orientation & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
+				if ((doorInfo.getOrientation() & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
 					door.scale.setX(0.1f);
 				}
 				else {
@@ -122,10 +90,10 @@ public class Map implements Displayable {
 				}
 
 				door.setOriginialPosition(new Vector3(x, 0, y));
-				Vector3 openingPosition = new Vector3(doorInfo.openingPosition);
+				Vector3 openingPosition = new Vector3(doorInfo.getOpeningPosition());
 				openingPosition.add(door.position);
 				door.setOpeningPosition(openingPosition);
-				door.setOpeningTime(doorInfo.time);
+				door.setOpeningTime(doorInfo.getTime());
 
 				actorsList.add(door);
 			}
@@ -147,28 +115,28 @@ public class Map implements Displayable {
 
 				if (i > 0) {
 					ShapeInfo info = shapeMap.get(map[i - 1][j]);
-					if (info == null || !info.isSolid()) {
+					if (info == null || !info.isSolid() || !info.isWall()) {
 						orientationArray[i][j] += Orientation.WEST;
 						amount++;
 					}
 				}
 				if (i < sizeX - 1) {
 					ShapeInfo info = shapeMap.get(map[i + 1][j]);
-					if (info == null || !info.isSolid()) {
+					if (info == null || !info.isSolid() || !info.isWall()) {
 						orientationArray[i][j] += Orientation.EAST;
 						amount++;
 					}
 				}
 				if (j > 0) {
 					ShapeInfo info = shapeMap.get(map[i][j - 1]);
-					if (info == null || !info.isSolid()) {
+					if (info == null || !info.isSolid() || !info.isWall()) {
 						orientationArray[i][j] += Orientation.NORTH;
 						amount++;
 					}
 				}
 				if (j < sizeY - 1) {
 					ShapeInfo info = shapeMap.get(map[i][j + 1]);
-					if (info == null || !info.isSolid()) {
+					if (info == null || !info.isSolid() || !info.isWall()) {
 						orientationArray[i][j] += Orientation.SOUTH;
 						amount++;
 					}
@@ -199,7 +167,7 @@ public class Map implements Displayable {
 				continue;
 			}*/
 
-			int amount = info.amount;
+			int amount = info.getAmount();
 
 			FloatBuffer fb = BufferUtils.createFloatBuffer(amount * (3 + 16 + 1));
 
@@ -216,7 +184,6 @@ public class Map implements Displayable {
 					}
 
 					float pi = 3.1416f;
-
 					float offsetValue = 0.5f;
 
 					// Side door
@@ -224,17 +191,22 @@ public class Map implements Displayable {
 						offsetValue = -0.5f;
 					}
 
-					if ((orientation & Orientation.NORTH) != 0) {
-						storeFace(new Vector3(i, 0f, j - offsetValue), new Vector3(0f, pi, 0f), fb);
+					if (info.wall) {
+						if ((orientation & Orientation.NORTH) != 0) {
+							storeFace(new Vector3(i, 0f, j - offsetValue), new Vector3(0f, pi, 0f), fb);
+						}
+						if ((orientation & Orientation.SOUTH) != 0) {
+							storeFace(new Vector3(i, 0f, j + offsetValue), new Vector3(0f), fb);
+						}
+						if ((orientation & Orientation.EAST) != 0) {
+							storeFace(new Vector3(i + offsetValue, 0f, j), new Vector3(0f, pi * 0.5f, 0f), fb);
+						}
+						if ((orientation & Orientation.WEST) != 0) {
+							storeFace(new Vector3(i - offsetValue, 0f, j), new Vector3(0f, pi * -0.5f, 0f), fb);
+						}
 					}
-					if ((orientation & Orientation.SOUTH) != 0) {
-						storeFace(new Vector3(i, 0f, j + offsetValue), new Vector3(0f), fb);
-					}
-					if ((orientation & Orientation.EAST) != 0) {
-						storeFace(new Vector3(i + offsetValue, 0f, j), new Vector3(0f, pi * 0.5f, 0f), fb);
-					}
-					if ((orientation & Orientation.WEST) != 0) {
-						storeFace(new Vector3(i - offsetValue, 0f, j), new Vector3(0f, pi * -0.5f, 0f), fb);
+					else {
+						storeFace(new Vector3(i, 0f, j), new Vector3(0f), fb);
 					}
 
 				} // for j
@@ -244,10 +216,10 @@ public class Map implements Displayable {
 
 			if (info instanceof DoorShapeInfo) {
 				DoorShapeInfo door = (DoorShapeInfo) info;
-				door.sideShape.setData(fb);
+				door.getSideShape().setData(fb);
 			}
 			else {
-				((InstancedTexturedShape) info.shape).setData(fb);
+				((InstancedTexturedShape) info.getShape()).setData(fb);
 			}
 		}
 	}
@@ -319,10 +291,7 @@ public class Map implements Displayable {
 	}
 
 	public void newBillboard(char c, String texture, boolean solid) {
-		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(
-				ShaderProgram.getProgram("texture_billboard_instanced"), texture), solid);
-
-		shapeMap.put(c, info);
+		shapeMap.put(c, MapUtil.newBillboard(texture, solid));
 	}
 
 	/**
@@ -334,21 +303,11 @@ public class Map implements Displayable {
 	 *            Time to open
 	 */
 	public void newDoor(char c, String texture, String sideTexture, Vector3 openingPosition, int orientation, float time) {
-		ShapeCubeTexture shape = new ShapeCubeTexture(ShaderProgram.getProgram("texture"), texture);
-
-		ShapeInstancedQuadTexture sideShape = new ShapeInstancedQuadTexture(
-				ShaderProgram.getProgram("texture_instanced"), sideTexture);
-
-		DoorShapeInfo info = new DoorShapeInfo(shape, sideShape, true, openingPosition, orientation, time);
-
-		shapeMap.put(c, info);
+		shapeMap.put(c, MapUtil.newDoor(texture, sideTexture, openingPosition, orientation, time));
 	}
 
 	public void newWall(char c, String texture, boolean solid) {
-		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_instanced"),
-				texture), solid);
-
-		shapeMap.put(c, info);
+		shapeMap.put(c, MapUtil.newWall(texture, solid));
 	}
 
 	/**
@@ -394,16 +353,20 @@ public class Map implements Displayable {
 		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
 			ShapeInfo info = entry.getValue();
 
-			if (info.shape instanceof InstancedTexturedShape) {
-				info.shape.preRender();
-				((InstancedTexturedShape) info.shape).render(info.amount);
-				info.shape.postRender();
+			Shape shape = info.getShape();
+
+			if (shape instanceof InstancedTexturedShape) {
+				shape.preRender();
+				((InstancedTexturedShape) shape).render(info.getAmount());
+				shape.postRender();
 			}
 			if (info instanceof DoorShapeInfo) {
 				DoorShapeInfo door = (DoorShapeInfo) info;
-				door.sideShape.preRender();
-				door.sideShape.render(info.amount);
-				door.sideShape.postRender();
+				InstancedTexturedShape sideShape = door.getSideShape();
+
+				sideShape.preRender();
+				sideShape.render(info.getAmount());
+				sideShape.postRender();
 			}
 		}
 
@@ -438,42 +401,53 @@ public class Map implements Displayable {
 	@Override
 	public boolean update(float dt) {
 
+		// TODO: Engine/Game dependency
 		int x = (int) (((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().position.getX() + 0.5f);
 		int z = (int) (((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().position.getZ() + 0.5f);
 
-		AABBRectangle playerAABB = ((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().collisionRectangle;
+		AABBSphere playerAABB = ((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer()
+				.getCollisionSphere();
 
-		for (int i = x - 1; i < x + 2; i++) {
-			for (int j = z - 1; j < z + 2; j++) {
-
-				AABBRectangle rect;
-				EntityActor e = getActor(i, j);
-
-				if (e == null) {
-					ShapeInfo info = get(i, j);
-
-					if (info == null)
-						continue;
-
-					if (!info.isSolid())
-						continue;
-
-					rect = new AABBRectangle(new Vector3(i, 0, j));
-				}
-				else {
-					rect = new AABBRectangle(e);
-				}
-
-				if (playerAABB.collide(rect)) {
-					Vector3 resolution = playerAABB.resolveCollision(rect);
-					((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().position.add(resolution);
-				}
-			}
-		}
+		testCollision(playerAABB, x, z);
+		testCollision(playerAABB, x - 1, z);
+		testCollision(playerAABB, x + 1, z);
+		testCollision(playerAABB, x, z - 1);
+		testCollision(playerAABB, x, z + 1);
 
 		actorsList.update(dt);
 
 		return !delete;
+	}
+
+	protected void testCollision(AABB playerAABB, int x, int z) {
+		AABB rect;
+		EntityActor e = getActor(x, z);
+
+		if (e == null) {
+			ShapeInfo info = get(x, z);
+
+			if (info == null)
+				return;
+
+			if (!info.isSolid())
+				return;
+
+			if (!info.wall) {
+				rect = new AABBSphere(new Vector3(x, 0, z));
+			}
+			else {
+				rect = new AABBRectangle(new Vector3(x, 0, z));
+			}
+
+		}
+		else {
+			rect = new AABBRectangle(e);
+		}
+
+		if (playerAABB.collide(rect)) {
+			Vector3 resolution = playerAABB.resolveCollision(rect);
+			((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().position.add(resolution);
+		}
 	}
 
 	private boolean inRange(int n, int min, int max) {

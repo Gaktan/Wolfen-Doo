@@ -165,7 +165,7 @@ public class Vector3 {
 	}
 
 	/**
-	 * Gets Distance from an other Vector
+	 * Gets distance from an other Vector
 	 *
 	 * @param vec
 	 * @return

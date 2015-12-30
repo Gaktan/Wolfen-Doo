@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
-import engine.entities.AABBRectangle;
+import engine.entities.AABBSphere;
 import engine.entities.Camera;
 import engine.entities.EntityActor;
 import engine.game.Controls.ControlsListener;
@@ -55,7 +55,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 	protected Camera camera;
 	protected Vector3 movement;
 	protected Vector3 movementGoal;
-	public AABBRectangle collisionRectangle;
+	protected AABBSphere collisionSphere;
 
 	// Mouse
 	protected int lastMouseX, lastMouseY;
@@ -84,7 +84,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 
 		scale.set(0.5f);
 
-		collisionRectangle = new AABBRectangle(position, scale);
+		collisionSphere = new AABBSphere(position, scale);
 
 		if (Controls.getLocale().startsWith("fr")) {
 			k_forward = KEY_Z;
@@ -245,5 +245,17 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		rotation.setZ((float) Math.toRadians(-camera.getViewAngle().yaw));
 
 		return result;
+	}
+
+	public Weapon getWeapon(int weaponNumber) {
+		if (weaponNumber >= weaponList.size() || weaponNumber < 0) {
+			return null;
+		}
+
+		return weaponList.get(weaponNumber);
+	}
+
+	public AABBSphere getCollisionSphere() {
+		return collisionSphere;
 	}
 }

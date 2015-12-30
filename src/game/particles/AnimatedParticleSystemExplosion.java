@@ -16,7 +16,7 @@ public class AnimatedParticleSystemExplosion extends ParticleSystem {
 
 		newParticlesPerFrame = 1;
 		maxParticles = 100;
-		particlesLife = 4000.f;
+		particlesLife = 480.f;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class AnimatedParticleSystemExplosion extends ParticleSystem {
 		float scale = MathUtil.random(0.2f, 0.4f);
 
 		AnimatedParticle p;
-		p = new AnimatedParticle(MathUtil.random(500, maxLife / 2), new Vector3(position), scale);
+		p = new AnimatedParticle(maxLife * MathUtil.random(0f, 1f), new Vector3(position), scale);
 		p.velocity = new Vector3(MathUtil.random(-2f, 2f), MathUtil.random(-0.3f, 0.3f), MathUtil.random(-2f, 2f));
 
 		p.velocity.normalize();

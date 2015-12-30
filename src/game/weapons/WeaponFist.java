@@ -67,12 +67,6 @@ public class WeaponFist extends Weapon {
 
 		shotsLeft -= 9;
 
-		/*
-		if (shotsLeft < 0) {
-			shotsLeft = 0;
-		}
-		*/
-
 		weaponSprite.setAnimation("fist_fire");
 	}
 
@@ -90,5 +84,16 @@ public class WeaponFist extends Weapon {
 		}
 
 		return true;
+	}
+
+	@Override
+	public void addAmmo(int ammo) {
+		shotsLeft += ammo;
+
+		if (shotsLeft > 100) {
+			shotsLeft = 100;
+		}
+
+		updateAmmoText();
 	}
 }

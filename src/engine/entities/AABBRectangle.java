@@ -2,25 +2,21 @@ package engine.entities;
 
 import engine.util.Vector3;
 
-public class AABBRectangle {
+public class AABBRectangle extends AABB {
 
-	protected Vector3 position;
-	protected Vector3 scale;
-
-	public AABBRectangle(Entity a) {
-		this(a.position, a.scale);
+	public AABBRectangle(Vector3 position, Vector3 scale) {
+		super(position, scale);
 	}
 
 	public AABBRectangle(Vector3 position) {
-		this(position, new Vector3(1f, 1f, 1f));
+		super(position);
 	}
 
-	public AABBRectangle(Vector3 position, Vector3 scale) {
-		super();
-		this.position = position;
-		this.scale = scale;
+	public AABBRectangle(Entity a) {
+		super(a);
 	}
 
+	@Override
 	public boolean collide(AABBRectangle b) {
 		// X
 		float size = 0.5f * scale.getX();
@@ -55,6 +51,7 @@ public class AABBRectangle {
 		return true;
 	}
 
+	@Override
 	public Vector3 resolveCollision(AABBRectangle b) {
 		float size = .5f;
 
@@ -115,5 +112,15 @@ public class AABBRectangle {
 		Vector3 ret = new Vector3(shiftX, shiftY, shiftZ);
 
 		return ret;
+	}
+
+	@Override
+	public boolean collide(AABBSphere b) {
+		return b.collide(this);
+	}
+
+	@Override
+	public Vector3 resolveCollision(AABBSphere b) {
+		return b.resolveCollision(this);
 	}
 }

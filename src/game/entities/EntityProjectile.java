@@ -6,8 +6,7 @@ import engine.entities.EntityActor;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
 import engine.generator.Map;
-import engine.generator.Map.DoorShapeInfo;
-import engine.generator.Map.ShapeInfo;
+import engine.generator.MapUtil;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 import game.game.states.WolfenGameState;
@@ -92,14 +91,14 @@ public class EntityProjectile extends EntityLine {
 			oldX = x;
 			oldZ = z;
 
-			ShapeInfo info = map.get(x, z);
+			MapUtil.ShapeInfo info = map.get(x, z);
 
 			if (info != null) {
 
 				if (!info.isSolid())
 					continue;
 
-				if (info instanceof DoorShapeInfo) {
+				if (info instanceof MapUtil.DoorShapeInfo) {
 					/*
 					EntityDoor door = (EntityDoor) map.getActor(x, z);
 					if (door.getState() != DoorState.OPEN) {

@@ -68,7 +68,6 @@ public abstract class Weapon implements Displayable {
 	protected AnimatedActor weaponSprite;
 
 	public Weapon(Player player) {
-
 		this.player = player;
 
 		currentCooldown = 0f;
@@ -272,8 +271,9 @@ public abstract class Weapon implements Displayable {
 		currentReloading = reloadingTime;
 	}
 
-	protected void addAmmo(int ammo) {
+	public void addAmmo(int ammo) {
 		totalAmmo += ammo;
+		updateAmmoText();
 	}
 
 	protected void setBobbingTime(float bobbingTime) {
