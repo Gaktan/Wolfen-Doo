@@ -78,7 +78,7 @@ public class WeaponFist extends Weapon {
 			weaponSprite.setAnimation("fist_idle");
 		}
 
-		if (shotsLeft < 100 && Math.abs(currentCooldown % 200) < 3) {
+		if (shotsLeft < 100 && MathUtil.abs(currentCooldown % 200) < 3) {
 			shotsLeft += 1;
 			updateAmmoText();
 		}

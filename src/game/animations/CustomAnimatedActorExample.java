@@ -10,7 +10,12 @@ import engine.util.Vector3;
 
 public class CustomAnimatedActorExample extends AnimatedActor {
 
-	private static final float PI_OVER_2 = 3.14159f / 2.f;
+	private static final float PI = MathUtil.PI;
+	private static final float PI_1_5 = MathUtil.PI * 1.5f;
+	private static final float PI_2 = MathUtil.PI * 2f;
+	private static final float PI_0_5 = MathUtil.PI * 0.5f;
+	private static final float PI_0_25 = MathUtil.PI * 0.25f;
+
 	protected Vector3 lookingPoint;
 	protected Vector3 lookingDirection;
 
@@ -44,19 +49,19 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 
 		Vector3 vec1 = GameStateManager.getCurrentGameState().current_camera.getViewAngle().toVector();
 
-		float angle = (float) (Math.atan2(lookingDirection.getZ(), lookingDirection.getX()) - Math.atan2(vec1.getZ(),
-				vec1.getX())) + PI_OVER_2 / 2f;
+		float angle = MathUtil.atan2(lookingDirection.getZ(), lookingDirection.getX())
+				- MathUtil.atan2(vec1.getZ(), vec1.getX()) + PI_0_25;
 
 		if (angle < 0)
-			angle += 2 * Math.PI;
+			angle += PI_2;
 
-		if (angle < PI_OVER_2 || angle > PI_OVER_2 * 4.f) {
+		if (angle < PI_0_5 || angle > PI_2) {
 			changeOrientation(Orientation.EAST);
 		}
-		else if (angle >= PI_OVER_2 && angle < Math.PI) {
+		else if (angle >= PI_0_5 && angle < PI) {
 			changeOrientation(Orientation.SOUTH);
 		}
-		else if (angle >= Math.PI && angle < PI_OVER_2 * 3.f) {
+		else if (angle >= PI && angle < PI_1_5) {
 			changeOrientation(Orientation.WEST);
 		}
 		else {

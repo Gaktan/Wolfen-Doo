@@ -126,10 +126,10 @@ public class ShapeCubeTexture extends TexturedShape {
 		// v - Normalized ? (between 0 - 1)
 		// v - Offset between things (size of a line)
 		// v - Where to start ?
-		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 5 * (Float.SIZE / 8), 0);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 5 * FLOAT_SIZE, 0);
 
 		GL20.glEnableVertexAttribArray(1);
-		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 5 * (Float.SIZE / 8), 3 * (Float.SIZE / 8));
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 5 * FLOAT_SIZE, 3 * FLOAT_SIZE);
 
 		// GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
 

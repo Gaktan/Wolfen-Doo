@@ -1,7 +1,5 @@
 package game.entities;
 
-import org.newdawn.slick.Color;
-
 import engine.entities.EntityActor;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
@@ -29,7 +27,7 @@ public class EntityProjectile extends EntityLine {
 	protected int bounces;
 
 	public EntityProjectile(Vector3 position, Vector3 direction, Map map) {
-		super(position, new Vector3(), new Color(0xffff4c), new Color(0xffde4c));
+		super(position, new Vector3(), new Vector3(1f, 1f, 0.3f), new Vector3(1f, 0.86f, 0.3f));
 
 		this.map = map;
 
@@ -37,6 +35,9 @@ public class EntityProjectile extends EntityLine {
 		velocity.scale(SPEED);
 
 		bounces = 0;
+
+		colorA.scale(1.5f);
+		colorB.scale(1.5f);
 	}
 
 	@Override
@@ -44,9 +45,7 @@ public class EntityProjectile extends EntityLine {
 
 		boolean b = false;
 
-		position.addX(velocity.getX() * (dt / 100.0f));
-		position.addY(velocity.getY() * (dt / 100.0f));
-		position.addZ(velocity.getZ() * (dt / 100.0f));
+		super.update(dt);
 
 		positionB = position.getAdd(velocity.getNormalize().getScale(2.0f));
 		// Vector3.add(position, velocity, positionB);
@@ -117,7 +116,7 @@ public class EntityProjectile extends EntityLine {
 				normal.setX(x - impactPosition.getX());
 				normal.setZ(z - impactPosition.getZ());
 
-				if (Math.abs(normal.getX()) > Math.abs(normal.getZ())) {
+				if (MathUtil.abs(normal.getX()) > MathUtil.abs(normal.getZ())) {
 					normal.setZ(0f);
 					normal.setX(-normal.getX());
 					impactPosition.setX((int) impactPosition.getX() + 0.5f);
@@ -172,7 +171,7 @@ public class EntityProjectile extends EntityLine {
 		Vector3 newPos = new Vector3(impactPosition);
 		Vector3 newRot = new Vector3();
 
-		float pi2 = (float) (Math.PI / 2);
+		float pi2 = MathUtil.PI * 0.5f;
 
 		if (normal.getX() != 0) {
 			newRot.setY(pi2 * normal.getX());

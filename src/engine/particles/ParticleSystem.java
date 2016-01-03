@@ -7,11 +7,12 @@ import org.lwjgl.BufferUtils;
 
 import engine.Displayable;
 import engine.shapes.ShapeInstancedQuadTexture;
+import engine.util.MathUtil;
 import engine.util.Vector3;
 
 /**
  * Object used to generate particles
- * 
+ *
  * @author Gaktan
  */
 public abstract class ParticleSystem implements Displayable {
@@ -60,7 +61,7 @@ public abstract class ParticleSystem implements Displayable {
 			life -= dt;
 
 			if (list.size() < maxParticles) {
-				int amountToAdd = Math.min(maxParticles - list.size(), newParticlesPerFrame);
+				int amountToAdd = (int) MathUtil.min(maxParticles - list.size(), newParticlesPerFrame);
 
 				for (int i = 0; i < amountToAdd; i++) {
 					Particle p = newParticle(particlesLife);

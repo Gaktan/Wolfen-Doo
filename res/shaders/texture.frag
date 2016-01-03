@@ -6,7 +6,7 @@ in float Z_far;
 
 out vec4 color;
 
-uniform sampler2D u_myTexture;
+uniform sampler2D u_texture;
 
 float Z_near = 0.2;
 
@@ -18,5 +18,5 @@ float LinearizeDepth(float depth) {
 void main() {             
     float depth = LinearizeDepth(gl_FragCoord.z) / Z_far;
     
-	color = texture(u_myTexture, TexCoord) * Color - vec4(vec3(depth), 0.0f);
+	color = texture(u_texture, TexCoord) * Color - vec4(vec3(depth), 0.0f);
 }

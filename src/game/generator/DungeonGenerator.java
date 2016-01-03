@@ -10,6 +10,7 @@ import engine.generator.Map;
 import engine.shapes.Orientation;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInsideOutCubeColor;
+import engine.util.MathUtil;
 import engine.util.Vector3;
 
 public class DungeonGenerator extends Generator {
@@ -203,11 +204,11 @@ public class DungeonGenerator extends Generator {
 				continue;
 			}
 
-			minX = Math.min(minX, p.x);
-			minY = Math.min(minY, p.y);
+			minX = MathUtil.min(minX, p.x);
+			minY = MathUtil.min(minY, p.y);
 
-			maxX = Math.max(maxX, p.x);
-			maxY = Math.max(maxY, p.y);
+			maxX = MathUtil.max(maxX, p.x);
+			maxY = MathUtil.max(maxY, p.y);
 		}
 
 		realSizeX = maxX - minX;
@@ -386,8 +387,11 @@ public class DungeonGenerator extends Generator {
 			sb.append(cc);
 		}
 
-		Vector3 downColor = new Vector3(237f, 157f, 95f).getScale(1f / 256f);
-		Vector3 upColor = new Vector3(252f, 231f, 227f).getScale(1f / 256f);
+		// colorScale = 1 / 256
+		float colorScale = 0.00390625f;
+
+		Vector3 downColor = new Vector3(237f, 157f, 95f).getScale(colorScale);
+		Vector3 upColor = new Vector3(252f, 231f, 227f).getScale(colorScale);
 		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
 				downColor);
 		EntityActor sky = new EntityActor(skyShape);

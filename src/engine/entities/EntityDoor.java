@@ -97,13 +97,14 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 
 			Vector3 vec1 = ((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().getViewAngle()
 					.toVector();
-			float angle = (float) ((Math.atan2(diff.getZ(), diff.getX()) - Math.atan2(vec1.getZ(), vec1.getX())) + Math.PI / 4);
-			angle -= Math.PI;
+			float angle = (MathUtil.atan2(diff.getZ(), diff.getX()) - MathUtil.atan2(vec1.getZ(), vec1.getX()))
+					+ MathUtil.PI * 0.25f;
+			angle -= MathUtil.PI;
 
 			if (angle < 0)
-				angle += 2 * Math.PI;
+				angle += 2 * MathUtil.PI;
 
-			if (angle >= (Math.PI / 2.0) && angle < Math.PI) {
+			if (angle >= (MathUtil.PI * 0.5f) && angle < MathUtil.PI) {
 				toggle();
 			}
 		}

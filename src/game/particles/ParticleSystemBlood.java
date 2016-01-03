@@ -17,7 +17,7 @@ public class ParticleSystemBlood extends ParticleSystem {
 
 		newParticlesPerFrame = 100;
 		maxParticles = 10000;
-		particlesLife = 4000.f;
+		particlesLife = 2000.f;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class ParticleSystemBlood extends ParticleSystem {
 		float scale = MathUtil.random(0.05f, 0.1f);
 
 		Particle p;
-		p = new Particle(MathUtil.random(500, maxLife / 2), new Vector3(position), scale);
+		p = new Particle(MathUtil.random(500, maxLife), new Vector3(position), scale);
 		p.velocity = new Vector3(MathUtil.random(-0.5f, 0.5f), MathUtil.random(-0.1f, 0.1f), MathUtil.random(-0.5f,
 				0.5f));
 		p.velocity.normalize();

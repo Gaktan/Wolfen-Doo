@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
 import engine.shapes.ShapeInstancedSprite;
+import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 
@@ -80,7 +81,7 @@ public class DisplayableText implements Displayable {
 	}
 
 	public void setRotation(float rot) {
-		rotation = (float) Math.toRadians(rot);
+		rotation = MathUtil.toRadians(rot);
 	}
 
 	/**

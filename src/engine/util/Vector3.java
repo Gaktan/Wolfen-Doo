@@ -222,7 +222,7 @@ public class Vector3 {
 	 * @return
 	 */
 	public float length() {
-		return (float) Math.sqrt(lengthSquared());
+		return MathUtil.sqrt(lengthSquared());
 	}
 
 	/**

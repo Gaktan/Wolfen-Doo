@@ -26,6 +26,7 @@ import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.shapes.ShapeInstancedSprite;
 import engine.shapes.ShapeSprite;
+import engine.util.MathUtil;
 import engine.util.Vector3;
 import game.animations.CustomAnimatedActorExample;
 import game.entities.Item;
@@ -61,7 +62,7 @@ public class WolfenGameState extends GameState {
 	protected long seed;
 	protected String mapName;
 
-	protected FrameBuffer frameBuffer;
+	public FrameBuffer frameBuffer;
 
 	public WolfenGameState(long seed) {
 		this.seed = seed;
@@ -218,6 +219,7 @@ public class WolfenGameState extends GameState {
 	@Override
 	public void render() {
 		frameBuffer.bind();
+		frameBuffer.clear();
 
 		current_camera.apply();
 
@@ -239,7 +241,8 @@ public class WolfenGameState extends GameState {
 		player.render();
 
 		frameBuffer.render();
-		frameBuffer.unbind();
+
+		FrameBuffer.unbind();
 	}
 
 	@Override
@@ -250,7 +253,7 @@ public class WolfenGameState extends GameState {
 
 		displayableList.update(dt);
 
-		textPos.setText(Math.round(player.position.getX()) + ", " + Math.round(player.position.getZ()));
+		textPos.setText(MathUtil.round(player.position.getX()) + ", " + MathUtil.round(player.position.getZ()));
 		textFps.setText("fps : " + l_fps);
 
 		int mb = 1024 * 1024;

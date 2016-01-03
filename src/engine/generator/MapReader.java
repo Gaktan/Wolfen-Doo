@@ -231,8 +231,11 @@ public class MapReader {
 		Vector3 downColor = readVector3(values[0].trim());
 		Vector3 upColor = readVector3(values[1].trim());
 
-		downColor.scale(1.0f / 256);
-		upColor.scale(1.0f / 256);
+		// 0,00390625 = 1 / 255
+		float colorScale = 0.00390625f;
+
+		downColor.scale(colorScale);
+		upColor.scale(colorScale);
 
 		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
 				downColor);

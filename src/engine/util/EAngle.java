@@ -56,12 +56,12 @@ public class EAngle {
 	public Vector3 toVector() {
 		Vector3 result = new Vector3();
 
-		float y = (float) Math.toRadians(yaw);
-		float p = (float) Math.toRadians(pitch);
+		float y = MathUtil.toRadians(yaw);
+		float p = MathUtil.toRadians(pitch);
 
-		result.setX((float) (Math.cos(y) * Math.cos(p)));
-		result.setY((float) (Math.sin(p)));
-		result.setZ((float) (Math.sin(y) * Math.cos(p)));
+		result.setX((MathUtil.cos(y) * MathUtil.cos(p)));
+		result.setY((MathUtil.sin(p)));
+		result.setZ((MathUtil.sin(y) * MathUtil.cos(p)));
 
 		return result;
 	}

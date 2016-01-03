@@ -19,16 +19,13 @@ import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUniform4f;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Vector4f;
 
 import engine.game.Game;
@@ -38,7 +35,7 @@ import engine.util.Vector3;
 
 /**
  * ShaderProgram Class. Used to load and use Vertex and Fragment shaders easily.
- * 
+ *
  * @author Sri Harsha Chilakapati
  */
 public class ShaderProgram {
@@ -69,7 +66,7 @@ public class ShaderProgram {
 
 	/**
 	 * Attach a Fragment Shader to this program.
-	 * 
+	 *
 	 * @param name
 	 *            The file name of the Fragment Shader.
 	 */
@@ -102,7 +99,7 @@ public class ShaderProgram {
 
 	/**
 	 * Attach a Vertex Shader to this program.
-	 * 
+	 *
 	 * @param name
 	 *            The file name of the vertex shader.
 	 */
@@ -181,51 +178,75 @@ public class ShaderProgram {
 	}
 
 	/**
+	 * Sets a uniform integer variable
+	 *
+	 * @param name
+	 *            The name of the uniform
+	 * @param i
+	 *            The integer value
+	 */
+	public void setUniformi(String name, int i) {
+		GL20.glUniform1i(glGetUniformLocation(programID, name), i);
+	}
+
+	/**
 	 * Sets a uniform float variable
-	 * 
+	 *
 	 * @param name
 	 *            The name of the uniform
 	 * @param f
 	 *            The float value
 	 */
 	public void setUniform(String name, float f) {
-		glUniform1f(glGetUniformLocation(programID, name), f);
+		GL20.glUniform1f(glGetUniformLocation(programID, name), f);
+	}
+
+	/**
+	 * Sets a uniform vec2 variable
+	 *
+	 * @param name
+	 *            The name of the uniform
+	 * @param f
+	 *            The float value
+	 */
+	public void setUniform(String name, float f1, float f2) {
+		GL20.glUniform2f(glGetUniformLocation(programID, name), f1, f2);
 	}
 
 	/**
 	 * Sets a uniform matrix variable.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the uniform.
 	 * @param value
 	 *            The value of the matrix.
 	 */
 	public void setUniform(String name, Matrix4 value) {
-		glUniformMatrix4(glGetUniformLocation(programID, name), false, value.toFloatBuffer());
+		GL20.glUniformMatrix4(glGetUniformLocation(programID, name), false, value.toFloatBuffer());
 	}
 
 	/**
 	 * Sets a uniform vector variable
-	 * 
+	 *
 	 * @param name
 	 *            The name of the uniform
 	 * @param v
 	 *            The value of the vector
 	 */
 	public void setUniform(String name, Vector3 v) {
-		glUniform3f(glGetUniformLocation(programID, name), v.getX(), v.getY(), v.getZ());
+		GL20.glUniform3f(glGetUniformLocation(programID, name), v.getX(), v.getY(), v.getZ());
 	}
 
 	/**
 	 * Sets a uniform vector variable
-	 * 
+	 *
 	 * @param name
 	 *            The name of the uniform
 	 * @param v
 	 *            The value of the vector
 	 */
 	public void setUniform(String name, Vector4f v) {
-		glUniform4f(glGetUniformLocation(programID, name), v.x, v.y, v.z, v.w);
+		GL20.glUniform4f(glGetUniformLocation(programID, name), v.x, v.y, v.z, v.w);
 	}
 
 	public static Set<Entry<String, ShaderProgram>> getAllPrograms() {

@@ -389,7 +389,7 @@ public class Map implements Displayable {
 
 	public void setSky(EntityActor sky) {
 		sky.scale = new Vector3(sizeX - 0.5f, 1, sizeY - 0.5f);
-		sky.position = new Vector3((sizeX - 1f) / 2, 0, (sizeY - 1f) / 2f);
+		sky.position = new Vector3((sizeX - 1f) * 0.5f, 0, (sizeY - 1f) * 0.5f);
 
 		this.sky = sky;
 	}

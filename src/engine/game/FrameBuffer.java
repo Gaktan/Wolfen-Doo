@@ -3,6 +3,7 @@ package engine.game;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
 import engine.shapes.ShaderProgram;
@@ -12,32 +13,26 @@ import engine.util.Vector3;
 
 public class FrameBuffer {
 
-	public static final boolean ENABLED;
-
-	static {
-		ENABLED = true;
-	}
-
+	protected int renderBuffer;
 	protected int frameBuffer;
 	protected int textureID;
 	protected ShapeQuadTexture screenShape;
 
 	public void bind() {
-		if (!ENABLED)
-			return;
-
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
+	}
+
+	public void clear() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
 	public void dispose() {
+		GL11.glDeleteTextures(textureID);
+		GL30.glDeleteRenderbuffers(renderBuffer);
 		GL30.glDeleteFramebuffers(frameBuffer);
 	}
 
 	public void init(String shaderName) {
-		if (!ENABLED)
-			return;
-
 		// Framebuffer
 		frameBuffer = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
@@ -56,13 +51,14 @@ public class FrameBuffer {
 
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, textureID, 0);
 
-		int rbo = GL30.glGenRenderbuffers();
-		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
+		renderBuffer = GL30.glGenRenderbuffers();
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, renderBuffer);
 		GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH24_STENCIL8, Game.getInstance().getWidth(), Game
 				.getInstance().getHeight());
 
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, rbo);
+		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER,
+				renderBuffer);
 
 		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
 			System.err.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
@@ -75,9 +71,6 @@ public class FrameBuffer {
 	}
 
 	public void render() {
-		if (!ENABLED)
-			return;
-
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -94,12 +87,42 @@ public class FrameBuffer {
 
 		screenShape.render();
 		screenShape.postRender();
-	}
-
-	public void unbind() {
-		if (!ENABLED)
-			return;
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+
+	public void renderFuck(int tex1, int tex2) {
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+
+		GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+		screenShape.preRender();
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex1);
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex2);
+
+		screenShape.getShaderProgram().setUniform("u_color", new Vector3(1f));
+		Matrix4 model = Matrix4.createIdentityMatrix();
+		model.scale(new Vector3(2f));
+		screenShape.getShaderProgram().setUniform("u_model", model);
+		screenShape.getShaderProgram().setUniform("u_spriteNumber", -1f);
+
+		screenShape.render();
+		screenShape.postRender();
+
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+
+	public static void unbind() {
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+	}
+
+	public int getTextureID() {
+		return textureID;
 	}
 }

@@ -26,12 +26,12 @@ public class ParticleSystemImpact extends ParticleSystem {
 
 		newParticlesPerFrame = 10;
 		maxParticles = 10;
-		particlesLife = 450.f;
+		particlesLife = 850.f;
 	}
 
 	@Override
 	protected Particle newParticle(float maxLife) {
-		Particle p = new Particle(maxLife, new Vector3(position), 0.025f);
+		Particle p = new Particle(MathUtil.random(maxLife * 0.5f, maxLife), new Vector3(position), 0.025f);
 
 		p.velocity = new Vector3(direction);
 
@@ -69,8 +69,8 @@ public class ParticleSystemImpact extends ParticleSystem {
 
 		float green = MathUtil.random(0.5f, 1.f);
 		p.color = new Color(1.f, green, 0.2f);
+		p.color.scale(1.5f);
 
 		return p;
 	}
-
 }

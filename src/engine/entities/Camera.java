@@ -13,7 +13,6 @@ public class Camera extends Entity {
 
 	protected Matrix4 projection;
 	protected Matrix4 view;
-	protected Matrix4 projectionXview;
 
 	// Camera rotation
 	protected EAngle viewAngle;
@@ -32,7 +31,6 @@ public class Camera extends Entity {
 		setProjection();
 
 		view = Matrix4.createIdentityMatrix();
-		projectionXview = new Matrix4();
 
 		viewAngle = new EAngle();
 	}
@@ -66,15 +64,6 @@ public class Camera extends Entity {
 		return projection;
 	}
 
-	/**
-	 * Used for non-shader rendering
-	 *
-	 * @return The projection matrix * view Matrix
-	 */
-	public Matrix4 getProjectionXview() {
-		return projectionXview;
-	}
-
 	public EAngle getViewAngle() {
 		return viewAngle;
 	}
@@ -103,7 +92,6 @@ public class Camera extends Entity {
 
 	public void setPosition(Vector3 pos) {
 		position.set(pos);
-		setProjection();
 	}
 
 	/**
@@ -115,7 +103,6 @@ public class Camera extends Entity {
 
 	public void setView(Matrix4 view) {
 		this.view = view;
-		setProjection();
 	}
 
 	public void setzFar(float zFar) {
@@ -126,14 +113,5 @@ public class Camera extends Entity {
 	public void setzNear(float zNear) {
 		this.zNear = zNear;
 		setProjection();
-	}
-
-	@Override
-	public boolean update(float elapsedTime) {
-		boolean result = super.update(elapsedTime);
-
-		projectionXview.set(projection.getMul(view));
-
-		return result;
 	}
 }

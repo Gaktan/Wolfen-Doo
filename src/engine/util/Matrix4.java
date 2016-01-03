@@ -186,8 +186,8 @@ public class Matrix4 {
 	 *            Vector
 	 */
 	public void rotate(float angle, Vector3 axis) {
-		float c = (float) Math.cos(angle);
-		float s = (float) Math.sin(angle);
+		float c = MathUtil.cos(angle);
+		float s = MathUtil.sin(angle);
 		float oneminusc = 1.0f - c;
 		float xy = axis.x * axis.y;
 		float yz = axis.y * axis.z;
@@ -393,21 +393,21 @@ public class Matrix4 {
 	public static Matrix4 createLookAt(Vector3 eye, Vector3 center, Vector3 up) {
 		/*
 		 * Vector3 f = center.getSub(eye); f.normalize();
-		 * 
+		 *
 		 * Vector3 u = up.getNormalize();
-		 * 
+		 *
 		 * Vector3 s = f.getCross(u); s.normalize();
-		 * 
+		 *
 		 * u = s.getCross(f);
-		 * 
+		 *
 		 * Matrix4 result = new Matrix4(); result.m00 = s.getX(); result.m10 =
 		 * s.getY(); result.m20 = s.getZ(); result.m01 = u.getX(); result.m11 =
 		 * u.getY(); result.m21 = u.getZ(); result.m02 = -f.getX(); result.m12 =
 		 * -f.getY(); result.m22 = -f.getZ();
-		 * 
+		 *
 		 * result.translate(eye.getNegate()); //
 		 * Matrix4.translate(eye.getNegate(), result, result);
-		 * 
+		 *
 		 * return result;
 		 */
 
@@ -498,7 +498,7 @@ public class Matrix4 {
 	public static Matrix4 createPerspectiveProjection(float fov, float aspect, float zNear, float zFar) {
 		Matrix4 mat = createIdentityMatrix();
 
-		float yScale = 1f / (aspect * (float) Math.tan(Math.toRadians(fov / 2f)));
+		float yScale = 1f / (aspect * MathUtil.tan(MathUtil.toRadians(fov / 2f)));
 		float xScale = yScale / aspect;
 		float frustumLength = zFar - zNear;
 
@@ -510,6 +510,44 @@ public class Matrix4 {
 		mat.m33 = 0;
 
 		return mat;
+	}
+
+	/**
+	 * Creates a Orthogonal Projection Matrix
+	 *
+	 * @param left
+	 * @param right
+	 * @param top
+	 * @param bottom
+	 * @param near
+	 * @param far
+	 * @return
+	 */
+	public static Matrix4 createOrthoProjectionMatrix(float left, float right, float top, float bottom, float near,
+			float far) {
+		Matrix4 m = new Matrix4();
+
+		m.m00 = 2.0f / (right - left);
+		m.m01 = 0.0f;
+		m.m02 = 0.0f;
+		m.m03 = 0.0f;
+
+		m.m10 = 0.0f;
+		m.m11 = 2.0f / (top - bottom);
+		m.m12 = 0.0f;
+		m.m13 = 0.0f;
+
+		m.m20 = 0.0f;
+		m.m21 = 0.0f;
+		m.m22 = -2.0f / (far - near);
+		m.m23 = 0.0f;
+
+		m.m30 = -(right + left) / (right - left);
+		m.m31 = -(top + bottom) / (top - bottom);
+		m.m32 = -(far + near) / (far - near);
+		m.m33 = 1.0f;
+
+		return m;
 	}
 
 	/**
@@ -525,9 +563,9 @@ public class Matrix4 {
 		Matrix4 view = createIdentityMatrix();
 
 		// Rotate the view
-		view.rotate((float) Math.toRadians(viewAngle.pitch), X_AXIS);
-		view.rotate((float) Math.toRadians(viewAngle.yaw), Y_AXIS);
-		view.rotate((float) Math.toRadians(viewAngle.roll), Z_AXIS);
+		view.rotate(MathUtil.toRadians(viewAngle.pitch), X_AXIS);
+		view.rotate(MathUtil.toRadians(viewAngle.yaw), Y_AXIS);
+		view.rotate(MathUtil.toRadians(viewAngle.roll), Z_AXIS);
 
 		// Move the camera
 		Vector3 newPos = position.getNegate();

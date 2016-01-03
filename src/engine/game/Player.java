@@ -80,7 +80,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		this.camera = camera;
 		this.camera.position = position;
 
-		rotation.setX((float) Math.toRadians(-90));
+		rotation.setX(MathUtil.toRadians(-90));
 
 		scale.set(0.5f);
 
@@ -242,7 +242,7 @@ public class Player extends EntityActor implements ControlsListener, MouseListen
 		velocity = forward.getAdd(right);
 		velocity.setY(y);
 
-		rotation.setZ((float) Math.toRadians(-camera.getViewAngle().yaw));
+		rotation.setZ(MathUtil.toRadians(-camera.getViewAngle().yaw));
 
 		return result;
 	}

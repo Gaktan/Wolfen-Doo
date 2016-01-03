@@ -5,10 +5,12 @@ import org.lwjgl.opengl.GL30;
 
 /**
  * Abstract class used to created any kind of shape (1D, 2D, 3D, meshes, ...)
- * 
+ *
  * @author Gaktan
  */
 public abstract class Shape {
+
+	public static final int FLOAT_SIZE = Float.SIZE / 8;
 
 	protected int VBO, VAO, EBO;
 	protected ShaderProgram shaderProgram;

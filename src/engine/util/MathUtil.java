@@ -13,6 +13,8 @@ public final class MathUtil {
 
 	private static Random random = new Random();
 
+	public static final float PI = 3.14159265f;
+
 	/**
 	 * Approaches a float from start to end with a percentage
 	 *
@@ -137,5 +139,61 @@ public final class MathUtil {
 		x = clamp((x - edge0) / (edge1 - edge0), 0f, 1f);
 		// Evaluate polynomial
 		return x * x * (3 - 2 * x);
+	}
+
+	public static float cos(float x) {
+		return (float) Math.cos(x);
+	}
+
+	public static float sin(float x) {
+		return (float) Math.sin(x);
+	}
+
+	public static float tan(float x) {
+		return (float) Math.tan(x);
+	}
+
+	public static float atan(float x) {
+		return (float) Math.atan(x);
+	}
+
+	public static float atan2(float x, float y) {
+		return (float) Math.atan2(x, y);
+	}
+
+	public static float toDegrees(float angleRad) {
+		return (float) Math.toDegrees(angleRad);
+	}
+
+	public static float toRadians(float angleDeg) {
+		return (float) Math.toRadians(angleDeg);
+	}
+
+	public static float sqrt(float x) {
+		return (float) Math.sqrt(x);
+	}
+
+	public static float abs(float x) {
+		return Math.abs(x);
+	}
+
+	public static int round(float x) {
+		return Math.round(x);
+	}
+
+	public static float max(float x, float y) {
+		return Math.max(x, y);
+	}
+
+	public static float min(float x, float y) {
+		return Math.min(x, y);
+	}
+
+	public static int max(int x, int y) {
+		return Math.max(x, y);
+	}
+
+	public static int min(int x, int y) {
+		return Math.min(x, y);
 	}
 }

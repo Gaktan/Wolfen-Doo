@@ -19,7 +19,7 @@ public abstract class Weapon implements Displayable {
 		TO_LEFT, TO_RIGHT, TO_CENTER, IDLE;
 
 		static BobbingState randomDir() {
-			return ((int) (Math.random() + 0.5) == 1) ? TO_RIGHT : TO_LEFT;
+			return (MathUtil.random(0f, 1f) > 0.5f) ? TO_RIGHT : TO_LEFT;
 		}
 	}
 
@@ -213,14 +213,16 @@ public abstract class Weapon implements Displayable {
 	protected void moveToPosition(Vector3 start, Vector3 goal) {
 		float diff = goal.getSub(start).length();
 
-		Vector3 currentPos = MathUtil.smoothApproach(start, goal, (timeStamp / bobbingTime));
+		float percent = (timeStamp / bobbingTime);
+
+		Vector3 currentPos = MathUtil.smoothApproach(start, goal, percent);
 
 		Vector3 bending = new Vector3(bendingCurve);
 		bending.scale(diff);
 
-		currentPos.addX((float) (bending.getX() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
-		currentPos.addY((float) (bending.getY() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
-		currentPos.addZ((float) (bending.getZ() * Math.sin((timeStamp / bobbingTime) * Math.PI)));
+		currentPos.addX(bending.getX() * MathUtil.sin(percent * MathUtil.PI));
+		currentPos.addY(bending.getY() * MathUtil.sin(percent * MathUtil.PI));
+		currentPos.addZ(bending.getZ() * MathUtil.sin(percent * MathUtil.PI));
 
 		weaponSprite.position.set(currentPos);
 	}

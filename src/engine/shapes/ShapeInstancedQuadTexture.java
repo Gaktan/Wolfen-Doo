@@ -66,29 +66,29 @@ public class ShapeInstancedQuadTexture extends InstancedTexturedShape {
 		// v - Normalized ? (between 0 - 1)
 		// v - Offset between things (size of a line)
 		// v - Where to start ?
-		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE / 8), 0);
+		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 4 * FLOAT_SIZE, 0);
 
 		GL20.glEnableVertexAttribArray(1);
-		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 4 * (Float.SIZE / 8), 2 * (Float.SIZE / 8));
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 4 * FLOAT_SIZE, 2 * FLOAT_SIZE);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instancedVBO);
 		GL20.glEnableVertexAttribArray(2);
-		GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 20 * (Float.SIZE / 8), 0);
+		GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 20 * FLOAT_SIZE, 0);
 
 		GL20.glEnableVertexAttribArray(3);
-		GL20.glVertexAttribPointer(3, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE / 8), 3 * (Float.SIZE / 8));
+		GL20.glVertexAttribPointer(3, 4, GL11.GL_FLOAT, false, 20 * FLOAT_SIZE, 3 * FLOAT_SIZE);
 
 		GL20.glEnableVertexAttribArray(4);
-		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE / 8), 7 * (Float.SIZE / 8));
+		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 20 * FLOAT_SIZE, 7 * FLOAT_SIZE);
 
 		GL20.glEnableVertexAttribArray(5);
-		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE / 8), 11 * (Float.SIZE / 8));
+		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, 20 * FLOAT_SIZE, 11 * FLOAT_SIZE);
 
 		GL20.glEnableVertexAttribArray(6);
-		GL20.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 20 * (Float.SIZE / 8), 15 * (Float.SIZE / 8));
+		GL20.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 20 * FLOAT_SIZE, 15 * FLOAT_SIZE);
 
 		GL20.glEnableVertexAttribArray(7);
-		GL20.glVertexAttribPointer(7, 1, GL11.GL_FLOAT, false, 20 * (Float.SIZE / 8), 19 * (Float.SIZE / 8));
+		GL20.glVertexAttribPointer(7, 1, GL11.GL_FLOAT, false, 20 * FLOAT_SIZE, 19 * FLOAT_SIZE);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 

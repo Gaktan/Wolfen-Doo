@@ -24,6 +24,7 @@ public abstract class Game {
 	public Game(int width, int height, boolean fullScreen) {
 		try {
 			instance = this;
+
 			Display.create();
 			setDisplayMode(width, height, fullScreen);
 			Display.setResizable(true);
