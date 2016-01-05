@@ -45,28 +45,22 @@ public class DisplayableInstancedList extends DisplayableList {
 		boolean result = super.update(dt);
 
 		if (doUpdate || updatedList) {
-
 			updatedList = false;
 
 			FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
 
 			for (Displayable d : list) {
-
 				if (doUpdate)
 					d.update(dt);
 
 				EntityActor a = (EntityActor) d;
 
 				a.color.store(fb1);
-
 				Matrix4 model = Matrix4.createModelMatrix(a.position, a.rotation, a.scale);
 				model.store(fb1);
-
 				fb1.put(-1f);
 			}
-
 			fb1.flip();
-
 			shape.setData(fb1);
 		}
 

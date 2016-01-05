@@ -11,8 +11,10 @@ import engine.util.Vector3;
 
 public class ParticleSystemImpact extends ParticleSystem {
 
-	private Vector3 direction;
-	private Vector3 impactNormal;
+	protected Vector3 direction;
+	protected Vector3 impactNormal;
+
+	protected float dot;
 
 	public ParticleSystemImpact(Vector3 position, Vector3 direction, Vector3 impactNormal) {
 		super(position, 1);
@@ -27,6 +29,8 @@ public class ParticleSystemImpact extends ParticleSystem {
 		newParticlesPerFrame = 10;
 		maxParticles = 10;
 		particlesLife = 850.f;
+
+		dot = -direction.dot(impactNormal);
 	}
 
 	@Override
@@ -39,29 +43,26 @@ public class ParticleSystemImpact extends ParticleSystem {
 			p.velocity.setX(-direction.getX());
 
 			p.velocity.setY(MathUtil.random(0.1f, 1.1f));
-			// p.velocity.setX(p.velocity.getX() * MathUtil.randomNegative(-.2f,
-			// 2.f));
-			p.velocity.setZ(p.velocity.getZ() * MathUtil.random(-.2f, 1.f));
+			p.velocity.setZ(MathUtil.signum(direction.getZ()) * dot * MathUtil.random(0f, 1.f));
 		}
 
 		else if (impactNormal.getZ() != 0) {
 			p.velocity.setZ(-direction.getZ());
 
 			p.velocity.setY(MathUtil.random(0.1f, 1.1f));
-			p.velocity.setX(p.velocity.getX() * MathUtil.random(-.2f, 1.f));
+			p.velocity.setX(MathUtil.signum(direction.getX()) * dot * MathUtil.random(0f, 1.f));
 		}
 
 		else if (impactNormal.getY() != 0) {
-			p.velocity.setY(-direction.getY());
+			p.velocity.setY(0f);
 
-			p.velocity.setX(p.velocity.getX() * MathUtil.random(-.2f, 1.f));
-			p.velocity.setZ(p.velocity.getZ() * MathUtil.random(-.2f, 1.f));
+			p.velocity.setX(MathUtil.signum(direction.getX()) * dot * MathUtil.random(0f, 1.f));
+			p.velocity.setZ(MathUtil.signum(direction.getZ()) * dot * MathUtil.random(0f, 1.f));
 		}
 
 		if (impactNormal.getY() > 0) {
 			p.position.addY(0.1f);
-			p.velocity.scale(1f, 3f, 1f);
-			// p.velocity.y *= 3f;
+			p.velocity.setY(-direction.getY() * 3f);
 		}
 
 		p.velocity.normalize();

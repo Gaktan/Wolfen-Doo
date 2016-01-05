@@ -46,7 +46,6 @@ public class WolfenGameState extends GameState {
 	protected Map map;
 	protected DisplayableInstancedList bulletHoles;
 
-	protected ShapeSprite itemShape;
 	protected DisplayableList itemList;
 
 	/* TEMP STUFF */
@@ -93,6 +92,12 @@ public class WolfenGameState extends GameState {
 
 		Controls.removeControlsListener(player);
 		Controls.removeMouseListener(player);
+
+		displayableList.dispose();
+		bmf.dispose();
+		textPos.dispose();
+		textFps.dispose();
+		textMemory.dispose();
 	}
 
 	public Map getMap() {
@@ -131,8 +136,9 @@ public class WolfenGameState extends GameState {
 				256, 64, 64);
 
 		// Items
-		itemShape = new ShapeSprite(shaderProgramTexBill, "items.png", 128, 64, 32, 32);
-		itemList = new ItemList(player);
+		ShapeInstancedSprite itemShape = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "items.png", 128, 64,
+				32, 32);
+		itemList = new ItemList(itemShape, player);
 
 		addItem(new Vector3(9, 0, 3), 0, 100);
 		addItem(new Vector3(10, 0, 3), 1, 100);
@@ -158,7 +164,7 @@ public class WolfenGameState extends GameState {
 		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
 				"a_running_front");
 		animatedActorTest.position.set(3, 0, 5);
-		add(animatedActorTest);
+		map.addActor(animatedActorTest);
 
 		bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "scumm_font.png", 128, 256, 8,
 				11));
@@ -247,7 +253,6 @@ public class WolfenGameState extends GameState {
 
 	@Override
 	public void update(float dt) {
-
 		current_camera.update(dt);
 		player.update(dt);
 
@@ -271,7 +276,7 @@ public class WolfenGameState extends GameState {
 	}
 
 	public void addItem(Vector3 position, int itemNumber, int value) {
-		Item item = new Item(itemShape, position, itemNumber, value);
+		Item item = new Item(position, itemNumber, value);
 		itemList.add(item);
 	}
 

@@ -14,6 +14,9 @@ import game.game.states.WolfenGameState;
 
 public class WeaponFist extends Weapon {
 
+	protected float punchCooldown;
+	protected float currentPunchCooldown;
+
 	public WeaponFist(Player player) {
 		super(player);
 
@@ -22,6 +25,9 @@ public class WeaponFist extends Weapon {
 		setReloadingTime(1000f);
 		addAmmo(0);
 		setBobbingTime(500f);
+
+		punchCooldown = 300f;
+		currentPunchCooldown = punchCooldown;
 
 		updateAmmoText();
 
@@ -37,10 +43,8 @@ public class WeaponFist extends Weapon {
 
 	@Override
 	public void fire() {
-
-		if (shotsLeft - 9 < 0) {
+		if (shotsLeft - 9 <= 0)
 			return;
-		}
 
 		if (!canFire())
 			return;
@@ -65,7 +69,7 @@ public class WeaponFist extends Weapon {
 		// hack
 		proj.update(16f);
 
-		shotsLeft -= 9;
+		addAmmo(-9);
 
 		weaponSprite.setAnimation("fist_fire");
 	}
@@ -74,13 +78,15 @@ public class WeaponFist extends Weapon {
 	public boolean update(float dt) {
 		super.update(dt);
 
+		currentPunchCooldown -= dt;
+
 		if (currentCooldown < 0) {
 			weaponSprite.setAnimation("fist_idle");
 		}
 
-		if (shotsLeft < 100 && MathUtil.abs(currentCooldown % 200) < 3) {
-			shotsLeft += 1;
-			updateAmmoText();
+		if (shotsLeft < 100 && currentPunchCooldown < 0) {
+			currentPunchCooldown = punchCooldown;
+			addAmmo(1);
 		}
 
 		return true;

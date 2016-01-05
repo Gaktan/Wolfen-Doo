@@ -16,7 +16,6 @@ public class RotatingText extends DisplayableText {
 
 	@Override
 	public boolean update(float dt) {
-
 		rotation += 0.001f * dt;
 
 		updateText();

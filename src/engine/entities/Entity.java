@@ -27,6 +27,11 @@ public abstract class Entity implements Displayable {
 		delete = true;
 	}
 
+	@Override
+	public void dispose() {
+		// ??
+	}
+
 	public boolean isSolid() {
 		return solid;
 	}
@@ -40,7 +45,6 @@ public abstract class Entity implements Displayable {
 
 	@Override
 	public boolean update(float dt) {
-
 		dt = dt * 0.01f;
 
 		position.addX(velocity.getX() * dt);

@@ -27,7 +27,7 @@ public abstract class ParticleSystem implements Displayable {
 
 	protected ShapeInstancedQuadTexture particleShape;
 
-	public ParticleSystem(Vector3 position, int life) {
+	public ParticleSystem(Vector3 position, float life) {
 		list = new ArrayList<Particle>();
 
 		this.position = position;
@@ -44,6 +44,11 @@ public abstract class ParticleSystem implements Displayable {
 	}
 
 	@Override
+	public void dispose() {
+		particleShape.dispose();
+	}
+
+	@Override
 	public void render() {
 		particleShape.preRender();
 		particleShape.render(list.size());
@@ -56,12 +61,11 @@ public abstract class ParticleSystem implements Displayable {
 
 	@Override
 	public boolean update(float dt) {
-
 		if (life > 0) {
 			life -= dt;
 
 			if (list.size() < maxParticles) {
-				int amountToAdd = (int) MathUtil.min(maxParticles - list.size(), newParticlesPerFrame);
+				int amountToAdd = MathUtil.min(maxParticles - list.size(), newParticlesPerFrame);
 
 				for (int i = 0; i < amountToAdd; i++) {
 					Particle p = newParticle(particlesLife);

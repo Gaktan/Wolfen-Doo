@@ -42,27 +42,11 @@ public class EntityLine extends Entity {
 		VBO = GL15.glGenBuffers();
 	}
 
-	/*
-
 	@Override
-	public void render() {
-		GL11.glPushMatrix();
-
-		GL11.glLoadMatrix(GameStateManager.getCurrentGameState().current_camera.getProjectionXview().toFloatBuffer());
-
-		GL11.glLineWidth(2.5f);
-		GL11.glColor3f(colorA.r, colorA.g, colorA.b);
-		GL11.glBegin(GL11.GL_LINES);
-		{
-			GL11.glVertex3f(position.getX(), position.getY(), position.getZ());
-			GL11.glColor3f(colorB.r, colorB.g, colorB.b);
-			GL11.glVertex3f(positionB.getX(), positionB.getY(), positionB.getZ());
-		}
-		GL11.glEnd();
-
-		GL11.glPopMatrix();
+	public void dispose() {
+		GL30.glDeleteVertexArrays(VAO);
+		GL15.glDeleteBuffers(VBO);
 	}
-	*/
 
 	@Override
 	public void render() {

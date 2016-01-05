@@ -57,6 +57,11 @@ public class DisplayableText implements Displayable {
 		delete = true;
 	}
 
+	@Override
+	public void dispose() {
+		shape.dispose();
+	}
+
 	public String getText() {
 		return text;
 	}

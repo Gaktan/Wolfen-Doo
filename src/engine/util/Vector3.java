@@ -108,6 +108,10 @@ public class Vector3 {
 		z = z1;
 	}
 
+	public float dot(Vector3 vec) {
+		return x * vec.x + y * vec.y + z * vec.z;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Vector3) {

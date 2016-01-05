@@ -29,8 +29,16 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		lookingDirection = MathUtil.randomCoord(new Vector3(-1, 0, -1), new Vector3(1, 0, 1));
 		lookingDirection.normalize();
 
+		velocity.set(lookingDirection.getScale(0.01f));
+
 		lookingPoint = new Vector3();
 		dirLine = new EntityLine(position, lookingPoint);
+	}
+
+	@Override
+	public void dispose() {
+		dirLine.dispose();
+		super.dispose();
 	}
 
 	@Override

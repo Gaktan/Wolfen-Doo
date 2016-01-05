@@ -37,6 +37,13 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 		delete = true;
 	}
 
+	@Override
+	public void dispose() {
+		for (Displayable d : list) {
+			d.dispose();
+		}
+	}
+
 	public Displayable get(int i) {
 		return list.get(i);
 	}
@@ -69,26 +76,23 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 
 	@Override
 	public boolean update(float dt) {
-
 		for (Displayable d : toBeAdded) {
 			list.add(d);
 		}
-
 		toBeAdded.clear();
 
 		for (Displayable d : list) {
 			boolean b = d.update(dt);
 			if (!b)
-				toBeDeleted.add(d);
+				remove(d);
 		}
 
 		for (Displayable d : toBeDeleted) {
+			d.dispose();
 			list.remove(d);
 		}
-
 		toBeDeleted.clear();
 
 		return !delete;
 	}
-
 }

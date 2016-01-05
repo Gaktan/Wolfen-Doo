@@ -8,19 +8,24 @@ package engine;
 public interface Displayable {
 
 	/**
-	 * Should be used to delete the object
+	 * Should be used to delete this object
 	 */
 	public void delete();
 
 	/**
-	 * Used to render an object
+	 * Should be called upon destruction
+	 */
+	public void dispose();
+
+	/**
+	 * Used to render this object
 	 *
 	 * @param camera
 	 */
 	public void render();
 
 	/**
-	 * Used to update an object's logic
+	 * Used to update this object's logic
 	 *
 	 * @param dt
 	 *            Delta time

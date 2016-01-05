@@ -1,6 +1,8 @@
 package game.entities;
 
 import engine.entities.EntityActor;
+import engine.entities.EntityDoor;
+import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
 import engine.generator.Map;
@@ -8,6 +10,7 @@ import engine.generator.MapUtil;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 import game.game.states.WolfenGameState;
+import game.particles.ParticleSystemBlood;
 import game.particles.ParticleSystemImpact;
 
 /**
@@ -47,7 +50,7 @@ public class EntityProjectile extends EntityLine {
 
 		super.update(dt);
 
-		positionB = position.getAdd(velocity.getNormalize().getScale(2.0f));
+		positionB = position.getAdd(velocity.getNormalize().getScale(3.0f));
 		// Vector3.add(position, velocity, positionB);
 
 		if (position.getX() < 0 || position.getZ() < 0 || position.getX() > map.getSizeX()
@@ -64,25 +67,26 @@ public class EntityProjectile extends EntityLine {
 		int oldX = -1, oldZ = -1;
 
 		for (float i = 0f; i < 0.25f; i += 0.025f) {
-			if (position.getY() + (velocity.getY() * i) < -0.5f) {
+
+			normal.set(0f);
+
+			impactPosition.set(position.getAdd(velocity.getScale(i)));
+
+			if (impactPosition.getY() < -0.5f) {
 				b = true;
 				normal.setY(1f);
 				impactPosition.setY(-0.5f);
-				impactPosition.setX(position.getX() + (velocity.getX() * i));
-				impactPosition.setZ(position.getZ() + (velocity.getZ() * i));
 				break;
 			}
-			if (position.getY() + (velocity.getY() * i) > 0.5f) {
+			if (impactPosition.getY() > 0.5f) {
 				b = true;
 				normal.setY(-1f);
-				impactPosition.setY(0f);
-				impactPosition.setX(position.getX() + (velocity.getX() * i));
-				impactPosition.setZ(position.getZ() + (velocity.getZ() * i));
+				impactPosition.setY(0.5f);
 				break;
 			}
 
-			int x = (int) (position.getX() + (velocity.getX() * i) + 0.5f);
-			int z = (int) (position.getZ() + (velocity.getZ() * i) + 0.5f);
+			int x = (int) (impactPosition.getX() + 0.5f);
+			int z = (int) (impactPosition.getZ() + 0.5f);
 
 			if (x == oldX && z == oldZ)
 				continue;
@@ -90,42 +94,45 @@ public class EntityProjectile extends EntityLine {
 			oldX = x;
 			oldZ = z;
 
+			normal.setX(x - impactPosition.getX());
+			normal.setZ(z - impactPosition.getZ());
+
+			if (MathUtil.abs(normal.getX()) > MathUtil.abs(normal.getZ())) {
+				normal.setZ(0f);
+				normal.setX(-normal.getX());
+				impactPosition.setX((int) impactPosition.getX() + 0.5f);
+			}
+			else {
+				normal.setX(0f);
+				normal.setZ(-normal.getZ());
+				impactPosition.setZ((int) impactPosition.getZ() + 0.5f);
+			}
+
+			EntityActor a = map.getActor(x, z);
+
+			if (a != null) {
+
+				if (a instanceof EntityDoor) {
+					EntityDoor door = (EntityDoor) a;
+					if (door.getState() == DoorState.OPEN) {
+						continue;
+					}
+
+					createParticles(impactPosition, new Vector3(velocity), normal);
+					return false;
+				}
+				else {
+					createBlood(a.position);
+					return false;
+				}
+			}
+
 			MapUtil.ShapeInfo info = map.get(x, z);
-
 			if (info != null) {
-
 				if (!info.isSolid())
 					continue;
 
-				if (info instanceof MapUtil.DoorShapeInfo) {
-					/*
-					EntityDoor door = (EntityDoor) map.getActor(x, z);
-					if (door.getState() != DoorState.OPEN) {
-						return false;
-					}
-					*/
-					continue;
-				}
-
 				b = true;
-
-				impactPosition.setX(position.getX() + (velocity.getX() * i));
-				impactPosition.setY(position.getY() + (velocity.getY() * i));
-				impactPosition.setZ(position.getZ() + (velocity.getZ() * i));
-
-				normal.setX(x - impactPosition.getX());
-				normal.setZ(z - impactPosition.getZ());
-
-				if (MathUtil.abs(normal.getX()) > MathUtil.abs(normal.getZ())) {
-					normal.setZ(0f);
-					normal.setX(-normal.getX());
-					impactPosition.setX((int) impactPosition.getX() + 0.5f);
-				}
-				else {
-					normal.setX(0f);
-					normal.setZ(-normal.getZ());
-					impactPosition.setZ((int) impactPosition.getZ() + 0.5f);
-				}
 
 				break;
 			}
@@ -185,7 +192,7 @@ public class EntityProjectile extends EntityLine {
 
 		else if (normal.getY() != 0) {
 			newRot.setX(pi2 * -normal.getY());
-			newPos.setY((int) (impactPosition.getY() + 0.5f) + 0.5f * -normal.getY() * 0.99f);
+			newPos.setY((int) (impactPosition.getY()) + 0.5f * -normal.getY() * 0.99f);
 		}
 
 		e.position = newPos;
@@ -194,9 +201,17 @@ public class EntityProjectile extends EntityLine {
 
 		((WolfenGameState) GameStateManager.getCurrentGameState()).addBulletHole(e);
 
-		ParticleSystemImpact particles = new ParticleSystemImpact(new Vector3(newPos), new Vector3(velocity),
-				new Vector3(normal));
+		createParticles(newPos, new Vector3(velocity), normal);
+	}
+
+	protected void createParticles(Vector3 position, Vector3 velocity, Vector3 normal) {
+		ParticleSystemImpact particles = new ParticleSystemImpact(position, velocity, normal);
 
 		((WolfenGameState) GameStateManager.getCurrentGameState()).add(particles);
+	}
+
+	protected void createBlood(Vector3 position) {
+		ParticleSystemBlood blood = new ParticleSystemBlood(position, 20f);
+		((WolfenGameState) GameStateManager.getCurrentGameState()).add(blood);
 	}
 }

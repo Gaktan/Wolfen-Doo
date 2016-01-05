@@ -196,4 +196,8 @@ public final class MathUtil {
 	public static int min(int x, int y) {
 		return Math.min(x, y);
 	}
+
+	public static float signum(float x) {
+		return Math.signum(x);
+	}
 }

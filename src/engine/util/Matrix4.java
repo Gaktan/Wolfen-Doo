@@ -391,27 +391,8 @@ public class Matrix4 {
 	 *            Up Vector
 	 */
 	public static Matrix4 createLookAt(Vector3 eye, Vector3 center, Vector3 up) {
-		/*
-		 * Vector3 f = center.getSub(eye); f.normalize();
-		 *
-		 * Vector3 u = up.getNormalize();
-		 *
-		 * Vector3 s = f.getCross(u); s.normalize();
-		 *
-		 * u = s.getCross(f);
-		 *
-		 * Matrix4 result = new Matrix4(); result.m00 = s.getX(); result.m10 =
-		 * s.getY(); result.m20 = s.getZ(); result.m01 = u.getX(); result.m11 =
-		 * u.getY(); result.m21 = u.getZ(); result.m02 = -f.getX(); result.m12 =
-		 * -f.getY(); result.m22 = -f.getZ();
-		 *
-		 * result.translate(eye.getNegate()); //
-		 * Matrix4.translate(eye.getNegate(), result, result);
-		 *
-		 * return result;
-		 */
 
-		Vector3 dir = center.getSub(eye);
+		Vector3 dir = eye.getSub(center);
 		Vector3 z = new Vector3(dir);
 		z.normalize();
 
@@ -420,7 +401,7 @@ public class Matrix4 {
 
 		Vector3 y = z.getCross(x);
 
-		Matrix4 result = new Matrix4();
+		Matrix4 result = createIdentityMatrix();
 		result.m00 = x.getX();
 		result.m10 = x.getY();
 		result.m20 = x.getZ();
@@ -430,6 +411,8 @@ public class Matrix4 {
 		result.m02 = z.getX();
 		result.m12 = z.getY();
 		result.m22 = z.getZ();
+
+		result.translate(eye.getNegate());
 
 		return result;
 	}

@@ -12,7 +12,7 @@ public abstract class Game {
 	/**
 	 * limit the fps <= 0 for no limit
 	 */
-	private int limitFPS = -1;
+	private int limitFPS = 60;
 
 	public Game() {
 		this(800, 600, false);
@@ -120,7 +120,7 @@ public abstract class Game {
 	 * @return Current time in milliseconds.
 	 */
 	public static float getCurrentTime() {
-		return (float) Sys.getTime() * 1000 / Sys.getTimerResolution();
+		return Sys.getTime() * 1000f / Sys.getTimerResolution();
 	}
 
 	public static Game getInstance() {

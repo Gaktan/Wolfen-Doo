@@ -24,13 +24,6 @@ public abstract class TexturedShape extends Shape {
 	}
 
 	@Override
-	public void dispose() {
-		GL11.glDeleteTextures(textureID);
-
-		super.dispose();
-	}
-
-	@Override
 	public void postRender() {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		GL30.glBindVertexArray(0);

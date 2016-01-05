@@ -92,6 +92,13 @@ public abstract class Weapon implements Displayable {
 	public void delete() {
 	}
 
+	@Override
+	public void dispose() {
+		reloadingText.dispose();
+		ammoText.dispose();
+		weaponSprite.dispose();
+	}
+
 	protected abstract void fire();
 
 	public void forceReload() {

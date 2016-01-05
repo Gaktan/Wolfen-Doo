@@ -237,6 +237,15 @@ public class Map implements Displayable {
 		delete = true;
 	}
 
+	@Override
+	public void dispose() {
+		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
+			ShapeInfo info = entry.getValue();
+			Shape shape = info.getShape();
+			shape.dispose();
+		}
+	}
+
 	public ShapeInfo get(int x, int y) {
 		if (!inRange(x, 0, sizeX) || !inRange(y, 0, sizeY)) {
 			return null;
@@ -452,5 +461,9 @@ public class Map implements Displayable {
 
 	private boolean inRange(int n, int min, int max) {
 		return n >= min && n < max;
+	}
+
+	public void addActor(EntityActor actor) {
+		actorsList.add(actor);
 	}
 }

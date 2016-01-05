@@ -9,7 +9,7 @@ import engine.util.Vector3;
 
 /**
  * Class used to store a single font and write text with it
- * 
+ *
  * @author Gaktan
  */
 public class BitMapFont {
@@ -61,5 +61,9 @@ public class BitMapFont {
 
 	public Shape getShape() {
 		return shape;
+	}
+
+	public void dispose() {
+		shape.dispose();
 	}
 }

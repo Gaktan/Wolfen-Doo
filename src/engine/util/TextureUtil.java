@@ -2,9 +2,11 @@ package engine.util;
 
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
@@ -21,7 +23,43 @@ import org.newdawn.slick.opengl.TextureLoader;
  */
 public final class TextureUtil {
 
-	public static final int NO_TEXTURE = loadTexture("noTexture.png");
+	public static final int NO_TEXTURE;
+
+	public static HashMap<String, Integer> textureMap;
+
+	static {
+		textureMap = new HashMap<String, Integer>();
+
+		NO_TEXTURE = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, NO_TEXTURE);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL13.GL_CLAMP_TO_BORDER);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL13.GL_CLAMP_TO_BORDER);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+		ByteBuffer bb = BufferUtils.createByteBuffer(3 * 4 * 4);
+
+		byte[] magenta = new byte[] { (byte) 255, 0, (byte) 255 };
+		byte[] black = new byte[] { 0, 0, 0 };
+
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if ((j + i) % 2 == 0) {
+					bb.put(magenta);
+				}
+				else {
+					bb.put(black);
+				}
+			}
+		}
+
+		bb.flip();
+
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, 4, 4, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, bb);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	}
 
 	/**
 	 * Turns a Color into a Vector3
@@ -40,24 +78,36 @@ public final class TextureUtil {
 	/**
 	 * Loads a texture from a file
 	 *
-	 * @param path
-	 *            name of the texture. No need to specify extension, but must be
-	 *            a png
+	 * @param fileName
+	 *            name of the texture
 	 * @return OpenGL texture ID
 	 */
-	public static int loadTexture(String path) {
-		// Load a texture
+	public static int loadTexture(String fileName) {
+
+		int id = getTextureID(fileName);
+
+		if (id != -1) {
+			return id;
+		}
+
 		int textureID = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 
-		// Init the textures
+		// Wrap methods
 		// GL11.GL_REPEAT, GL14.GL_MIRRORED_REPEAT, GL12.GL_CLAMP_TO_EDGE,
 		// GL13.GL_CLAMP_TO_BORDER
 
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL13.GL_CLAMP_TO_BORDER);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL13.GL_CLAMP_TO_BORDER);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 
-		// GL11.GL_LINEAR, GL11.GL_NEAREST
+		// Filter methods
+		// GL11.GL_LINEAR
+		// GL11.GL_LINEAR_MIPMAP_NEAREST
+		// GL11.GL_LINEAR_MIPMAP_LINEAR
+
+		// GL11.GL_NEAREST
+		// GL11.GL_NEAREST_MIPMAP_NEAREST
+		// GL11.GL_NEAREST_MIPMAP_LINEAR
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
@@ -65,7 +115,7 @@ public final class TextureUtil {
 		Texture t;
 
 		try {
-			t = TextureLoader.getTexture("PNG", new FileInputStream("res/images/" + path));
+			t = TextureLoader.getTexture("PNG", new FileInputStream("res/images/" + fileName));
 			ByteBuffer b = BufferUtils.createByteBuffer(t.getTextureData().length);
 			b.put(t.getTextureData());
 			b.flip();
@@ -88,11 +138,32 @@ public final class TextureUtil {
 			e.printStackTrace();
 
 			return NO_TEXTURE;
+		} finally {
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		}
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		textureMap.put(fileName, textureID);
 
 		return textureID;
+	}
+
+	public static void deleteTexture(int textureID) {
+		GL11.glDeleteTextures(textureID);
+	}
+
+	public static void deleteTexture(String textureName) {
+		int id = getTextureID(textureName);
+		deleteTexture(id);
+	}
+
+	public static int getTextureID(String textureName) {
+		Integer id = textureMap.get(textureName);
+
+		if (id == null) {
+			id = -1;
+		}
+
+		return id;
 	}
 
 }

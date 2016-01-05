@@ -1,7 +1,6 @@
 package game.entities;
 
 import engine.entities.EntityActor;
-import engine.shapes.ShapeSprite;
 import engine.util.Vector3;
 
 public class Item extends EntityActor {
@@ -9,8 +8,8 @@ public class Item extends EntityActor {
 	protected int value;
 	protected int itemNumber;
 
-	public Item(ShapeSprite shape, Vector3 position, int itemNumber, int value) {
-		super(shape);
+	public Item(Vector3 position, int itemNumber, int value) {
+		super(null);
 
 		this.itemNumber = itemNumber;
 		this.value = value;
