@@ -1,21 +1,12 @@
 package game.game;
 
-import static org.lwjgl.input.Keyboard.KEY_A;
-import static org.lwjgl.input.Keyboard.KEY_D;
-import static org.lwjgl.input.Keyboard.KEY_ESCAPE;
-import static org.lwjgl.input.Keyboard.KEY_LCONTROL;
-import static org.lwjgl.input.Keyboard.KEY_Q;
-import static org.lwjgl.input.Keyboard.KEY_R;
-import static org.lwjgl.input.Keyboard.KEY_S;
-import static org.lwjgl.input.Keyboard.KEY_SPACE;
-import static org.lwjgl.input.Keyboard.KEY_W;
-import static org.lwjgl.input.Keyboard.KEY_Z;
-
 import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
 import engine.entities.Camera;
+import engine.entities.Entity;
+import engine.entities.EntityDoor;
 import engine.game.Controls;
 import engine.game.Player;
 import engine.game.states.GameStateManager;
@@ -47,10 +38,10 @@ public class WolfenPlayer extends Player {
 	protected ArrayList<Weapon> weaponList;
 
 	// Controls
-	protected static int k_forward = KEY_W;
-	protected static int k_left = KEY_A;
-	protected static int k_back = KEY_S;
-	protected static int k_right = KEY_D;
+	protected static int k_forward = Keyboard.KEY_W;
+	protected static int k_left = Keyboard.KEY_A;
+	protected static int k_back = Keyboard.KEY_S;
+	protected static int k_right = Keyboard.KEY_D;
 
 	protected Map map;
 
@@ -74,8 +65,8 @@ public class WolfenPlayer extends Player {
 		weaponIndex = 0;
 
 		if (Controls.getLocale().startsWith("fr")) {
-			k_forward = KEY_Z;
-			k_left = KEY_Q;
+			k_forward = Keyboard.KEY_Z;
+			k_left = Keyboard.KEY_Q;
 		}
 	}
 
@@ -95,14 +86,7 @@ public class WolfenPlayer extends Player {
 		currentWeapon.update(dt);
 
 		// Collision on map
-		int x = (int) (position.getX() + 0.5f);
-		int z = (int) (position.getZ() + 0.5f);
-		Vector3 resolution = new Vector3();
-		resolution.add(map.testCollision(collisionSphere, x, z));
-		resolution.add(map.testCollision(collisionSphere, x - 1, z));
-		resolution.add(map.testCollision(collisionSphere, x + 1, z));
-		resolution.add(map.testCollision(collisionSphere, x, z - 1));
-		resolution.add(map.testCollision(collisionSphere, x, z + 1));
+		Vector3 resolution = map.testCollision(collisionSphere);
 		position.add(resolution);
 
 		return result;
@@ -138,10 +122,10 @@ public class WolfenPlayer extends Player {
 			rightGoal = SIDEWAYS_SPEED;
 			movingKeyPressed++;
 		}
-		else if (key == KEY_SPACE) {
+		else if (key == Keyboard.KEY_SPACE) {
 			upGoal = UPDOWN_SPEED;
 		}
-		else if (key == KEY_LCONTROL) {
+		else if (key == Keyboard.KEY_LCONTROL) {
 			downGoal = -UPDOWN_SPEED;
 		}
 	}
@@ -164,16 +148,27 @@ public class WolfenPlayer extends Player {
 			rightGoal = 0;
 			movingKeyPressed--;
 		}
-		else if (key == KEY_SPACE) {
+		else if (key == Keyboard.KEY_SPACE) {
 			upGoal = 0f;
 		}
-		else if (key == KEY_LCONTROL) {
+		else if (key == Keyboard.KEY_LCONTROL) {
 			downGoal = 0f;
 		}
-		else if (key == KEY_R) {
+		else if (key == Keyboard.KEY_R) {
 			weaponList.get(weaponIndex).forceReload();
 		}
-		else if (key == KEY_ESCAPE) {
+		else if (key == Keyboard.KEY_E) {
+			Entity e = map.rayCast(position, getViewAngle().toVector(), 1f);
+			if (e == null) {
+				return;
+			}
+
+			if (e instanceof EntityDoor) {
+				EntityDoor door = (EntityDoor) e;
+				door.toggle();
+			}
+		}
+		else if (key == Keyboard.KEY_ESCAPE) {
 			if (GameWolfen.SKIP_MENU) {
 				GameWolfen.end();
 			}

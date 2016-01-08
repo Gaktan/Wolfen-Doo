@@ -1,6 +1,7 @@
 package engine.generator;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -31,7 +32,7 @@ public class Map implements Displayable {
 	protected char map[][];
 	protected HashMap<Character, ShapeInfo> shapeMap;
 
-	protected DisplayableList actorsList;
+	protected DisplayableList<EntityActor> actorsList;
 	protected EntityActor sky;
 	protected boolean delete;
 	protected Vector3 startingPoint;
@@ -42,7 +43,7 @@ public class Map implements Displayable {
 
 	public Map(int sizeX, int sizeY) {
 		shapeMap = new HashMap<Character, ShapeInfo>();
-		actorsList = new DisplayableList();
+		actorsList = new DisplayableList<EntityActor>();
 		delete = false;
 		startingPoint = new Vector3();
 
@@ -246,25 +247,42 @@ public class Map implements Displayable {
 		return shapeMap.get(map[y][x]);
 	}
 
+	public ArrayList<EntityActor> getActors(int x, int y) {
+		ArrayList<EntityActor> list = new ArrayList<EntityActor>();
+
+		for (EntityActor actor : actorsList) {
+			if (actor instanceof EntityDoor) {
+				EntityDoor door = (EntityDoor) actor;
+
+				if ((int) (door.getOriginialPosition().getX() + 0.5f) == x
+						&& (int) (door.getOriginialPosition().getZ() + 0.5f) == y) {
+					list.add(door);
+				}
+				continue;
+			}
+
+			if ((int) (actor.position.getX() + 0.5f) == x && (int) (actor.position.getZ() + 0.5f) == y) {
+				list.add(actor);
+			}
+		}
+
+		return list;
+	}
+
 	public EntityActor getActor(int x, int y) {
-		for (Displayable d : actorsList) {
+		for (EntityActor actor : actorsList) {
+			if (actor instanceof EntityDoor) {
+				EntityDoor door = (EntityDoor) actor;
 
-			if (d instanceof EntityActor) {
-				EntityActor actor = (EntityActor) d;
-
-				if (actor instanceof EntityDoor) {
-					EntityDoor door = (EntityDoor) actor;
-
-					if ((int) (door.getOriginialPosition().getX() + 0.5f) == x
-							&& (int) (door.getOriginialPosition().getZ() + 0.5f) == y) {
-						return door;
-					}
-					continue;
+				if ((int) (door.getOriginialPosition().getX() + 0.5f) == x
+						&& (int) (door.getOriginialPosition().getZ() + 0.5f) == y) {
+					return door;
 				}
+				continue;
+			}
 
-				if ((int) (actor.position.getX() + 0.5f) == x && (int) (actor.position.getZ() + 0.5f) == y) {
-					return actor;
-				}
+			if ((int) (actor.position.getX() + 0.5f) == x && (int) (actor.position.getZ() + 0.5f) == y) {
+				return actor;
 			}
 		}
 
@@ -328,7 +346,7 @@ public class Map implements Displayable {
 
 		ray.normalize();
 
-		for (float i = 0f; i < distance; i += 0.04f) {
+		for (float i = 0f; i < distance; i += 0.2f) {
 			if (position.getY() + (ray.getY() * i) > 0.5f)
 				break;
 			if (position.getY() + (ray.getY() * i) < -0.5f)
@@ -420,8 +438,6 @@ public class Map implements Displayable {
 	 *         there is no collision
 	 */
 	public Vector3 testCollision(AABB aabb, int x, int z) {
-
-		// TODO: fix collisions
 		Vector3 result = new Vector3();
 
 		if (!inRange(x, 0, sizeX) || !inRange(z, 0, sizeY)) {
@@ -457,6 +473,24 @@ public class Map implements Displayable {
 		}
 
 		return result;
+	}
+
+	public Vector3 testCollision(AABB aabb) {
+		// TODO: fix corner collisions
+		int x = (int) (aabb.position.getX() + 0.5f);
+		int z = (int) (aabb.position.getZ() + 0.5f);
+		Vector3 resolution = new Vector3();
+
+		for (int i = -1; i < 2; i++) {
+			for (int j = -1; j < 2; j++) {
+				Vector3 res = testCollision(aabb, x + j, z + i);
+				if (res.length() > resolution.length()) {
+					resolution.set(res);
+				}
+			}
+		}
+
+		return resolution;
 	}
 
 	private boolean inRange(int n, int min, int max) {

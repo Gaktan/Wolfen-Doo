@@ -46,10 +46,6 @@ public class WeaponRevolver extends Weapon {
 		linePosition.addY(MathUtil.random(-0.1f, 0f));
 
 		EAngle angle = new EAngle(player.getViewAngle());
-
-		angle.yaw -= 90;
-		angle.pitch = -angle.pitch;
-
 		angle.yaw += MathUtil.random(-1f, 1f);
 
 		Vector3 lineVector = angle.toVector();

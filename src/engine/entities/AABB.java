@@ -4,8 +4,8 @@ import engine.util.Vector3;
 
 public abstract class AABB {
 
-	protected Vector3 position;
-	protected Vector3 scale;
+	public Vector3 position;
+	public Vector3 scale;
 
 	public AABB(Entity a) {
 		this(a.position, a.scale);

@@ -4,7 +4,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import engine.BitMapFont;
-import engine.Displayable;
 import engine.DisplayableList;
 import engine.entities.AABBRectangle;
 import engine.entities.Camera;
@@ -29,7 +28,7 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 
 	protected BitMapFont font;
 
-	protected DisplayableList buttons;
+	protected DisplayableList<MenuButton> buttons;
 	protected MenuButton selectedButton;
 
 	@Override
@@ -61,7 +60,7 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 		font = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "scumm_font.png", 128, 256, 8,
 				11));
 
-		buttons = new DisplayableList();
+		buttons = new DisplayableList<MenuButton>();
 	}
 
 	@Override
@@ -78,8 +77,7 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 
 			AABBRectangle cursorRect = getMouseRectangle();
 
-			for (Displayable d : buttons) {
-				MenuButton buttonActor = (MenuButton) d;
+			for (MenuButton buttonActor : buttons) {
 				AABBRectangle buttonRect = new AABBRectangle(buttonActor);
 
 				if (cursorRect.collide(buttonRect)) {

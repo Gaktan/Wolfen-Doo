@@ -1,22 +1,17 @@
 package engine.entities;
 
-import org.lwjgl.input.Keyboard;
-
-import engine.game.Controls;
-import engine.game.Controls.ControlsListener;
-import engine.game.states.GameStateManager;
+import engine.generator.Map;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeCubeTexture;
 import engine.util.MathUtil;
 import engine.util.Vector3;
-import game.game.states.WolfenGameState;
 
 /**
  * Works like a wall, but can be opened
  *
  * @author Gaktan
  */
-public class EntityDoor extends EntityWall implements ControlsListener {
+public class EntityDoor extends EntityWall {
 
 	/**
 	 * Describes all different states of the door
@@ -35,6 +30,8 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 
 	protected float timeStamp;
 
+	protected Map map;
+
 	public EntityDoor(ShapeCubeTexture shape) {
 		super(shape);
 
@@ -49,8 +46,6 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 		openingTime = 0.5f;
 
 		setSolid(true);
-
-		Controls.addControlsListener(this);
 	}
 
 	/**
@@ -75,39 +70,6 @@ public class EntityDoor extends EntityWall implements ControlsListener {
 
 	public DoorState getState() {
 		return state;
-	}
-
-	@Override
-	public void onKeyPress(int key) {
-	}
-
-	@Override
-	public void onKeyRelease(int key) {
-		if (key == Keyboard.KEY_E) {
-
-			Vector3 diff = originialPosition.getSub(((WolfenGameState) GameStateManager.getCurrentGameState())
-					.getPlayer().position);
-			// Vector3.sub(originialPosition,
-			// GameWolfen.getInstance().camera.position, diff);
-
-			if (diff.length() > 1.5f)
-				return;
-
-			diff.normalize();
-
-			Vector3 vec1 = ((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().getViewAngle()
-					.toVector();
-			float angle = (MathUtil.atan2(diff.getZ(), diff.getX()) - MathUtil.atan2(vec1.getZ(), vec1.getX()))
-					+ MathUtil.PI * 0.25f;
-			angle -= MathUtil.PI;
-
-			if (angle < 0)
-				angle += 2 * MathUtil.PI;
-
-			if (angle >= (MathUtil.PI * 0.5f) && angle < MathUtil.PI) {
-				toggle();
-			}
-		}
 	}
 
 	/**

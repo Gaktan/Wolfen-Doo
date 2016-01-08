@@ -8,7 +8,7 @@ import engine.entities.EntityActor;
 import engine.shapes.InstancedTexturedShape;
 import engine.util.Matrix4;
 
-public class DisplayableInstancedList extends DisplayableList {
+public class DisplayableInstancedList<E extends Displayable> extends DisplayableList<E> {
 
 	protected InstancedTexturedShape shape;
 	protected boolean doUpdate;
@@ -20,7 +20,7 @@ public class DisplayableInstancedList extends DisplayableList {
 	}
 
 	@Override
-	public void add(Displayable d) {
+	public void add(E d) {
 		if (d instanceof EntityActor) {
 			super.add(d);
 			updatedList = true;
@@ -28,7 +28,7 @@ public class DisplayableInstancedList extends DisplayableList {
 	}
 
 	@Override
-	public void remove(Displayable d) {
+	public void remove(E d) {
 		super.remove(d);
 		updatedList = true;
 	}
@@ -49,7 +49,7 @@ public class DisplayableInstancedList extends DisplayableList {
 
 			FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
 
-			for (Displayable d : list) {
+			for (E d : list) {
 				if (doUpdate)
 					d.update(dt);
 

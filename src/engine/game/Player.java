@@ -43,7 +43,10 @@ public abstract class Player extends EntityActor implements ControlsListener, Mo
 	}
 
 	public EAngle getViewAngle() {
-		return camera.getViewAngle();
+		EAngle viewAngle = new EAngle(camera.getViewAngle());
+		viewAngle.yaw -= 90f;
+		viewAngle.pitch = -viewAngle.pitch;
+		return viewAngle;
 	}
 
 	@Override

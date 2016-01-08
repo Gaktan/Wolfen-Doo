@@ -12,6 +12,7 @@ import engine.DisplayableText;
 import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
+import engine.entities.EntityActor;
 import engine.entities.EntityLine;
 import engine.game.Controls;
 import engine.game.Fps;
@@ -44,11 +45,11 @@ public class WolfenGameState extends GameState {
 
 	protected WolfenPlayer player;
 
-	protected DisplayableList displayableList;
+	protected DisplayableList<Displayable> displayableList;
 	protected Map map;
-	protected DisplayableInstancedList bulletHoles;
+	protected DisplayableInstancedList<EntityActor> bulletHoles;
 
-	protected DisplayableList itemList;
+	protected ItemList itemList;
 
 	/* TEMP STUFF */
 
@@ -78,7 +79,7 @@ public class WolfenGameState extends GameState {
 		displayableList.add(d);
 	}
 
-	public void addBulletHole(Displayable d) {
+	public void addBulletHole(EntityActor d) {
 		bulletHoles.add(d);
 	}
 
@@ -108,7 +109,7 @@ public class WolfenGameState extends GameState {
 
 	@Override
 	public void init() {
-		displayableList = new DisplayableList();
+		displayableList = new DisplayableList<Displayable>();
 
 		fps = new Fps();
 
@@ -179,15 +180,15 @@ public class WolfenGameState extends GameState {
 		*/
 
 		// Bullets
-		bulletHoles = new DisplayableInstancedList(new ShapeInstancedQuadTexture(shaderProgramTexInstanced,
-				"bullet_impact.png"), false);
+		bulletHoles = new DisplayableInstancedList<EntityActor>(new ShapeInstancedQuadTexture(
+				shaderProgramTexInstanced, "bullet_impact.png"), false);
 		add(bulletHoles);
 
 		// -- Test area --
 
 		// animation
 		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
-				"a_running_front");
+				"a_running_front", map);
 		animatedActorTest.position.set(3, 0, 5);
 		map.addActor(animatedActorTest);
 

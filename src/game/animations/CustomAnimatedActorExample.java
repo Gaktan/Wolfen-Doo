@@ -1,20 +1,16 @@
 package game.animations;
 
 import engine.animations.AnimatedActor;
+import engine.entities.AABBSphere;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
+import engine.generator.Map;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 
 public class CustomAnimatedActorExample extends AnimatedActor {
-
-	private static final float PI = MathUtil.PI;
-	private static final float PI_1_5 = MathUtil.PI * 1.5f;
-	private static final float PI_2 = MathUtil.PI * 2f;
-	private static final float PI_0_5 = MathUtil.PI * 0.5f;
-	private static final float PI_0_25 = MathUtil.PI * 0.25f;
 
 	protected Vector3 lookingPoint;
 	protected Vector3 lookingDirection;
@@ -23,8 +19,13 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 
 	protected int orientation;
 
-	public CustomAnimatedActorExample(ShapeSprite shape, String file, String currentAnimation) {
+	protected Map map;
+	protected AABBSphere sphereCollision;
+
+	public CustomAnimatedActorExample(ShapeSprite shape, String file, String currentAnimation, Map map) {
 		super(shape, file, currentAnimation);
+
+		this.map = map;
 
 		lookingDirection = MathUtil.randomCoord(new Vector3(-1, 0, -1), new Vector3(1, 0, 1));
 		lookingDirection.normalize();
@@ -33,6 +34,8 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 
 		lookingPoint = new Vector3();
 		dirLine = new EntityLine(position, lookingPoint);
+
+		sphereCollision = new AABBSphere(position, new Vector3(0.5f));
 	}
 
 	@Override
@@ -58,23 +61,29 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 		Vector3 vec1 = GameStateManager.getCurrentGameState().current_camera.getViewAngle().toVector();
 
 		float angle = MathUtil.atan2(lookingDirection.getZ(), lookingDirection.getX())
-				- MathUtil.atan2(vec1.getZ(), vec1.getX()) + PI_0_25;
+				- MathUtil.atan2(vec1.getZ(), vec1.getX());
+
+		angle = MathUtil.toDegrees(angle) + 45f;
 
 		if (angle < 0)
-			angle += PI_2;
+			angle += 360f;
 
-		if (angle < PI_0_5 || angle > PI_2) {
+		if (angle < 90f || angle > 360f) {
 			changeOrientation(Orientation.EAST);
 		}
-		else if (angle >= PI_0_5 && angle < PI) {
+		else if (angle >= 90f && angle < 180f) {
 			changeOrientation(Orientation.SOUTH);
 		}
-		else if (angle >= PI && angle < PI_1_5) {
+		else if (angle >= 180f && angle < 270f) {
 			changeOrientation(Orientation.WEST);
 		}
 		else {
 			changeOrientation(Orientation.NORTH);
 		}
+
+		// Collision
+		Vector3 resolution = map.testCollision(sphereCollision);
+		position.add(resolution);
 
 		return result;
 	}

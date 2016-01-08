@@ -9,17 +9,17 @@ import java.util.List;
  *
  * @author Gaktan
  */
-public class DisplayableList implements Displayable, Iterable<Displayable> {
+public class DisplayableList<E extends Displayable> implements Displayable, Iterable<E> {
 
-	public List<Displayable> list;
-	private List<Displayable> toBeAdded;
-	private List<Displayable> toBeDeleted;
+	public List<E> list;
+	private List<E> toBeAdded;
+	private List<E> toBeDeleted;
 	private boolean delete = false;
 
 	public DisplayableList() {
-		list = new ArrayList<Displayable>();
-		toBeAdded = new ArrayList<Displayable>();
-		toBeDeleted = new ArrayList<Displayable>();
+		list = new ArrayList<E>();
+		toBeAdded = new ArrayList<E>();
+		toBeDeleted = new ArrayList<E>();
 	}
 
 	/**
@@ -28,7 +28,7 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 	 * @param d
 	 *            Displayable to add
 	 */
-	public void add(Displayable d) {
+	public void add(E d) {
 		toBeAdded.add(d);
 	}
 
@@ -39,21 +39,21 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 
 	@Override
 	public void dispose() {
-		for (Displayable d : list) {
+		for (E d : list) {
 			d.dispose();
 		}
 	}
 
-	public Displayable get(int i) {
+	public E get(int i) {
 		return list.get(i);
 	}
 
-	public int indexOf(Displayable d) {
+	public int indexOf(E d) {
 		return list.indexOf(d);
 	}
 
 	@Override
-	public Iterator<Displayable> iterator() {
+	public Iterator<E> iterator() {
 		return list.iterator();
 	}
 
@@ -63,7 +63,7 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 	 * @param d
 	 *            Displayable to remove
 	 */
-	public void remove(Displayable d) {
+	public void remove(E d) {
 		toBeDeleted.add(d);
 	}
 
@@ -76,18 +76,18 @@ public class DisplayableList implements Displayable, Iterable<Displayable> {
 
 	@Override
 	public boolean update(float dt) {
-		for (Displayable d : toBeAdded) {
+		for (E d : toBeAdded) {
 			list.add(d);
 		}
 		toBeAdded.clear();
 
-		for (Displayable d : list) {
+		for (E d : list) {
 			boolean b = d.update(dt);
 			if (!b)
 				remove(d);
 		}
 
-		for (Displayable d : toBeDeleted) {
+		for (E d : toBeDeleted) {
 			d.dispose();
 			list.remove(d);
 		}

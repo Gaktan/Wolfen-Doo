@@ -15,8 +15,8 @@ public class ParticleSystemBlood extends ParticleSystem {
 		particleShape = new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_billboard_instanced"),
 				"blood.png");
 
-		newParticlesPerFrame = 20;
-		maxParticles = 1000;
+		newParticlesPerFrame = 1;
+		maxParticles = 10;
 		particlesLife = 2000.f;
 	}
 

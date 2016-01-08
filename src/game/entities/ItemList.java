@@ -4,7 +4,6 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 
-import engine.Displayable;
 import engine.DisplayableInstancedList;
 import engine.entities.AABBSphere;
 import engine.shapes.ShapeInstancedSprite;
@@ -12,7 +11,7 @@ import engine.util.Matrix4;
 import engine.weapons.Weapon;
 import game.game.WolfenPlayer;
 
-public class ItemList extends DisplayableInstancedList {
+public class ItemList extends DisplayableInstancedList<Item> {
 
 	protected WolfenPlayer player;
 
@@ -29,8 +28,7 @@ public class ItemList extends DisplayableInstancedList {
 
 		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
 
-		for (Displayable d : list) {
-			Item item = (Item) d;
+		for (Item item : list) {
 			AABBSphere itemSphere = new AABBSphere(item);
 
 			if (playerSphere.collide(itemSphere)) {

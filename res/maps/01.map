@@ -10,8 +10,8 @@ wall{U, wall_portrait.png, 1}
 billboard{X, pillar.png, 1}
 wall{A, wall_hole.png, 0}
 animation{W, mul_test.png, 1}
-door{-, door.png, door_side.png, 0 0 -0.9, 0, 1000}
-door{|, xdoor.png, door_side.png, 0.9 0 0, 1, 350}
+door{-, door.png, door_side.png, -0.9 0 0, 0, 1000}
+door{|, xdoor.png, door_side.png, 0 0 0.9, 1, 350}
 door{_, pillar.png, wall.png, 0 -0.9 0, 0, 1000}
 
 map{

@@ -54,7 +54,6 @@ public class EntityLine extends Entity {
 
 	@Override
 	public void render() {
-
 		ShaderProgram program = ShaderProgram.getProgram("color");
 
 		if (program == null)

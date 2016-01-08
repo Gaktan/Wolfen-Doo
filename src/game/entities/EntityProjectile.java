@@ -1,5 +1,7 @@
 package game.entities;
 
+import java.util.ArrayList;
+
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.entities.EntityDoor.DoorState;
@@ -108,16 +110,13 @@ public class EntityProjectile extends EntityLine {
 				impactPosition.setZ((int) impactPosition.getZ() + 0.5f);
 			}
 
-			EntityActor a = map.getActor(x, z);
-
-			if (a != null) {
-
+			ArrayList<EntityActor> hitList = map.getActors(x, z);
+			for (EntityActor a : hitList) {
 				if (a instanceof EntityDoor) {
 					EntityDoor door = (EntityDoor) a;
 					if (door.getState() == DoorState.OPEN) {
 						continue;
 					}
-
 					createParticles(impactPosition, new Vector3(velocity), normal);
 					return false;
 				}
