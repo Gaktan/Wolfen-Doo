@@ -59,8 +59,9 @@ public class MapReader {
 		map.buildMapFromString(mapData);
 		map.setStartingPoint(startingPoint);
 
-		if (sky != null)
+		if (sky != null) {
 			map.setSky(sky);
+		}
 
 		for (int i = 0; i < height; i++) {
 			System.out.println(mapData.substring(i * height, (i + 1) * height));
@@ -81,34 +82,26 @@ public class MapReader {
 		}
 
 		else if (command.equals(COMMAND_BILLBOARD)) {
-
 			if (values.length != 3) {
 				System.err.println("Error with command \"" + command + "\". Usage : " + command
 						+ "{char, texture, solidity (0 for not solid, 1 for solid)}");
 				System.err.println("Values given : {" + value + "}.");
 				return;
 			}
-
 			String s_solid = values[2];
-
 			boolean solid = (MathUtil.parseInt(s_solid) == 1);
-
 			map.newBillboard(ch, s_image, solid);
 		}
 
 		else if (command.equals(COMMAND_WALL)) {
-
 			if (values.length != 3) {
 				System.err.println("Error with command \"" + command + "\". Usage : " + command
 						+ "{char, texture, solidity (0 for not solid, 1 for solid)}");
 				System.err.println("Values given : {" + value + "}.");
 				return;
 			}
-
 			String s_solid = values[2];
-
 			boolean solid = (MathUtil.parseInt(s_solid) == 1);
-
 			map.newWall(ch, s_image, solid);
 		}
 
@@ -124,7 +117,7 @@ public class MapReader {
 
 			String side_image = values[2];
 			Vector3 openingPosition = readVector3(values[3]);
-			int orientation = ((MathUtil.parseInt(values[4]) == 1) ? Orientation.NORTH : Orientation.WEST);
+			int orientation = ((MathUtil.parseInt(values[4]) == 1) ? Orientation.NORTH : Orientation.EAST);
 			float openingTime = MathUtil.parseFloat(values[5]);
 
 			map.newDoor(ch, s_image, side_image, openingPosition, orientation, openingTime);
@@ -171,7 +164,6 @@ public class MapReader {
 
 				start = end + 1;
 			}
-
 			else if (ch == '}') {
 				String value;
 
@@ -185,7 +177,6 @@ public class MapReader {
 				performCommand(command, value);
 				command = null;
 			}
-
 			end++;
 		}
 	}
@@ -233,7 +224,6 @@ public class MapReader {
 
 		// 0,00390625 = 1 / 255
 		float colorScale = 0.00390625f;
-
 		downColor.scale(colorScale);
 		upColor.scale(colorScale);
 

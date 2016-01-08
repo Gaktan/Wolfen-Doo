@@ -1,7 +1,7 @@
 name{coucou}
 width{20}
 height{20}
-start{3, 2}
+start{2, 18}
 
 sky{237 157 95, 252 231 227}
 
@@ -10,9 +10,9 @@ wall{U, wall_portrait.png, 1}
 billboard{X, pillar.png, 1}
 wall{A, wall_hole.png, 0}
 animation{W, mul_test.png, 1}
-door{-, door.png, door_side.png, 0 0 -0.9, 1, 1000}
-door{|, xdoor.png, door_side.png, 0.9 0 0, 0, 350}
-door{_, pillar.png, wall.png, 0 -0.9 0, 1, 1000}
+door{-, door.png, door_side.png, 0 0 -0.9, 0, 1000}
+door{|, xdoor.png, door_side.png, 0.9 0 0, 1, 350}
+door{_, pillar.png, wall.png, 0 -0.9 0, 0, 1000}
 
 map{
 OOOOOOOOOOOOOOOOOOOO
@@ -32,7 +32,7 @@ U     X            O
 O                  O
 O          X X  O  O
 U   W       X OOOO O
-O           X   O  O
+O          X X  O  O
 O                  O
 OOOOOUOOOOOOOOOOOOOO
 }

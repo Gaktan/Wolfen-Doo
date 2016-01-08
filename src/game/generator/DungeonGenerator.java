@@ -244,13 +244,13 @@ public class DungeonGenerator extends Generator {
 		int width = (realSizeX + 2) * realRoomSize - (realRoomSize - 1);
 		int height = (realSizeY + 2) * realRoomSize - (realRoomSize - 1);
 
-		char[][] newMap = new char[width][height];
+		char[][] newMap = new char[height][width];
 
 		for (int i = 0; i < (width * height) - 1; i++) {
 			int x = i % width;
 			int y = i / width;
 
-			newMap[x][y] = VOID;
+			newMap[y][x] = VOID;
 		}
 
 		for (Pair p : map) {
@@ -261,13 +261,13 @@ public class DungeonGenerator extends Generator {
 			int y = p.y * realRoomSize;
 
 			if (p.c == START) {
-				startingPoint.set((width - 1) - (x + (realRoomSize * 0.5f)), 0f, y + (realRoomSize * 0.5f));
+				startingPoint.set(x + (realRoomSize * 0.5f), 0f, y + (realRoomSize * 0.5f));
 			}
 
 			for (int i = 0; i <= realRoomSize; i++) {
 				for (int j = 0; j <= realRoomSize; j++) {
 					if (!(i > 0 && i < realRoomSize) || !(j > 0 && j < realRoomSize)) {
-						newMap[x + j][y + i] = WALL;
+						newMap[y + i][x + j] = WALL;
 					}
 
 				} // for j
@@ -275,12 +275,10 @@ public class DungeonGenerator extends Generator {
 		} // for p
 
 		for (Pair p : map) {
-
 			int x = p.x * realRoomSize;
 			int y = p.y * realRoomSize;
 
 			for (Pair f : p.friends) {
-
 				int xf = f.x * realRoomSize;
 				int yf = f.y * realRoomSize;
 
@@ -288,44 +286,42 @@ public class DungeonGenerator extends Generator {
 
 				// Make a door --
 				if (r == 0) {
-
 					int medX = ((x + realRoomSize / 2) + (xf + realRoomSize / 2)) / 2;
 					int medY = ((y + realRoomSize / 2) + (yf + realRoomSize / 2)) / 2;
 
-					newMap[medX][medY] = DOOR_NORTH;
+					newMap[medY][medX] = DOOR_NORTH;
 
 					if (xf != x) {
-						newMap[medX][medY] = DOOR_NORTH;
+						newMap[medY][medX] = DOOR_NORTH;
 					}
 					else {
-						newMap[medX][medY] = DOOR_EAST;
+						newMap[medY][medX] = DOOR_EAST;
 					}
 				} // Door
 
 				// Make a big room --
 				else if (r == 1) {
-
 					if (x == xf) {
 						if (y < yf) {
 							for (int i = x + realRoomSize - 1; i > x; i--) {
-								newMap[i][y + realRoomSize] = VOID;
+								newMap[y + realRoomSize][i] = VOID;
 							}
 						}
 						else {
 							for (int i = x + 1; i < x + realRoomSize; i++) {
-								newMap[i][y] = VOID;
+								newMap[y][i] = VOID;
 							}
 						}
 					} // x == f.x
 					else if (y == yf) {
 						if (x < xf) {
 							for (int i = y + realRoomSize - 1; i > y; i--) {
-								newMap[x + realRoomSize][i] = VOID;
+								newMap[i][x + realRoomSize] = VOID;
 							}
 						}
 						else {
 							for (int i = y + 1; i < y + realRoomSize; i++) {
-								newMap[x][i] = VOID;
+								newMap[i][x] = VOID;
 							}
 						}
 					} // y == f.y
@@ -373,7 +369,7 @@ public class DungeonGenerator extends Generator {
 
 		char[][] charMap = buildRealMap();
 
-		Map map = new Map(charMap.length, charMap[0].length);
+		Map map = new Map(charMap[0].length, charMap.length);
 		map.setStartingPoint(startingPoint);
 
 		map.newWall(WALL, "wall.png", true);
@@ -449,10 +445,10 @@ public class DungeonGenerator extends Generator {
 	}
 
 	public void print() {
-		char[][] newMap = new char[realSizeX + 1][realSizeY + 1];
+		char[][] newMap = new char[realSizeY + 1][realSizeX + 1];
 
 		for (Pair p : map) {
-			newMap[p.x][p.y] = p.c;
+			newMap[p.y][p.x] = p.c;
 		}
 
 		for (char[] cc : newMap) {
@@ -468,7 +464,7 @@ public class DungeonGenerator extends Generator {
 	}
 
 	public void replaceChar(char replace, char find, int x, int y, char[][] map) {
-		if (map[x][y] == find) {
+		if (map[y][x] == find) {
 			setChar(replace, x, y, map);
 		}
 	}
@@ -482,6 +478,6 @@ public class DungeonGenerator extends Generator {
 	}
 
 	public void setChar(char c, int x, int y, char[][] map) {
-		map[x][y] = c;
+		map[y][x] = c;
 	}
 }

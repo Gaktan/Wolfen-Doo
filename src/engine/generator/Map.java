@@ -14,7 +14,6 @@ import engine.entities.AABBSphere;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
-import engine.game.states.GameStateManager;
 import engine.generator.MapUtil.DoorShapeInfo;
 import engine.generator.MapUtil.ShapeInfo;
 import engine.shapes.InstancedTexturedShape;
@@ -23,7 +22,6 @@ import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
 import engine.util.Matrix4;
 import engine.util.Vector3;
-import game.game.states.WolfenGameState;
 
 public class Map implements Displayable {
 
@@ -57,19 +55,16 @@ public class Map implements Displayable {
 	 * @param st
 	 */
 	public void buildMapFromString(String st) {
-
-		setSize(sizeX, sizeY);
-
 		for (int i = 0; i < sizeX * sizeY; i++) {
 			char c = st.charAt(i);
 
 			if (c == ' ')
 				continue;
 
-			int y = (i % sizeY);
-			int x = sizeX - (i / sizeY) - 1;
+			int x = i % sizeX;
+			int y = i / sizeX;
 
-			map[x][y] = c;
+			map[y][x] = c;
 
 			ShapeInfo info = shapeMap.get(c);
 
@@ -77,7 +72,6 @@ public class Map implements Displayable {
 				continue;
 
 			if (info instanceof DoorShapeInfo) {
-
 				DoorShapeInfo doorInfo = (DoorShapeInfo) info;
 				EntityDoor door = new EntityDoor((ShapeCubeTexture) doorInfo.getShape());
 
@@ -99,11 +93,11 @@ public class Map implements Displayable {
 			}
 		} // for
 
-		int[][] orientationArray = new int[sizeX][sizeY];
+		int[][] orientationArray = new int[sizeY][sizeX];
 
 		// Finding neighbours for orientation
-		for (int i = 0; i < sizeX; i++) {
-			for (int j = 0; j < sizeY; j++) {
+		for (int i = 0; i < sizeY; i++) {
+			for (int j = 0; j < sizeX; j++) {
 
 				ShapeInfo wall = shapeMap.get(map[i][j]);
 
@@ -120,7 +114,7 @@ public class Map implements Displayable {
 						amount++;
 					}
 				}
-				if (i < sizeX - 1) {
+				if (i < sizeY - 1) {
 					ShapeInfo info = shapeMap.get(map[i + 1][j]);
 					if (info == null || !info.isSolid() || !info.isWall()) {
 						orientationArray[i][j] += Orientation.EAST;
@@ -134,14 +128,13 @@ public class Map implements Displayable {
 						amount++;
 					}
 				}
-				if (j < sizeY - 1) {
+				if (j < sizeX - 1) {
 					ShapeInfo info = shapeMap.get(map[i][j + 1]);
 					if (info == null || !info.isSolid() || !info.isWall()) {
 						orientationArray[i][j] += Orientation.SOUTH;
 						amount++;
 					}
 				}
-
 				if (wall instanceof DoorShapeInfo) {
 					int orientation = orientationArray[i][j];
 					if ((orientation & Orientation.NORTH) != 0 && (orientation & Orientation.SOUTH) != 0) {
@@ -171,8 +164,8 @@ public class Map implements Displayable {
 
 			FloatBuffer fb = BufferUtils.createFloatBuffer(amount * (3 + 16 + 1));
 
-			for (int i = 0; i < sizeX; i++) {
-				for (int j = 0; j < sizeY; j++) {
+			for (int i = 0; i < sizeY; i++) {
+				for (int j = 0; j < sizeX; j++) {
 
 					if (map[i][j] != key)
 						continue;
@@ -183,7 +176,6 @@ public class Map implements Displayable {
 						continue;
 					}
 
-					float pi = 3.1416f;
 					float offsetValue = 0.5f;
 
 					// Side door
@@ -193,20 +185,20 @@ public class Map implements Displayable {
 
 					if (info.wall) {
 						if ((orientation & Orientation.NORTH) != 0) {
-							storeFace(new Vector3(i, 0f, j - offsetValue), new Vector3(0f, pi, 0f), fb);
+							storeFace(new Vector3(j - offsetValue, 0f, i), new Vector3(0f, -90f, 0f), fb);
 						}
 						if ((orientation & Orientation.SOUTH) != 0) {
-							storeFace(new Vector3(i, 0f, j + offsetValue), new Vector3(0f), fb);
+							storeFace(new Vector3(j + offsetValue, 0f, i), new Vector3(0f, 90f, 0f), fb);
 						}
 						if ((orientation & Orientation.EAST) != 0) {
-							storeFace(new Vector3(i + offsetValue, 0f, j), new Vector3(0f, pi * 0.5f, 0f), fb);
+							storeFace(new Vector3(j, 0f, i + offsetValue), new Vector3(0f, 0f, 0f), fb);
 						}
 						if ((orientation & Orientation.WEST) != 0) {
-							storeFace(new Vector3(i - offsetValue, 0f, j), new Vector3(0f, pi * -0.5f, 0f), fb);
+							storeFace(new Vector3(j, 0f, i - offsetValue), new Vector3(0f, 180f, 0f), fb);
 						}
 					}
 					else {
-						storeFace(new Vector3(i, 0f, j), new Vector3(0f), fb);
+						storeFace(new Vector3(j, 0f, i), new Vector3(0f), fb);
 					}
 
 				} // for j
@@ -251,7 +243,7 @@ public class Map implements Displayable {
 			return null;
 		}
 
-		return shapeMap.get(map[x][y]);
+		return shapeMap.get(map[y][x]);
 	}
 
 	public EntityActor getActor(int x, int y) {
@@ -296,7 +288,7 @@ public class Map implements Displayable {
 			return false;
 		}
 
-		return shapeMap.get(map[x][y]).solid;
+		return shapeMap.get(map[y][x]).solid;
 	}
 
 	public void newBillboard(char c, String texture, boolean solid) {
@@ -385,7 +377,7 @@ public class Map implements Displayable {
 	public void setSize(int sizeX, int sizeY) {
 		this.setSizeX(sizeX);
 		this.setSizeY(sizeY);
-		map = new char[sizeX][sizeY];
+		map = new char[sizeY][sizeX];
 	}
 
 	public void setSizeX(int sizeX) {
@@ -405,58 +397,66 @@ public class Map implements Displayable {
 
 	public void setStartingPoint(Vector3 coord) {
 		startingPoint.set(coord);
+		startingPoint.setZ(startingPoint.getZ());
 	}
 
 	@Override
 	public boolean update(float dt) {
-
-		// TODO: Engine/Game dependency
-		int x = (int) (((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().position.getX() + 0.5f);
-		int z = (int) (((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().position.getZ() + 0.5f);
-
-		AABBSphere playerAABB = ((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer()
-				.getCollisionSphere();
-
-		testCollision(playerAABB, x, z);
-		testCollision(playerAABB, x - 1, z);
-		testCollision(playerAABB, x + 1, z);
-		testCollision(playerAABB, x, z - 1);
-		testCollision(playerAABB, x, z + 1);
-
 		actorsList.update(dt);
 
 		return !delete;
 	}
 
-	protected void testCollision(AABB playerAABB, int x, int z) {
-		AABB rect;
+	/**
+	 * Tests the collision of a given AABB to the map
+	 *
+	 * @param aabb
+	 *            Object bounding to test for collision
+	 * @param x
+	 *            X position to test on the map
+	 * @param z
+	 *            Z position to test on the map
+	 * @return A vector containing the collision resolution. (0, 0, 0) when
+	 *         there is no collision
+	 */
+	public Vector3 testCollision(AABB aabb, int x, int z) {
+
+		// TODO: fix collisions
+		Vector3 result = new Vector3();
+
+		if (!inRange(x, 0, sizeX) || !inRange(z, 0, sizeY)) {
+			return result;
+		}
+
+		AABB rect = null;
 		EntityActor e = getActor(x, z);
 
-		if (e == null) {
-			ShapeInfo info = get(x, z);
+		if (e != null) {
+			if (e instanceof EntityDoor) {
+				rect = new AABBRectangle(e);
+			}
+			else {
+				rect = new AABBSphere(e);
+			}
+			if (rect.collide(aabb)) {
+				result.add(aabb.resolveCollision(rect));
+			}
+		}
 
-			if (info == null)
-				return;
-
-			if (!info.isSolid())
-				return;
-
+		ShapeInfo info = get(x, z);
+		if (info != null && info.isSolid()) {
 			if (!info.wall) {
 				rect = new AABBSphere(new Vector3(x, 0, z));
 			}
 			else {
 				rect = new AABBRectangle(new Vector3(x, 0, z));
 			}
+			if (rect.collide(aabb)) {
+				result.add(aabb.resolveCollision(rect));
+			}
+		}
 
-		}
-		else {
-			rect = new AABBRectangle(e);
-		}
-
-		if (playerAABB.collide(rect)) {
-			Vector3 resolution = playerAABB.resolveCollision(rect);
-			((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer().position.add(resolution);
-		}
+		return result;
 	}
 
 	private boolean inRange(int n, int min, int max) {

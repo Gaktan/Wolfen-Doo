@@ -178,20 +178,20 @@ public class EntityProjectile extends EntityLine {
 		Vector3 newPos = new Vector3(impactPosition);
 		Vector3 newRot = new Vector3();
 
-		float pi2 = MathUtil.PI * 0.5f;
+		float _90 = 90f;
 
 		if (normal.getX() != 0) {
-			newRot.setY(pi2 * normal.getX());
+			newRot.setY(_90 * normal.getX());
 			newPos.setX(impactPosition.getX() + normal.getX() * 0.01f);
 		}
 
 		else if (normal.getZ() != 0) {
-			newRot.setY(pi2 - pi2 * normal.getZ());
+			newRot.setY(_90 - _90 * normal.getZ());
 			newPos.setZ(impactPosition.getZ() + normal.getZ() * 0.01f);
 		}
 
 		else if (normal.getY() != 0) {
-			newRot.setX(pi2 * -normal.getY());
+			newRot.setX(_90 * -normal.getY());
 			newPos.setY((int) (impactPosition.getY()) + 0.5f * -normal.getY() * 0.99f);
 		}
 

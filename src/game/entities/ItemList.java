@@ -7,16 +7,16 @@ import org.lwjgl.BufferUtils;
 import engine.Displayable;
 import engine.DisplayableInstancedList;
 import engine.entities.AABBSphere;
-import engine.game.Player;
 import engine.shapes.ShapeInstancedSprite;
 import engine.util.Matrix4;
 import engine.weapons.Weapon;
+import game.game.WolfenPlayer;
 
 public class ItemList extends DisplayableInstancedList {
 
-	protected Player player;
+	protected WolfenPlayer player;
 
-	public ItemList(ShapeInstancedSprite shape, Player player) {
+	public ItemList(ShapeInstancedSprite shape, WolfenPlayer player) {
 		super(shape, true);
 		this.player = player;
 	}

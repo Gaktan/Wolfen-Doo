@@ -31,6 +31,10 @@ public class EntityLine extends Entity {
 		this(position, positionB, new Vector3(1f, 0f, 0f), new Vector3(0f, 0f, 1f));
 	}
 
+	public EntityLine(Vector3 position, Vector3 positionB, Vector3 color) {
+		this(position, positionB, color, color);
+	}
+
 	public EntityLine(Vector3 position, Vector3 positionB, Vector3 colorA, Vector3 colorB) {
 		this.position = position;
 		this.positionB = positionB;

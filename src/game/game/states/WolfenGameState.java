@@ -12,6 +12,7 @@ import engine.DisplayableText;
 import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
 import engine.entities.Camera;
+import engine.entities.EntityLine;
 import engine.game.Controls;
 import engine.game.Fps;
 import engine.game.FrameBuffer;
@@ -32,6 +33,7 @@ import game.animations.CustomAnimatedActorExample;
 import game.entities.Item;
 import game.entities.ItemList;
 import game.entities.RotatingText;
+import game.game.WolfenPlayer;
 import game.generator.DungeonGenerator;
 import game.particles.AnimatedParticleSystemExplosion;
 
@@ -40,7 +42,7 @@ public class WolfenGameState extends GameState {
 	protected static final float Z_NEAR = 0.1f;
 	protected static final float Z_FAR = 100.0f;
 
-	protected Player player;
+	protected WolfenPlayer player;
 
 	protected DisplayableList displayableList;
 	protected Map map;
@@ -106,6 +108,10 @@ public class WolfenGameState extends GameState {
 
 	@Override
 	public void init() {
+		displayableList = new DisplayableList();
+
+		fps = new Fps();
+
 		new ShaderProgram("texture");
 		new ShaderProgram("color");
 		ShaderProgram shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
@@ -115,88 +121,53 @@ public class WolfenGameState extends GameState {
 		ShaderProgram shaderProgramTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture",
 				"texture_billboard_instanced");
 		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", "texture_instanced");
-		new ShaderProgram("texture_camera", "texture", "screen");
 
+		// FrameBuffer
+		new ShaderProgram("texture_camera", "texture", "screen");
 		frameBuffer = new FrameBuffer();
 		frameBuffer.init("screen");
 
+		// Camera
 		current_camera = new Camera(45.0f, (float) Game.getInstance().getWidth()
 				/ (float) Game.getInstance().getHeight(), Z_NEAR, Z_FAR);
-
 		setZfar(current_camera.getzFar());
-
-		player = new Player(current_camera);
-		Controls.addControlsListener(player);
-		Controls.addMouseListener(player);
-
-		displayableList = new DisplayableList();
 
 		ShapeSprite shapeAnimatedSmurf = new ShapeSprite(shaderProgramTexBill, "mul_test.png", 512, 512, 32, 48);
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
 				256, 64, 64);
 
-		// Items
-		ShapeInstancedSprite itemShape = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "items.png", 128, 64,
-				32, 32);
-		itemList = new ItemList(itemShape, player);
-
-		addItem(new Vector3(9, 0, 3), 0, 100);
-		addItem(new Vector3(10, 0, 3), 1, 100);
-		addItem(new Vector3(11, 0, 3), 2, 100);
-		addItem(new Vector3(12, 0, 3), 3, 100);
-
-		add(itemList);
-
+		// Map
 		if (mapName == null) {
 			Generator generator = new DungeonGenerator().setSizeX(30).setSizeY(4).setRoomSize(3).setSeed(seed)
 					.setIntersections(true);
-
 			map = generator.generate();
 		}
 		else {
 			map = new MapReader().createMap(mapName);
 		}
-
-		player.position.set(map.getStartingPoint());
-
 		add(map);
 
-		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
-				"a_running_front");
-		animatedActorTest.position.set(3, 0, 5);
-		map.addActor(animatedActorTest);
+		// Player
+		player = new WolfenPlayer(current_camera, map);
+		Controls.addControlsListener(player);
+		Controls.addMouseListener(player);
 
+		// Items
+		ShapeInstancedSprite itemShape = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "items.png", 128, 64,
+				32, 32);
+		itemList = new ItemList(itemShape, player);
+		addItem(map.getStartingPoint().getAdd(-1f, 0f, -1f), 0, 100);
+		addItem(map.getStartingPoint().getAdd(0f, 0f, -1f), 1, 100);
+		addItem(map.getStartingPoint().getAdd(1f, 0f, -1f), 2, 100);
+		addItem(map.getStartingPoint().getAdd(2f, 0f, -1f), 3, 100);
+		add(itemList);
+
+		// Screen Text
 		bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "scumm_font.png", 128, 256, 8,
 				11));
-
 		textPos = bmf.createString(new Vector3(-1f, 1f, 0), "", 0.85f);
 		textFps = bmf.createString(new Vector3(-1f, .9f, 0), "", 0.85f);
 		textMemory = bmf.createString(new Vector3(-1f, 0.7f, 0), "", 0.6f);
-
-		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "scumm_font.png",
-				128, 256, 8, 11));
-
-		String welcomeText = "Hello and welcome to Wolfen-doo. You can't do much right now,\n"
-				+ "but it will come, don't worry.\n" + "Use WASD to move around, mouse to look and shoot,\n"
-				+ "'E' to open doors, 'R' to reload. '1-3' to change weapon.";
-
-		String rotatedText = "Woah! You can even rotate text!";
-
-		Vector3 worldTextPos = map.getStartingPoint().getAdd(new Vector3(-1.5f, 0.4f, 0f));
-
-		DisplayableText worldText = worldFont.createString(worldTextPos, rotatedText, 0.45f, true);
-		worldText.setRotation(90f);
-		worldText.updateText();
-		add(worldText);
-
-		worldTextPos = map.getStartingPoint().getAdd(new Vector3(-1.5f, 0.4f, -1.5f));
-
-		worldText = worldFont.createString(worldTextPos, welcomeText, 0.45f, true);
-		add(worldText);
-
-		RotatingText rotatingText = new RotatingText(new Vector3(9, 0.25f, 3), "WELCOME!", worldFont, 1f, new Color(1f,
-				0f, 1f), TextPosition.CENTER, true);
-		add(rotatingText);
 
 		/*
 		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
@@ -207,19 +178,56 @@ public class WolfenGameState extends GameState {
 		ac.add(gui);
 		*/
 
-		fps = new Fps();
+		// Bullets
+		bulletHoles = new DisplayableInstancedList(new ShapeInstancedQuadTexture(shaderProgramTexInstanced,
+				"bullet_impact.png"), false);
+		add(bulletHoles);
 
-		// ParticleSystem ps = new ParticleSystemBlood(new Vector3(4, 0, 4),
-		// 16000);
-		// ac.add(ps);
+		// -- Test area --
 
+		// animation
+		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
+				"a_running_front");
+		animatedActorTest.position.set(3, 0, 5);
+		map.addActor(animatedActorTest);
+
+		// explosion
 		ParticleSystem psTest = new AnimatedParticleSystemExplosion(new Vector3(4, 0, 4), 16000, shapeExplosion);
 		add(psTest);
 
-		bulletHoles = new DisplayableInstancedList(new ShapeInstancedQuadTexture(shaderProgramTexInstanced,
-				"bullet_impact.png"), false);
+		// text in world
+		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "scumm_font.png",
+				128, 256, 8, 11));
 
-		add(bulletHoles);
+		String welcomeText = "Hello and welcome to Wolfen-doo. You can't do much right now,\n"
+				+ "but it will come, don't worry.\n" + "Use WASD to move around, mouse to look and shoot,\n"
+				+ "'E' to open doors, 'R' to reload. '1-3' to change weapon.";
+
+		String rotatedText = "Woah! You can even rotate text!";
+
+		Vector3 worldTextPos = map.getStartingPoint().getAdd(new Vector3(0f, 0.4f, 0.5f));
+		DisplayableText worldText = worldFont.createString(worldTextPos, rotatedText, 0.45f, true);
+		worldText.setRotation(180f);
+		worldText.updateText();
+		add(worldText);
+
+		worldTextPos = map.getStartingPoint().getAdd(new Vector3(-1.5f, 0.4f, .5f));
+		worldText = worldFont.createString(worldTextPos, welcomeText, 0.45f, true);
+		worldText.setRotation(90f);
+		worldText.updateText();
+		add(worldText);
+
+		RotatingText rotatingText = new RotatingText(new Vector3(13f, 0.25f, 3f), "WELCOME!", worldFont, 1f, new Color(
+				1f, 0f, 1f), TextPosition.CENTER, true);
+		add(rotatingText);
+
+		// Origin
+		EntityLine line_x = new EntityLine(new Vector3(), new Vector3(100f, 0f, 0f), new Vector3(1f, 0f, 0f));
+		EntityLine line_y = new EntityLine(new Vector3(), new Vector3(0f, 100f, 0f), new Vector3(0f, 1f, 0f));
+		EntityLine line_z = new EntityLine(new Vector3(), new Vector3(0f, 0f, 100f), new Vector3(0f, 0f, 1f));
+		add(line_x);
+		add(line_y);
+		add(line_z);
 	}
 
 	@Override

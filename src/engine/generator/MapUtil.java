@@ -16,9 +16,9 @@ public class MapUtil {
 		protected int orientation;
 		protected float time;
 
-		public DoorShapeInfo(Shape shape, InstancedTexturedShape sideShape, boolean solid, Vector3 openingPosition,
-				int orientation, float time) {
-			super(shape, solid, true);
+		public DoorShapeInfo(Shape shape, InstancedTexturedShape sideShape, Vector3 openingPosition, int orientation,
+				float time) {
+			super(shape, false, true);
 			this.sideShape = sideShape;
 			this.openingPosition = openingPosition;
 			this.orientation = orientation;
@@ -87,7 +87,7 @@ public class MapUtil {
 		ShapeInstancedQuadTexture sideShape = new ShapeInstancedQuadTexture(
 				ShaderProgram.getProgram("texture_instanced"), sideTexture);
 
-		DoorShapeInfo info = new DoorShapeInfo(shape, sideShape, true, openingPosition, orientation, time);
+		DoorShapeInfo info = new DoorShapeInfo(shape, sideShape, openingPosition, orientation, time);
 
 		return info;
 	}

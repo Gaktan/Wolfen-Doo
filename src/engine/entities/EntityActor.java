@@ -13,6 +13,7 @@ public class EntityActor extends Entity {
 
 	public Shape shape;
 	public Vector3 color;
+	// In degrees
 	public Vector3 rotation;
 
 	public EntityActor(Shape shape) {

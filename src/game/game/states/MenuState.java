@@ -32,9 +32,6 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 	protected DisplayableList buttons;
 	protected MenuButton selectedButton;
 
-	protected int lastX;
-	protected int lastY;
-
 	@Override
 	public void dispose() {
 		Controls.removeMouseListener(this);
@@ -69,17 +66,10 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 
 	@Override
 	public void onMouseMoved(int x, int y) {
+		float f_x = x * 2f / Game.getInstance().getWidth();
+		float f_y = y * 2f / Game.getInstance().getHeight();
 
-		float newX = x - lastX;
-		float newY = y - lastY;
-
-		newX *= 2f / Game.getInstance().getWidth();
-		newY *= 2f / Game.getInstance().getHeight();
-
-		mouseCursor.position.add(newX, newY, 0f);
-
-		lastX = x;
-		lastY = y;
+		mouseCursor.position.add(f_x, f_y, 0f);
 	}
 
 	@Override

@@ -145,8 +145,16 @@ public final class MathUtil {
 		return (float) Math.cos(x);
 	}
 
+	public static float acos(float x) {
+		return (float) Math.acos(x);
+	}
+
 	public static float sin(float x) {
 		return (float) Math.sin(x);
+	}
+
+	public static float asin(float x) {
+		return (float) Math.asin(x);
 	}
 
 	public static float tan(float x) {

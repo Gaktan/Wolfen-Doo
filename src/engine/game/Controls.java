@@ -25,7 +25,7 @@ public class Controls {
 	}
 
 	public interface MouseListener {
-		public void onMouseMoved(int x, int y);
+		public void onMouseMoved(int amount_x, int amount_y);
 
 		public void onMousePress(int button);
 
@@ -35,6 +35,9 @@ public class Controls {
 	protected static ArrayList<ControlsListener> controlsListeners;
 	protected static ArrayList<MouseListener> mouseListeners;
 	protected static ArrayList<ControlsCharListener> controlsCharListener;
+
+	protected static int mouseLastX;
+	protected static int mouseLastY;
 
 	protected static String locale;
 
@@ -50,6 +53,9 @@ public class Controls {
 		Mouse.setGrabbed(true);
 		Mouse.setClipMouseCoordinatesToWindow(false);
 		Mouse.setCursorPosition(0, 0);
+
+		mouseLastX = 0;
+		mouseLastY = 0;
 	}
 
 	public static void addControlsCharListener(ControlsCharListener l) {
@@ -123,8 +129,15 @@ public class Controls {
 
 		int mouseX = Mouse.getX();
 		int mouseY = Mouse.getY();
+
+		int movedX = mouseX - mouseLastX;
+		int movedY = mouseY - mouseLastY;
+
+		mouseLastX = mouseX;
+		mouseLastY = mouseY;
+
 		for (MouseListener l : mouseListeners) {
-			l.onMouseMoved(mouseX, mouseY);
+			l.onMouseMoved(movedX, movedY);
 		}
 	}
 }

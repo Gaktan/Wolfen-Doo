@@ -447,7 +447,8 @@ public class Matrix4 {
 	 * @param pos
 	 *            Position
 	 * @param rot
-	 *            Rotation
+	 *            Rotation in degrees. Each axis represents the rotation angle
+	 *            in degrees
 	 * @param scale
 	 *            Scale
 	 * @return model Matrix formatted for Instancing
@@ -457,9 +458,9 @@ public class Matrix4 {
 
 		model.translate(pos);
 
-		model.rotate(rot.getX(), X_AXIS);
-		model.rotate(rot.getY(), Y_AXIS);
-		model.rotate(rot.getZ(), Z_AXIS);
+		model.rotate(MathUtil.toRadians(rot.getX()), X_AXIS);
+		model.rotate(MathUtil.toRadians(rot.getY()), Y_AXIS);
+		model.rotate(MathUtil.toRadians(rot.getZ()), Z_AXIS);
 
 		model.scale(scale);
 
