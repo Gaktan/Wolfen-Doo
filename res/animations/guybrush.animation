@@ -1,23 +1,47 @@
 animation{
-  name[a_running_front]
+  name[a_idle_front]
+  frames[0]
+  delays[1000000]
+}
+
+animation{
+  name[a_idle_right]
+  frames[16]
+  delays[1000000]
+}
+
+animation{
+  name[a_idle_left]
+  frames[32]
+  delays[1000000]
+}
+
+animation{
+  name[a_idle_back]
+  frames[48]
+  delays[1000000]
+}
+
+animation{
+  name[a_walking_front]
   frames[0, 1, 2, 3, 4, 5]
   delays[100]
 }
 
 animation{
-  name[a_running_right]
+  name[a_walking_right]
   frames[16, 17, 18, 19, 20, 21]
   delays[100]
 }
 
 animation{
-  name[a_running_left]
+  name[a_walking_left]
   frames[32, 33, 34, 35, 36, 37]
   delays[100]
 }
 
 animation{
-  name[a_running_back]
+  name[a_walking_back]
   frames[48, 49, 50, 51, 52, 53]
   delays[100]
 }

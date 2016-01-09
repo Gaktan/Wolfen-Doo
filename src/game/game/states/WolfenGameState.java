@@ -188,8 +188,7 @@ public class WolfenGameState extends GameState {
 
 		// animation
 		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
-				"a_running_front", map);
-		animatedActorTest.position.set(3, 0, 5);
+				"a_walking_front", map);
 		map.addActor(animatedActorTest);
 
 		// explosion

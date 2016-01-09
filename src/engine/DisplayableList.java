@@ -95,4 +95,8 @@ public class DisplayableList<E extends Displayable> implements Displayable, Iter
 
 		return !delete;
 	}
+
+	public boolean isEmpty() {
+		return list.isEmpty();
+	}
 }

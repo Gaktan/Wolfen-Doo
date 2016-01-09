@@ -8,7 +8,7 @@ public abstract class AABB {
 	public Vector3 scale;
 
 	public AABB(Entity a) {
-		this(a.position, a.scale);
+		this(new Vector3(a.position), new Vector3(a.scale));
 	}
 
 	public AABB(Vector3 position) {

@@ -454,6 +454,7 @@ public class Map implements Displayable {
 			else {
 				rect = new AABBSphere(e);
 			}
+			rect.position.setY(0f);
 			if (rect.collide(aabb)) {
 				result.add(aabb.resolveCollision(rect));
 			}
@@ -467,6 +468,7 @@ public class Map implements Displayable {
 			else {
 				rect = new AABBRectangle(new Vector3(x, 0, z));
 			}
+			rect.position.setY(0f);
 			if (rect.collide(aabb)) {
 				result.add(aabb.resolveCollision(rect));
 			}
