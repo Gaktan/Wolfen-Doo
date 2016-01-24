@@ -113,14 +113,4 @@ public class AABBRectangle extends AABB {
 
 		return ret;
 	}
-
-	@Override
-	public boolean collide(AABBSphere b) {
-		return b.collide(this);
-	}
-
-	@Override
-	public Vector3 resolveCollision(AABBSphere b) {
-		return b.resolveCollision(this);
-	}
 }

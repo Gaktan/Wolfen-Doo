@@ -1,6 +1,6 @@
 package engine.shapes;
 
-import org.lwjgl.util.vector.Vector4f;
+import engine.shapes.ShaderProgram.Uniform;
 
 public class ShapeInstancedSprite extends ShapeInstancedQuadTexture {
 
@@ -37,7 +37,12 @@ public class ShapeInstancedSprite extends ShapeInstancedQuadTexture {
 	@Override
 	public void preRender() {
 		super.preRender();
-		shaderProgram.setUniform("u_imageInfo", new Vector4f(imageWidth, imageHeight, spritesWidth, spritesHeight));
+		shaderProgram.setUniform(Uniform.imageInfo, imageWidth, imageHeight, spritesWidth, spritesHeight);
 	}
 
+	@Override
+	public void postRender() {
+		super.postRender();
+		shaderProgram.setUniform(Uniform.imageInfo, 1f, 1f, 1f, 1f);
+	}
 }

@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import engine.shapes.ShaderProgram;
+import engine.shapes.ShaderProgram.Uniform;
 import engine.shapes.Shape;
 import engine.util.Matrix4;
 import engine.util.Vector3;
@@ -24,24 +25,27 @@ public class EntityLine extends Entity {
 	protected Vector3 colorA;
 	protected Vector3 colorB;
 
+	protected ShaderProgram program;
+
 	protected int VBO;
 	protected int VAO;
 
-	public EntityLine(Vector3 position, Vector3 positionB) {
-		this(position, positionB, new Vector3(1f, 0f, 0f), new Vector3(0f, 0f, 1f));
+	public EntityLine(Vector3 position, Vector3 positionB, ShaderProgram program) {
+		this(position, positionB, new Vector3(1f, 0f, 0f), new Vector3(0f, 0f, 1f), program);
 	}
 
-	public EntityLine(Vector3 position, Vector3 positionB, Vector3 color) {
-		this(position, positionB, color, color);
+	public EntityLine(Vector3 position, Vector3 positionB, Vector3 color, ShaderProgram program) {
+		this(position, positionB, color, color, program);
 	}
 
-	public EntityLine(Vector3 position, Vector3 positionB, Vector3 colorA, Vector3 colorB) {
+	public EntityLine(Vector3 position, Vector3 positionB, Vector3 colorA, Vector3 colorB, ShaderProgram program) {
 		this.position = position;
 		this.positionB = positionB;
 
 		this.colorA = colorA;
 		this.colorB = colorB;
 
+		this.program = program;
 		VAO = GL30.glGenVertexArrays();
 		VBO = GL15.glGenBuffers();
 	}
@@ -54,14 +58,9 @@ public class EntityLine extends Entity {
 
 	@Override
 	public void render() {
-		ShaderProgram program = ShaderProgram.getProgram("color");
-
-		if (program == null)
-			return;
-
 		program.bind();
-
-		program.setUniform("u_model", Matrix4.createIdentityMatrix());
+		program.setUniform(Uniform.model, Matrix4.createIdentityMatrix());
+		program.setUniform(Uniform.color, new Vector3(1f));
 
 		FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * 4);
 		position.store(vertices);

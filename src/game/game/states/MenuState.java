@@ -22,12 +22,15 @@ import game.menu.MenuTextField;
 
 public abstract class MenuState extends GameState implements MouseListener, ControlsListener {
 
-	protected ShaderProgram screenProgram;
+	protected ShaderProgram programScreen;
+	protected ShaderProgram programTexCameraInstanced;
 
+	protected ShapeQuadTexture mouseShape;
 	protected EntityActor mouseCursor;
 
 	protected BitMapFont font;
 
+	protected ShapeQuadTexture buttonShape;
 	protected DisplayableList<MenuButton> buttons;
 	protected MenuButton selectedButton;
 
@@ -35,6 +38,16 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 	public void dispose() {
 		Controls.removeMouseListener(this);
 		Controls.removeControlsListener(this);
+
+		for (MenuButton button : buttons) {
+			button.dispose();
+		}
+		buttonShape.dispose();
+
+		programScreen.dispose();
+		programTexCameraInstanced.dispose();
+		mouseShape.dispose();
+		font.dispose();
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
@@ -49,16 +62,16 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 		current_camera = new Camera(45.0f, (float) Game.getInstance().getWidth()
 				/ (float) Game.getInstance().getHeight(), 0f, 100f);
 
-		screenProgram = new ShaderProgram("texture_camera", "texture", "screen");
-		ShapeQuadTexture mouseShape = new ShapeQuadTexture(screenProgram, "menu/cursor.png");
+		programScreen = new ShaderProgram("texture_camera", "texture", "texture_camera");
+		programTexCameraInstanced = new ShaderProgram("texture_camera_instanced", "texture", "texture_camera_instanced");
+
+		buttonShape = new ShapeQuadTexture(programScreen, "menu/button.png");
+		mouseShape = new ShapeQuadTexture(programScreen, "menu/cursor.png");
+
 		mouseCursor = new EntityActor(mouseShape);
 		mouseCursor.scale.set(0.075f);
 
-		ShaderProgram shaderProgramTexCameraInstanced = new ShaderProgram("texture_camera_instanced", "texture",
-				"texture_camera_instanced");
-
-		font = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "scumm_font.png", 128, 256, 8,
-				11));
+		font = new BitMapFont(new ShapeInstancedSprite(programTexCameraInstanced, "scumm_font.png", 128, 256, 8, 11));
 
 		buttons = new DisplayableList<MenuButton>();
 	}
@@ -74,12 +87,10 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 	@Override
 	public void onMousePress(int button) {
 		if (button == 0) {
-
 			AABBRectangle cursorRect = getMouseRectangle();
 
 			for (MenuButton buttonActor : buttons) {
 				AABBRectangle buttonRect = new AABBRectangle(buttonActor);
-
 				if (cursorRect.collide(buttonRect)) {
 					selectedButton = buttonActor;
 					selectedButton.onButtonPress();
@@ -113,6 +124,7 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 
 	@Override
 	public void render() {
+		current_camera.apply();
 		buttons.render();
 		mouseCursor.render();
 	}

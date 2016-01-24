@@ -1,17 +1,17 @@
 package engine.entities;
 
-import engine.generator.Map;
 import engine.shapes.Orientation;
 import engine.shapes.ShapeCubeTexture;
 import engine.util.MathUtil;
 import engine.util.Vector3;
+import game.generator.Map;
 
 /**
  * Works like a wall, but can be opened
  *
  * @author Gaktan
  */
-public class EntityDoor extends EntityWall {
+public class EntityDoor extends EntityActor {
 
 	/**
 	 * Describes all different states of the door
@@ -34,8 +34,6 @@ public class EntityDoor extends EntityWall {
 
 	public EntityDoor(ShapeCubeTexture shape) {
 		super(shape);
-
-		orientation = Orientation.ALL;
 
 		originialPosition = new Vector3();
 		openingPosition = new Vector3();
@@ -110,8 +108,7 @@ public class EntityDoor extends EntityWall {
 
 	@Override
 	public boolean update(float dt) {
-
-		boolean result = superUpdate(dt);
+		boolean result = super.update(dt);
 
 		if (state == DoorState.CLOSED) {
 			return result;
@@ -148,5 +145,13 @@ public class EntityDoor extends EntityWall {
 		timeStamp += dt;
 
 		return result;
+	}
+
+	@Override
+	public void render() {
+		shape.preRender();
+		setUniforms();
+		((ShapeCubeTexture) shape).render(Orientation.ALL);
+		shape.postRender();
 	}
 }

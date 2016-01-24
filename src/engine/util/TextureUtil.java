@@ -94,7 +94,9 @@ public final class TextureUtil {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 
 		// Wrap methods
-		// GL11.GL_REPEAT, GL14.GL_MIRRORED_REPEAT, GL12.GL_CLAMP_TO_EDGE,
+		// GL11.GL_REPEAT
+		// GL14.GL_MIRRORED_REPEAT
+		// GL12.GL_CLAMP_TO_EDGE
 		// GL13.GL_CLAMP_TO_BORDER
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
@@ -113,7 +115,6 @@ public final class TextureUtil {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
 		Texture t;
-
 		try {
 			t = TextureLoader.getTexture("PNG", new FileInputStream("res/images/" + fileName));
 			ByteBuffer b = BufferUtils.createByteBuffer(t.getTextureData().length);
@@ -135,8 +136,7 @@ public final class TextureUtil {
 					GL11.GL_UNSIGNED_BYTE, b);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-
+			System.err.println("Texture \"" + fileName + "\" missing.");
 			return NO_TEXTURE;
 		} finally {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -158,11 +158,9 @@ public final class TextureUtil {
 
 	public static int getTextureID(String textureName) {
 		Integer id = textureMap.get(textureName);
-
 		if (id == null) {
 			id = -1;
 		}
-
 		return id;
 	}
 

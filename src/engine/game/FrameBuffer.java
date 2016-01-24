@@ -3,10 +3,10 @@ package engine.game;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
 import engine.shapes.ShaderProgram;
+import engine.shapes.ShaderProgram.Uniform;
 import engine.shapes.ShapeQuadTexture;
 import engine.util.Matrix4;
 import engine.util.Vector3;
@@ -17,6 +17,7 @@ public class FrameBuffer {
 	protected int frameBuffer;
 	protected int textureID;
 	protected ShapeQuadTexture screenShape;
+	protected ShaderProgram program;
 
 	public void bind() {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
@@ -30,9 +31,11 @@ public class FrameBuffer {
 		GL11.glDeleteTextures(textureID);
 		GL30.glDeleteRenderbuffers(renderBuffer);
 		GL30.glDeleteFramebuffers(frameBuffer);
+
+		screenShape.dispose();
 	}
 
-	public void init(String shaderName) {
+	public void init(ShaderProgram program) {
 		// Framebuffer
 		frameBuffer = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
@@ -67,7 +70,7 @@ public class FrameBuffer {
 		}
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 
-		screenShape = new ShapeQuadTexture(ShaderProgram.getProgram(shaderName), textureID);
+		screenShape = new ShapeQuadTexture(program, textureID);
 	}
 
 	public void render() {
@@ -79,38 +82,11 @@ public class FrameBuffer {
 
 		screenShape.preRender();
 
-		screenShape.getShaderProgram().setUniform("u_color", new Vector3(1f));
+		screenShape.getShaderProgram().setUniform(Uniform.color, new Vector3(1f));
 		Matrix4 model = Matrix4.createIdentityMatrix();
 		model.scale(new Vector3(2f));
-		screenShape.getShaderProgram().setUniform("u_model", model);
-		screenShape.getShaderProgram().setUniform("u_spriteNumber", -1f);
-
-		screenShape.render();
-		screenShape.postRender();
-
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-	}
-
-	public void renderFuck(int tex1, int tex2) {
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-		screenShape.preRender();
-
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex1);
-
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex2);
-
-		screenShape.getShaderProgram().setUniform("u_color", new Vector3(1f));
-		Matrix4 model = Matrix4.createIdentityMatrix();
-		model.scale(new Vector3(2f));
-		screenShape.getShaderProgram().setUniform("u_model", model);
-		screenShape.getShaderProgram().setUniform("u_spriteNumber", -1f);
+		screenShape.getShaderProgram().setUniform(Uniform.model, model);
+		screenShape.getShaderProgram().setUniform(Uniform.spriteNumber, -1f);
 
 		screenShape.render();
 		screenShape.postRender();

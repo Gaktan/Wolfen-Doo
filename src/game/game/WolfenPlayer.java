@@ -8,17 +8,18 @@ import engine.entities.Camera;
 import engine.entities.Entity;
 import engine.entities.EntityDoor;
 import engine.game.Controls;
+import engine.game.Controls.ControlsListener;
+import engine.game.Controls.MouseListener;
 import engine.game.Player;
 import engine.game.states.GameStateManager;
-import engine.generator.Map;
-import engine.util.Vector3;
-import engine.weapons.Weapon;
 import game.game.states.MainMenuState;
+import game.generator.Map;
+import game.weapons.Weapon;
 import game.weapons.WeaponFist;
 import game.weapons.WeaponRevolver;
 import game.weapons.WeaponShotgun;
 
-public class WolfenPlayer extends Player {
+public class WolfenPlayer extends Player implements ControlsListener, MouseListener {
 
 	protected static float mouseSensitivity = 0.2f;
 
@@ -72,7 +73,6 @@ public class WolfenPlayer extends Player {
 
 	@Override
 	public void render() {
-		super.render();
 		weaponList.get(weaponIndex).render();
 	}
 
@@ -86,8 +86,7 @@ public class WolfenPlayer extends Player {
 		currentWeapon.update(dt);
 
 		// Collision on map
-		Vector3 resolution = map.testCollision(collisionSphere);
-		position.add(resolution);
+		map.resolveCollision(collisionBox);
 
 		return result;
 	}
@@ -177,7 +176,6 @@ public class WolfenPlayer extends Player {
 			}
 		}
 		else if (key >= Keyboard.KEY_1 && key <= Keyboard.KEY_0) {
-
 			int weaponIndex = key - 2;
 
 			if (weaponIndex != this.weaponIndex && weaponIndex < weaponList.size()) {
@@ -206,6 +204,17 @@ public class WolfenPlayer extends Player {
 	public void onMouseRelease(int button) {
 		if (button == 0) {
 			weaponList.get(weaponIndex).setFiring(false);
+		}
+	}
+
+	@Override
+	public void delete() {
+	}
+
+	@Override
+	public void dispose() {
+		for (Weapon w : weaponList) {
+			w.dispose();
 		}
 	}
 }

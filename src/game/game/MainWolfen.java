@@ -7,8 +7,14 @@ public class MainWolfen {
 		int width = 800;
 		int height = 600;
 		boolean fullScreen = false;
+		boolean ignoreNext = false;
 
 		for (int i = 0; i < args.length; i++) {
+			if (ignoreNext) {
+				ignoreNext = false;
+				continue;
+			}
+
 			String arg = args[i].trim();
 
 			if (arg.equals("-skipmenu")) {
@@ -25,6 +31,7 @@ public class MainWolfen {
 
 				try {
 					width = Integer.parseInt(s_width);
+					ignoreNext = true;
 				} catch (NumberFormatException e) {
 					System.err.println("Error with parameter -width. Usage : -width value. Value must be an integer");
 					return;
@@ -40,6 +47,7 @@ public class MainWolfen {
 
 				try {
 					height = Integer.parseInt(s_height);
+					ignoreNext = true;
 				} catch (NumberFormatException e) {
 					System.err.println("Error with parameter -height. Usage : -height value. Value must be an integer");
 					return;

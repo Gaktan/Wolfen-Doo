@@ -1,23 +1,24 @@
 package engine.game;
 
-import engine.entities.AABBSphere;
+import engine.Displayable;
+import engine.entities.AABBRectangle;
 import engine.entities.Camera;
-import engine.entities.EntityActor;
-import engine.game.Controls.ControlsListener;
-import engine.game.Controls.MouseListener;
-import engine.shapes.ShaderProgram;
-import engine.shapes.ShapeQuadTexture;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 
-public abstract class Player extends EntityActor implements ControlsListener, MouseListener {
+public abstract class Player implements Displayable {
+
+	public Vector3 position;
+	protected Vector3 velocity;
+	protected Vector3 rotation;
+	protected Vector3 scale;
 
 	protected Camera camera;
 	protected Vector3 movement;
 	protected Vector3 movementGoal;
-	protected AABBSphere collisionSphere;
+	protected AABBRectangle collisionBox;
 
 	protected float leftGoal;
 	protected float rightGoal;
@@ -30,7 +31,11 @@ public abstract class Player extends EntityActor implements ControlsListener, Mo
 	protected float slipperyLevel;
 
 	public Player(Camera camera) {
-		super(new ShapeQuadTexture(ShaderProgram.getProgram("texture"), "wall.png"));
+
+		position = new Vector3();
+		velocity = new Vector3();
+		rotation = new Vector3();
+		scale = new Vector3();
 
 		this.camera = camera;
 		this.camera.position = position;
@@ -39,7 +44,7 @@ public abstract class Player extends EntityActor implements ControlsListener, Mo
 		slipperyLevel = 100.0f;
 		rotation.setX(-90f);
 		scale.set(0.5f);
-		collisionSphere = new AABBSphere(position, scale);
+		collisionBox = new AABBRectangle(position, scale);
 	}
 
 	public EAngle getViewAngle() {
@@ -50,11 +55,19 @@ public abstract class Player extends EntityActor implements ControlsListener, Mo
 	}
 
 	@Override
+	public void render() {
+	}
+
+	@Override
 	public boolean update(float elapsedTime) {
-		boolean result = super.update(elapsedTime);
+		float dt = elapsedTime * 0.01f;
+
+		position.addX(velocity.getX() * dt);
+		position.addY(velocity.getY() * dt);
+		position.addZ(velocity.getZ() * dt);
 
 		movementGoal.set(leftGoal + rightGoal, upGoal + downGoal, forwardGoal + backwardGoal);
-		float dt = elapsedTime / slipperyLevel;
+		dt = elapsedTime / slipperyLevel;
 		movement = MathUtil.approach(movement, movementGoal, dt);
 
 		Vector3 forward = camera.getViewAngle().toVector();
@@ -67,10 +80,10 @@ public abstract class Player extends EntityActor implements ControlsListener, Mo
 		velocity.setY(movement.getY());
 		rotation.setZ(-camera.getViewAngle().yaw);
 
-		return result;
+		return true;
 	}
 
-	public AABBSphere getCollisionSphere() {
-		return collisionSphere;
+	public AABBRectangle getCollisionBox() {
+		return collisionBox;
 	}
 }

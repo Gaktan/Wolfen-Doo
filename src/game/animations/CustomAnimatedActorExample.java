@@ -11,13 +11,14 @@ import engine.entities.EntityDoor;
 import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
-import engine.generator.Map;
-import engine.generator.MapUtil;
-import engine.generator.MapUtil.Pair;
 import engine.shapes.Orientation;
+import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
+import game.generator.Map;
+import game.generator.MapUtil;
+import game.generator.MapUtil.Pair;
 
 public class CustomAnimatedActorExample extends AnimatedActor {
 
@@ -33,6 +34,8 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 	protected int orientation;
 	protected int animationState;
 
+	protected boolean closesDoor;
+
 	protected Map map;
 
 	protected DisplayableList<EntityLine> path;
@@ -42,13 +45,18 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 
 		this.map = map;
 
+		closesDoor = true;
+
 		scale.set(0.75f);
 		position.set(3, -0.5f + 0.5f * scale.getY(), 5);
 
 		lookingDirection = new Vector3();
 
 		lookingPoint = new Vector3();
-		dirLine = new EntityLine(position, lookingPoint);
+
+		ShaderProgram program = ShaderProgram.getProgram("color");
+
+		dirLine = new EntityLine(position, lookingPoint, program);
 
 		path = new DisplayableList<EntityLine>();
 
@@ -60,7 +68,7 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 			animationState = AnimationState.WALKING;
 			for (Pair p : pairs) {
 				if (previous != null) {
-					EntityLine line = new EntityLine(previous.toVector3(), p.toVector3());
+					EntityLine line = new EntityLine(previous.toVector3(), p.toVector3(), program);
 					path.add(line);
 				}
 				previous = p;
@@ -189,19 +197,20 @@ public class CustomAnimatedActorExample extends AnimatedActor {
 			door.open();
 		}
 
-		Vector3 test = intPosition.getSub(lookingDirection);
-		if (MathUtil.abs(lookingDirection.getX()) > MathUtil.abs(lookingDirection.getZ())) {
-			test.setZ(intPosition.getZ());
-		}
-		else {
-			test.setX(intPosition.getX());
-		}
-		actor = map.getActor((int) (test.getX()), (int) (test.getZ()));
-
-		if (actor instanceof EntityDoor) {
-			EntityDoor door = (EntityDoor) actor;
-			if (door.getState() == DoorState.OPEN) {
-				door.close();
+		if (closesDoor) {
+			Vector3 test = intPosition.getSub(lookingDirection);
+			if (MathUtil.abs(lookingDirection.getX()) > MathUtil.abs(lookingDirection.getZ())) {
+				test.setZ(intPosition.getZ());
+			}
+			else {
+				test.setX(intPosition.getX());
+			}
+			actor = map.getActor((int) (test.getX()), (int) (test.getZ()));
+			if (actor instanceof EntityDoor) {
+				EntityDoor door = (EntityDoor) actor;
+				if (door.getState() == DoorState.OPEN) {
+					door.close();
+				}
 			}
 		}
 

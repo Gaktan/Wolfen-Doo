@@ -12,18 +12,18 @@ uniform mat4 u_projection;
 
 uniform vec4 u_imageInfo;
 
+uniform float u_zfar;
+
 out vec4 Color;
 out vec2 TexCoord;
 out float Z_far;
 
 void main() { 
-	vec4 scale = vec4(model[0][0], model[1][1], model[2][2], 1.0);
-	gl_Position = (model * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position, 0.0) * scale);
+	gl_Position = model * vec4(position, 1.0);
 
 	vec2 _texCoord = vec2(texCoord);
 	
 	if (spriteNumber >= 0.0) {
-
 		float factorX = u_imageInfo.z / u_imageInfo.x;
 		float factorY = u_imageInfo.w / u_imageInfo.y;
 
@@ -39,5 +39,5 @@ void main() {
     
 	Color = vec4(color, 1.0);
 	TexCoord = _texCoord;
-	Z_far = 10.0;
+	Z_far = u_zfar;
 }

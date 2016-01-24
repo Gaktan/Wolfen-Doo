@@ -114,7 +114,6 @@ public class DisplayableText implements Displayable {
 	 * You should probably want to use setText instead
 	 */
 	public void updateText() {
-
 		FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * (3 + 16 + 1));
 
 		Vector3 newPosition = new Vector3();

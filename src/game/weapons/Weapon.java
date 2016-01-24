@@ -1,4 +1,4 @@
-package engine.weapons;
+package game.weapons;
 
 import org.lwjgl.opengl.GL11;
 
@@ -67,6 +67,9 @@ public abstract class Weapon implements Displayable {
 	// WEAPON_SPRITE
 	protected AnimatedActor weaponSprite;
 
+	// BMF
+	private BitMapFont bmf;
+
 	public Weapon(Player player) {
 		this.player = player;
 
@@ -74,7 +77,7 @@ public abstract class Weapon implements Displayable {
 		shotsLeft = shotsCapacity;
 		currentReloading = reloadingTime;
 
-		BitMapFont bmf = new BitMapFont(new ShapeInstancedSprite(ShaderProgram.getProgram("texture_camera_instanced"),
+		bmf = new BitMapFont(new ShapeInstancedSprite(ShaderProgram.getProgram("texture_camera_instanced"),
 				"scumm_font.png", 128, 256, 8, 11));
 
 		reloadingText = bmf.createString(new Vector3(0f), TEXT_RELOADING, 1f, TextPosition.CENTER);
@@ -97,6 +100,8 @@ public abstract class Weapon implements Displayable {
 		reloadingText.dispose();
 		ammoText.dispose();
 		weaponSprite.dispose();
+		weaponSprite.shape.dispose(); // experimental
+		bmf.dispose();
 	}
 
 	protected abstract void fire();

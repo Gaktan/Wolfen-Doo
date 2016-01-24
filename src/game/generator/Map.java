@@ -1,4 +1,4 @@
-package engine.generator;
+package game.generator;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -11,18 +11,19 @@ import engine.Displayable;
 import engine.DisplayableList;
 import engine.entities.AABB;
 import engine.entities.AABBRectangle;
-import engine.entities.AABBSphere;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
-import engine.generator.MapUtil.DoorShapeInfo;
-import engine.generator.MapUtil.ShapeInfo;
 import engine.shapes.InstancedTexturedShape;
 import engine.shapes.Orientation;
+import engine.shapes.ShaderProgram;
 import engine.shapes.Shape;
 import engine.shapes.ShapeCubeTexture;
+import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.Matrix4;
 import engine.util.Vector3;
+import game.generator.MapUtil.DoorShapeInfo;
+import game.generator.MapUtil.ShapeInfo;
 
 public class Map implements Displayable {
 
@@ -106,49 +107,49 @@ public class Map implements Displayable {
 					continue;
 				}
 
-				int amount = 0;
+				int faces = 0;
 
 				if (i > 0) {
 					ShapeInfo info = shapeMap.get(map[i - 1][j]);
-					if (info == null || !info.isSolid() || !info.isWall()) {
+					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.WEST;
-						amount++;
+						faces++;
 					}
 				}
 				if (i < sizeY - 1) {
 					ShapeInfo info = shapeMap.get(map[i + 1][j]);
-					if (info == null || !info.isSolid() || !info.isWall()) {
+					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.EAST;
-						amount++;
+						faces++;
 					}
 				}
 				if (j > 0) {
 					ShapeInfo info = shapeMap.get(map[i][j - 1]);
-					if (info == null || !info.isSolid() || !info.isWall()) {
+					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.NORTH;
-						amount++;
+						faces++;
 					}
 				}
 				if (j < sizeX - 1) {
 					ShapeInfo info = shapeMap.get(map[i][j + 1]);
-					if (info == null || !info.isSolid() || !info.isWall()) {
+					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.SOUTH;
-						amount++;
+						faces++;
 					}
 				}
 				if (wall instanceof DoorShapeInfo) {
 					int orientation = orientationArray[i][j];
 					if ((orientation & Orientation.NORTH) != 0 && (orientation & Orientation.SOUTH) != 0) {
 						orientationArray[i][j] = Orientation.WEST + Orientation.EAST;
-						amount = 2;
+						faces = 2;
 					}
 					else if ((orientation & Orientation.EAST) != 0 && (orientation & Orientation.WEST) != 0) {
 						orientationArray[i][j] = Orientation.SOUTH + Orientation.NORTH;
-						amount = 2;
+						faces = 2;
 					}
 				}
 
-				wall.amount += amount;
+				wall.amount += faces;
 			}
 		}
 
@@ -406,11 +407,12 @@ public class Map implements Displayable {
 		this.sizeY = sizeY;
 	}
 
-	public void setSky(EntityActor sky) {
+	public void setSky(Vector3 upColor, Vector3 downColor) {
+		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
+				downColor);
+		sky = new EntityActor(skyShape);
 		sky.scale = new Vector3(sizeX - 0.5f, 1, sizeY - 0.5f);
 		sky.position = new Vector3((sizeX - 1f) * 0.5f, 0, (sizeY - 1f) * 0.5f);
-
-		this.sky = sky;
 	}
 
 	public void setStartingPoint(Vector3 coord) {
@@ -434,10 +436,12 @@ public class Map implements Displayable {
 	 *            X position to test on the map
 	 * @param z
 	 *            Z position to test on the map
+	 * @param entities
+	 *            Check for entities as well
 	 * @return A vector containing the collision resolution. (0, 0, 0) when
 	 *         there is no collision
 	 */
-	public Vector3 testCollision(AABB aabb, int x, int z) {
+	public Vector3 testCollision(AABB aabb, int x, int z, boolean entities) {
 		Vector3 result = new Vector3();
 
 		if (!inRange(x, 0, sizeX) || !inRange(z, 0, sizeY)) {
@@ -445,29 +449,21 @@ public class Map implements Displayable {
 		}
 
 		AABB rect = null;
-		EntityActor e = getActor(x, z);
 
-		if (e != null) {
-			if (e instanceof EntityDoor) {
+		if (entities) {
+			for (EntityActor e : getActors(x, z)) {
 				rect = new AABBRectangle(e);
-			}
-			else {
-				rect = new AABBSphere(e);
-			}
-			rect.position.setY(0f);
-			if (rect.collide(aabb)) {
-				result.add(aabb.resolveCollision(rect));
+				rect.position.setY(0f);
+				if (rect.collide(aabb)) {
+					result.add(aabb.resolveCollision(rect));
+				}
+
 			}
 		}
 
 		ShapeInfo info = get(x, z);
 		if (info != null && info.isSolid()) {
-			if (!info.wall) {
-				rect = new AABBSphere(new Vector3(x, 0, z));
-			}
-			else {
-				rect = new AABBRectangle(new Vector3(x, 0, z));
-			}
+			rect = new AABBRectangle(new Vector3(x, 0, z));
 			rect.position.setY(0f);
 			if (rect.collide(aabb)) {
 				result.add(aabb.resolveCollision(rect));
@@ -477,22 +473,36 @@ public class Map implements Displayable {
 		return result;
 	}
 
-	public Vector3 testCollision(AABB aabb) {
+	/**
+	 * Resolves Collisions with a given AABB with the map<br>
+	 * Warning! This will modify AABB's position
+	 *
+	 * @param aabb
+	 *            Bounding Box of the object to resolve
+	 */
+	public void resolveCollision(AABB aabb) {
 		// TODO: fix corner collisions
 		int x = (int) (aabb.position.getX() + 0.5f);
 		int z = (int) (aabb.position.getZ() + 0.5f);
-		Vector3 resolution = new Vector3();
 
-		for (int i = -1; i < 2; i++) {
-			for (int j = -1; j < 2; j++) {
-				Vector3 res = testCollision(aabb, x + j, z + i);
-				if (res.length() > resolution.length()) {
-					resolution.set(res);
-				}
-			}
-		}
-
-		return resolution;
+		Vector3 res = testCollision(aabb, x, z, true);
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x + 1, z, true));
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x - 1, z, true));
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x, z + 1, true));
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x, z - 1, true));
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x + 1, z + 1, true));
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x + 1, z - 1, true));
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x - 1, z + 1, true));
+		aabb.position.add(res);
+		res.set(testCollision(aabb, x - 1, z - 1, true));
+		aabb.position.add(res);
 	}
 
 	private boolean inRange(int n, int min, int max) {

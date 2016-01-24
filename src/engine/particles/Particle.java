@@ -9,7 +9,7 @@ import engine.util.Vector3;
 
 /**
  * Short living Actor
- * 
+ *
  * @author Gaktan
  */
 public class Particle {
@@ -88,13 +88,8 @@ public class Particle {
 
 		dt = dt * .005f;
 
-		velocity.addX(GRAVITY.getX() * dt);
-		velocity.addY(GRAVITY.getY() * dt);
-		velocity.addZ(GRAVITY.getZ() * dt);
-
-		position.addX(velocity.getX() * dt);
-		position.addY(velocity.getY() * dt);
-		position.addZ(velocity.getZ() * dt);
+		velocity.add(GRAVITY.getScale(dt));
+		position.add(velocity.getScale(dt));
 
 		// position of the floor - size of Particle
 		if (position.getY() <= -0.5f + (scale * 0.5f)) {

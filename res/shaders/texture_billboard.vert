@@ -26,7 +26,6 @@ void main() {
 	vec2 _texCoord = vec2(texCoord);
 	
 	if (u_spriteNumber >= 0.0) {
-
 		float factorX = u_imageInfo.z / u_imageInfo.x;
 		float factorY = u_imageInfo.w / u_imageInfo.y;
 

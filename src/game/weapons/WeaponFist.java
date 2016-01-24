@@ -8,7 +8,6 @@ import engine.shapes.ShapeSprite;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Vector3;
-import engine.weapons.Weapon;
 import game.entities.EntityProjectile;
 import game.game.states.WolfenGameState;
 

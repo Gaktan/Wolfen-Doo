@@ -17,6 +17,7 @@ public class ShapeInsideOutCubeColor extends Shape {
 	protected Vector3 downColor;
 
 	public ShapeInsideOutCubeColor(ShaderProgram shaderProgram, Vector3 upColor, Vector3 downColor) {
+		super();
 		this.shaderProgram = shaderProgram;
 		this.upColor = upColor;
 		this.downColor = downColor;
@@ -27,20 +28,27 @@ public class ShapeInsideOutCubeColor extends Shape {
 	@Override
 	public void postRender() {
 		GL30.glBindVertexArray(0);
-
 		ShaderProgram.unbind();
 	}
 
 	@Override
 	public void preRender() {
 		shaderProgram.bind();
-
 		GL30.glBindVertexArray(VAO);
 	}
 
 	@Override
 	public void render() {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, 36, GL11.GL_UNSIGNED_INT, 0);
+	}
+
+	@Override
+	protected void setAttribs() {
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 6 * FLOAT_SIZE, 0);
+		GL20.glEnableVertexAttribArray(1);
+		GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 6 * FLOAT_SIZE, 3 * FLOAT_SIZE);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
 	}
 
 	@Override
@@ -76,35 +84,10 @@ public class ShapeInsideOutCubeColor extends Shape {
 		1, 5, 6, 6, 2, 1, });
 		indices.flip();
 
-		VAO = GL30.glGenVertexArrays();
-		VBO = GL15.glGenBuffers();
-		EBO = GL15.glGenBuffers();
-
-		// VAO
-		GL30.glBindVertexArray(VAO);
-
-		// VBO
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertices, GL15.GL_STATIC_DRAW);
-
-		// EBO
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
-
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-
-		GL20.glEnableVertexAttribArray(0);
-		// v - position in layout (see shader)
-		// v - Nb of component per vertex (2 for 2D (x, y))
-		// v - Normalized ? (between 0 - 1)
-		// v - Offset between things (size of a line)
-		// v - Where to start ?
-		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 6 * FLOAT_SIZE, 0);
-
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 6 * FLOAT_SIZE, 3 * FLOAT_SIZE);
-
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
+		createArrayObject();
+		loadVertices(vertices);
+		loadIndices(indices);
+		setAttribs();
 
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);

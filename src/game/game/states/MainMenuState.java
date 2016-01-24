@@ -4,7 +4,6 @@ import engine.DisplayableText;
 import engine.DisplayableText.TextPosition;
 import engine.game.Controls.ControlsCharListener;
 import engine.game.states.GameStateManager;
-import engine.shapes.ShapeQuadTexture;
 import engine.util.Vector3;
 import game.game.GameWolfen;
 import game.menu.MenuButton;
@@ -17,13 +16,18 @@ public class MainMenuState extends MenuState {
 	protected DisplayableText seedLabel;
 
 	@Override
+	public void dispose() {
+		gameTitle.dispose();
+		seedLabel.dispose();
+		super.dispose();
+	}
+
+	@Override
 	public void init() {
 		super.init();
 
 		gameTitle = font.createString(new Vector3(0f, 0.75f, 0f), "Wolfen-Doo", 2f, TextPosition.CENTER, true);
 		seedLabel = font.createString(new Vector3(-0.25f, 0.35f, 0f), "Seed:", 1f, TextPosition.CENTER, true);
-
-		ShapeQuadTexture buttonShape = new ShapeQuadTexture(screenProgram, "menu/button.png");
 
 		final MenuTextField seedField = new MenuTextField(buttonShape, "", new Vector3(0.25f, 0.35f, 0f), 1f, font);
 		seedField.scale.setX(0.5f);
@@ -131,5 +135,4 @@ public class MainMenuState extends MenuState {
 		gameTitle.update(dt);
 		seedLabel.update(dt);
 	}
-
 }

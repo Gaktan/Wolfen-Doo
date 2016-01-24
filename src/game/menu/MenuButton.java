@@ -89,4 +89,9 @@ public class MenuButton extends EntityActor {
 		}
 		text.updateText();
 	}
+
+	@Override
+	public void dispose() {
+		text.dispose();
+	}
 }

@@ -5,11 +5,11 @@ import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 
 import engine.DisplayableInstancedList;
-import engine.entities.AABBSphere;
+import engine.entities.AABBRectangle;
 import engine.shapes.ShapeInstancedSprite;
 import engine.util.Matrix4;
-import engine.weapons.Weapon;
 import game.game.WolfenPlayer;
+import game.weapons.Weapon;
 
 public class ItemList extends DisplayableInstancedList<Item> {
 
@@ -22,16 +22,16 @@ public class ItemList extends DisplayableInstancedList<Item> {
 
 	@Override
 	public boolean update(float dt) {
-		AABBSphere playerSphere = player.getCollisionSphere();
+		AABBRectangle playerSphere = player.getCollisionBox();
 
 		boolean result = super.update(dt);
 
 		FloatBuffer fb1 = BufferUtils.createFloatBuffer(list.size() * (3 + 16 + 1));
 
 		for (Item item : list) {
-			AABBSphere itemSphere = new AABBSphere(item);
+			AABBRectangle itemBox = new AABBRectangle(item);
 
-			if (playerSphere.collide(itemSphere)) {
+			if (playerSphere.collide(itemBox)) {
 				Weapon weapon = player.getWeapon(item.getItemNumber());
 				if (weapon != null) {
 					weapon.addAmmo(item.value);

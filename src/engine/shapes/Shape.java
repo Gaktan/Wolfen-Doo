@@ -1,5 +1,8 @@
 package engine.shapes;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
@@ -15,12 +18,12 @@ public abstract class Shape {
 	protected int VBO, VAO, EBO;
 	protected ShaderProgram shaderProgram;
 
-	public Shape() {
-	}
-
 	public Shape(ShaderProgram shaderProgram) {
 		this.shaderProgram = shaderProgram;
 		init();
+	}
+
+	public Shape() {
 	}
 
 	/**
@@ -65,4 +68,41 @@ public abstract class Shape {
 	 * Must only be called once by Shape's constructor
 	 */
 	protected abstract void init();
+
+	/**
+	 * Creates the VAO
+	 */
+	protected void createArrayObject() {
+		VAO = GL30.glGenVertexArrays();
+		GL30.glBindVertexArray(VAO);
+	}
+
+	/**
+	 * Creates the VBO based on given FloatBuffer
+	 *
+	 * @param vertices
+	 *            FlotaBuffer containing all vertices
+	 */
+	protected void loadVertices(FloatBuffer vertices) {
+		VBO = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertices, GL15.GL_STATIC_DRAW);
+	}
+
+	/**
+	 * Creates the EBO based on given IntBuffer
+	 *
+	 * @param indices
+	 *            IntBuffer containing all indices
+	 */
+	protected void loadIndices(IntBuffer indices) {
+		EBO = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
+	}
+
+	/**
+	 * Set the current VAO's attribs (see ShapeQuadTexture) for an example
+	 */
+	protected abstract void setAttribs();
 }

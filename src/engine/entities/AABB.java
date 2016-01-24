@@ -22,10 +22,6 @@ public abstract class AABB {
 	}
 
 	public boolean collide(AABB b) {
-		if (b instanceof AABBSphere) {
-			AABBSphere sphere = (AABBSphere) b;
-			return collide(sphere);
-		}
 		if (b instanceof AABBRectangle) {
 			AABBRectangle rect = (AABBRectangle) b;
 			return collide(rect);
@@ -36,13 +32,7 @@ public abstract class AABB {
 
 	public abstract boolean collide(AABBRectangle b);
 
-	public abstract boolean collide(AABBSphere b);
-
 	public Vector3 resolveCollision(AABB b) {
-		if (b instanceof AABBSphere) {
-			AABBSphere sphere = (AABBSphere) b;
-			return resolveCollision(sphere);
-		}
 		if (b instanceof AABBRectangle) {
 			AABBRectangle rect = (AABBRectangle) b;
 			return resolveCollision(rect);
@@ -52,7 +42,4 @@ public abstract class AABB {
 	}
 
 	public abstract Vector3 resolveCollision(AABBRectangle b);
-
-	public abstract Vector3 resolveCollision(AABBSphere b);
-
 }

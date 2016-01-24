@@ -1,9 +1,6 @@
-package engine.generator;
+package game.generator;
 
-import engine.entities.EntityActor;
 import engine.shapes.Orientation;
-import engine.shapes.ShaderProgram;
-import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.FileUtil;
 import engine.util.MathUtil;
 import engine.util.Vector3;
@@ -38,9 +35,13 @@ public class MapReader {
 	protected Vector3 startingPoint;
 
 	protected Map map;
-	protected EntityActor sky;
+	protected Vector3 upColor;
+	protected Vector3 downColor;
 
 	public MapReader() {
+		startingPoint = new Vector3();
+		upColor = new Vector3();
+		downColor = new Vector3();
 	}
 
 	/**
@@ -58,10 +59,7 @@ public class MapReader {
 		map.setSize(width, height);
 		map.buildMapFromString(mapData);
 		map.setStartingPoint(startingPoint);
-
-		if (sky != null) {
-			map.setSky(sky);
-		}
+		map.setSky(upColor, downColor);
 
 		for (int i = 0; i < height; i++) {
 			System.out.println(mapData.substring(i * height, (i + 1) * height));
@@ -219,17 +217,12 @@ public class MapReader {
 			return;
 		}
 
-		Vector3 downColor = readVector3(values[0].trim());
-		Vector3 upColor = readVector3(values[1].trim());
+		downColor = readVector3(values[0].trim());
+		upColor = readVector3(values[1].trim());
 
 		// 0,00390625 = 1 / 255
 		float colorScale = 0.00390625f;
 		downColor.scale(colorScale);
 		upColor.scale(colorScale);
-
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
-				downColor);
-
-		sky = new EntityActor(skyShape);
 	}
 }

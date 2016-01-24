@@ -1,4 +1,4 @@
-package engine.generator;
+package game.generator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class MapUtil {
 
 		public DoorShapeInfo(Shape shape, InstancedTexturedShape sideShape, Vector3 openingPosition, int orientation,
 				float time) {
-			super(shape, false, true);
+			super(shape, false, true, false);
 			this.sideShape = sideShape;
 			this.openingPosition = openingPosition;
 			this.orientation = orientation;
@@ -53,12 +53,18 @@ public class MapUtil {
 		protected int amount;
 		protected boolean solid;
 		protected boolean wall;
+		protected boolean billboard;
 
-		public ShapeInfo(Shape shape, boolean solid, boolean wall) {
+		public ShapeInfo(Shape shape, boolean solid, boolean wall, boolean billboard) {
 			this.shape = shape;
 			this.solid = solid;
 			this.wall = wall;
+			this.billboard = billboard;
 			amount = 0;
+		}
+
+		public boolean isBillboard() {
+			return billboard;
 		}
 
 		public boolean isSolid() {
@@ -157,7 +163,7 @@ public class MapUtil {
 
 	/**
 	 * Pathfind from a goal to a start
-	 * 
+	 *
 	 * @param map
 	 *            Map where to perform the pathfinding
 	 * @param start
@@ -244,7 +250,7 @@ public class MapUtil {
 
 	public static ShapeInfo newBillboard(String texture, boolean solid) {
 		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(
-				ShaderProgram.getProgram("texture_billboard_instanced"), texture), solid, false);
+				ShaderProgram.getProgram("texture_billboard_instanced"), texture), solid, false, true);
 
 		return info;
 	}
@@ -263,7 +269,7 @@ public class MapUtil {
 
 	public static ShapeInfo newWall(String texture, boolean solid) {
 		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_instanced"),
-				texture), solid, true);
+				texture), solid, true, false);
 
 		return info;
 	}

@@ -1,6 +1,8 @@
 package game.entities;
 
 import engine.entities.EntityActor;
+import engine.shapes.ShaderProgram.Uniform;
+import engine.util.Matrix4;
 import engine.util.Vector3;
 
 public class Item extends EntityActor {
@@ -23,8 +25,10 @@ public class Item extends EntityActor {
 
 	@Override
 	public void setUniforms() {
-		super.setUniforms();
-		shape.getShaderProgram().setUniform("u_spriteNumber", itemNumber);
+		shape.getShaderProgram().setUniform(Uniform.color, color);
+		Matrix4 model = Matrix4.createModelMatrix(position, rotation, scale);
+		shape.getShaderProgram().setUniform(Uniform.model, model);
+		shape.getShaderProgram().setUniform(Uniform.spriteNumber, itemNumber);
 	}
 
 	public int getValue() {

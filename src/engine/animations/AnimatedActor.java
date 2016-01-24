@@ -1,11 +1,13 @@
 package engine.animations;
 
 import engine.entities.EntityActor;
+import engine.shapes.ShaderProgram.Uniform;
 import engine.shapes.ShapeSprite;
+import engine.util.Matrix4;
 
 /**
  * Actor used for animation
- * 
+ *
  * @author Gaktan
  */
 public class AnimatedActor extends EntityActor {
@@ -28,7 +30,7 @@ public class AnimatedActor extends EntityActor {
 
 	/**
 	 * Changes current animation the a new one
-	 * 
+	 *
 	 * @param str
 	 *            Name of the new animation
 	 */
@@ -38,8 +40,10 @@ public class AnimatedActor extends EntityActor {
 
 	@Override
 	public void setUniforms() {
-		super.setUniforms();
-		shape.getShaderProgram().setUniform("u_spriteNumber", a_current.getCurrentFrame());
+		shape.getShaderProgram().setUniform(Uniform.color, color);
+		Matrix4 model = Matrix4.createModelMatrix(position, rotation, scale);
+		shape.getShaderProgram().setUniform(Uniform.model, model);
+		shape.getShaderProgram().setUniform(Uniform.spriteNumber, a_current.getCurrentFrame());
 	}
 
 	@Override

@@ -4,12 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import engine.entities.EntityActor;
-import engine.generator.Generator;
-import engine.generator.Map;
 import engine.shapes.Orientation;
-import engine.shapes.ShaderProgram;
-import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 
@@ -388,10 +383,7 @@ public class DungeonGenerator extends Generator {
 
 		Vector3 downColor = new Vector3(237f, 157f, 95f).getScale(colorScale);
 		Vector3 upColor = new Vector3(252f, 231f, 227f).getScale(colorScale);
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
-				downColor);
-		EntityActor sky = new EntityActor(skyShape);
-		map.setSky(sky);
+		map.setSky(upColor, downColor);
 
 		map.buildMapFromString(sb.toString());
 

@@ -7,9 +7,9 @@ import engine.shapes.ShapeInstancedSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 
-public class AnimatedParticleSystemExplosion extends ParticleSystem {
+public class ParticleSystemExplosion extends ParticleSystem {
 
-	public AnimatedParticleSystemExplosion(Vector3 position, int life, ShapeInstancedSprite shape) {
+	public ParticleSystemExplosion(Vector3 position, int life, ShapeInstancedSprite shape) {
 		super(position, life);
 
 		particleShape = shape;

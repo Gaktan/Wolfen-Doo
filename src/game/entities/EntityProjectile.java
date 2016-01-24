@@ -7,11 +7,12 @@ import engine.entities.EntityDoor;
 import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
-import engine.generator.Map;
-import engine.generator.MapUtil;
+import engine.shapes.ShaderProgram;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 import game.game.states.WolfenGameState;
+import game.generator.Map;
+import game.generator.MapUtil;
 import game.particles.ParticleSystemBlood;
 import game.particles.ParticleSystemImpact;
 
@@ -32,7 +33,8 @@ public class EntityProjectile extends EntityLine {
 	protected int bounces;
 
 	public EntityProjectile(Vector3 position, Vector3 direction, Map map) {
-		super(position, new Vector3(), new Vector3(1f, 1f, 0.3f), new Vector3(1f, 0.86f, 0.3f));
+		super(position, new Vector3(), new Vector3(1f, 1f, 0.3f), new Vector3(1f, 0.86f, 0.3f), ShaderProgram
+				.getProgram("color"));
 
 		this.map = map;
 
@@ -47,9 +49,7 @@ public class EntityProjectile extends EntityLine {
 
 	@Override
 	public boolean update(float dt) {
-
 		boolean b = false;
-
 		super.update(dt);
 
 		positionB = position.getAdd(velocity.getNormalize().getScale(3.0f));
@@ -60,8 +60,9 @@ public class EntityProjectile extends EntityLine {
 			return false;
 		}
 
-		if (position.getY() > 0.5f || position.getY() < -0.5f)
+		if (position.getY() > 0.5f || position.getY() < -0.5f) {
 			return false;
+		}
 
 		Vector3 normal = new Vector3();
 		Vector3 impactPosition = new Vector3();
@@ -69,9 +70,7 @@ public class EntityProjectile extends EntityLine {
 		int oldX = -1, oldZ = -1;
 
 		for (float i = 0f; i < 0.25f; i += 0.025f) {
-
 			normal.set(0f);
-
 			impactPosition.set(position.getAdd(velocity.getScale(i)));
 
 			if (impactPosition.getY() < -0.5f) {
@@ -128,17 +127,19 @@ public class EntityProjectile extends EntityLine {
 
 			MapUtil.ShapeInfo info = map.get(x, z);
 			if (info != null) {
-				if (!info.isSolid())
+				if (!info.isSolid()) {
 					continue;
-
+				}
+				if (info.isBillboard()) {
+					createParticles(impactPosition, new Vector3(velocity), normal);
+					return false;
+				}
 				b = true;
-
 				break;
 			}
 		}
 
 		if (b) {
-
 			if (normal.length() != 0)
 				normal.normalize();
 
@@ -154,9 +155,7 @@ public class EntityProjectile extends EntityLine {
 				else if (normal.getY() != 0) {
 					velocity.setY(-velocity.getY());
 				}
-
 				position.set(impactPosition);
-
 				bounces--;
 			}
 

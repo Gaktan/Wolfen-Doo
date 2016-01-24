@@ -1,7 +1,5 @@
 package game.game.states;
 
-import java.util.Map.Entry;
-
 import org.newdawn.slick.Color;
 
 import engine.BitMapFont;
@@ -20,13 +18,12 @@ import engine.game.FrameBuffer;
 import engine.game.Game;
 import engine.game.Player;
 import engine.game.states.GameState;
-import engine.generator.Generator;
-import engine.generator.Map;
-import engine.generator.MapReader;
 import engine.particles.ParticleSystem;
 import engine.shapes.ShaderProgram;
+import engine.shapes.ShaderProgram.Uniform;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.shapes.ShapeInstancedSprite;
+import engine.shapes.ShapeQuadTexture;
 import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
@@ -36,7 +33,10 @@ import game.entities.ItemList;
 import game.entities.RotatingText;
 import game.game.WolfenPlayer;
 import game.generator.DungeonGenerator;
-import game.particles.AnimatedParticleSystemExplosion;
+import game.generator.Generator;
+import game.generator.Map;
+import game.generator.MapReader;
+import game.particles.ParticleSystemExplosion;
 
 public class WolfenGameState extends GameState {
 
@@ -50,6 +50,16 @@ public class WolfenGameState extends GameState {
 	protected DisplayableInstancedList<EntityActor> bulletHoles;
 
 	protected ItemList itemList;
+
+	/* Shader programs */
+	protected ShaderProgram programTexture;
+	protected ShaderProgram programColor;
+	protected ShaderProgram programFrameBuffer;
+	protected ShaderProgram programTexBill;
+	protected ShaderProgram programTexCamera;
+	protected ShaderProgram programTexCameraInstanced;
+	protected ShaderProgram programTexBillInstanced;
+	protected ShaderProgram programTexInstanced;
 
 	/* TEMP STUFF */
 
@@ -85,11 +95,13 @@ public class WolfenGameState extends GameState {
 
 	@Override
 	public void dispose() {
-		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
-			ShaderProgram program = entry.getValue();
-
-			program.dispose();
-		}
+		programTexture.dispose();
+		programColor.dispose();
+		programTexBill.dispose();
+		programTexCamera.dispose();
+		programTexCameraInstanced.dispose();
+		programTexBillInstanced.dispose();
+		programTexInstanced.dispose();
 
 		frameBuffer.dispose();
 
@@ -113,29 +125,24 @@ public class WolfenGameState extends GameState {
 
 		fps = new Fps();
 
-		new ShaderProgram("texture");
-		new ShaderProgram("color");
-		ShaderProgram shaderProgramTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
-		new ShaderProgram("texture_camera", "texture", "texture_camera");
-		ShaderProgram shaderProgramTexCameraInstanced = new ShaderProgram("texture_camera_instanced", "texture",
-				"texture_camera_instanced");
-		ShaderProgram shaderProgramTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture",
+		programTexture = new ShaderProgram("texture");
+		programColor = new ShaderProgram("color");
+		programFrameBuffer = new ShaderProgram("frameBuffer", "texture", "frameBuffer");
+		programTexBill = new ShaderProgram("texture_billboard", "texture", "texture_billboard");
+		programTexCamera = new ShaderProgram("texture_camera", "texture", "texture_camera");
+		programTexCameraInstanced = new ShaderProgram("texture_camera_instanced", "texture", "texture_camera_instanced");
+		programTexBillInstanced = new ShaderProgram("texture_billboard_instanced", "texture",
 				"texture_billboard_instanced");
-		ShaderProgram shaderProgramTexInstanced = new ShaderProgram("texture_instanced", "texture", "texture_instanced");
+		programTexInstanced = new ShaderProgram("texture_instanced", "texture", "texture_instanced");
 
 		// FrameBuffer
-		new ShaderProgram("texture_camera", "texture", "screen");
 		frameBuffer = new FrameBuffer();
-		frameBuffer.init("screen");
+		frameBuffer.init(programFrameBuffer);
 
 		// Camera
 		current_camera = new Camera(45.0f, (float) Game.getInstance().getWidth()
 				/ (float) Game.getInstance().getHeight(), Z_NEAR, Z_FAR);
 		setZfar(current_camera.getzFar());
-
-		ShapeSprite shapeAnimatedSmurf = new ShapeSprite(shaderProgramTexBill, "mul_test.png", 512, 512, 32, 48);
-		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "exp2.png", 256,
-				256, 64, 64);
 
 		// Map
 		if (mapName == null) {
@@ -154,8 +161,7 @@ public class WolfenGameState extends GameState {
 		Controls.addMouseListener(player);
 
 		// Items
-		ShapeInstancedSprite itemShape = new ShapeInstancedSprite(shaderProgramTexBillInstanced, "items.png", 128, 64,
-				32, 32);
+		ShapeInstancedSprite itemShape = new ShapeInstancedSprite(programTexBillInstanced, "items.png", 128, 64, 32, 32);
 		itemList = new ItemList(itemShape, player);
 		addItem(map.getStartingPoint().getAdd(-1f, 0f, -1f), 0, 100);
 		addItem(map.getStartingPoint().getAdd(0f, 0f, -1f), 1, 100);
@@ -164,8 +170,7 @@ public class WolfenGameState extends GameState {
 		add(itemList);
 
 		// Screen Text
-		bmf = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexCameraInstanced, "scumm_font.png", 128, 256, 8,
-				11));
+		bmf = new BitMapFont(new ShapeInstancedSprite(programTexCameraInstanced, "scumm_font.png", 128, 256, 8, 11));
 		textPos = bmf.createString(new Vector3(-1f, 1f, 0), "", 0.85f);
 		textFps = bmf.createString(new Vector3(-1f, .9f, 0), "", 0.85f);
 		textMemory = bmf.createString(new Vector3(-1f, 0.7f, 0), "", 0.6f);
@@ -180,24 +185,27 @@ public class WolfenGameState extends GameState {
 		*/
 
 		// Bullets
-		bulletHoles = new DisplayableInstancedList<EntityActor>(new ShapeInstancedQuadTexture(
-				shaderProgramTexInstanced, "bullet_impact.png"), false);
+		bulletHoles = new DisplayableInstancedList<EntityActor>(new ShapeInstancedQuadTexture(programTexInstanced,
+				"bullet_impact.png"), false);
 		add(bulletHoles);
 
 		// -- Test area --
 
 		// animation
-		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeAnimatedSmurf, "guybrush.animation",
+		ShapeSprite shapeGuybrush = new ShapeSprite(programTexBill, "mul_test.png", 512, 512, 32, 48);
+		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeGuybrush, "guybrush.animation",
 				"a_walking_front", map);
 		map.addActor(animatedActorTest);
 
 		// explosion
-		ParticleSystem psTest = new AnimatedParticleSystemExplosion(new Vector3(4, 0, 4), 16000, shapeExplosion);
+		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(programTexBillInstanced, "exp2.png", 256, 256,
+				64, 64);
+		ParticleSystem psTest = new ParticleSystemExplosion(new Vector3(4, 0, 4), 16000, shapeExplosion);
 		add(psTest);
 
 		// text in world
-		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(shaderProgramTexInstanced, "scumm_font.png",
-				128, 256, 8, 11));
+		BitMapFont worldFont = new BitMapFont(new ShapeInstancedSprite(programTexInstanced, "scumm_font.png", 128, 256,
+				8, 11));
 
 		String welcomeText = "Hello and welcome to Wolfen-doo. You can't do much right now,\n"
 				+ "but it will come, don't worry.\n" + "Use WASD to move around, mouse to look and shoot,\n"
@@ -222,12 +230,47 @@ public class WolfenGameState extends GameState {
 		add(rotatingText);
 
 		// Origin
-		EntityLine line_x = new EntityLine(new Vector3(), new Vector3(100f, 0f, 0f), new Vector3(1f, 0f, 0f));
-		EntityLine line_y = new EntityLine(new Vector3(), new Vector3(0f, 100f, 0f), new Vector3(0f, 1f, 0f));
-		EntityLine line_z = new EntityLine(new Vector3(), new Vector3(0f, 0f, 100f), new Vector3(0f, 0f, 1f));
+		EntityLine line_x = new EntityLine(new Vector3(), new Vector3(100f, 0f, 0f), new Vector3(1f, 0f, 0f),
+				programColor);
+		EntityLine line_y = new EntityLine(new Vector3(), new Vector3(0f, 100f, 0f), new Vector3(0f, 1f, 0f),
+				programColor);
+		EntityLine line_z = new EntityLine(new Vector3(), new Vector3(0f, 0f, 100f), new Vector3(0f, 0f, 1f),
+				programColor);
 		add(line_x);
 		add(line_y);
 		add(line_z);
+
+		// Speech bubbles
+		ShapeQuadTexture bubbleShape = new ShapeQuadTexture(programTexBill, "speech_bubble.png");
+		EntityActor bubbleActor = new EntityActor(bubbleShape);
+		bubbleActor.position.set(13f, 0f, 2f);
+		bubbleActor.scale.setY(0.5f);
+		add(bubbleActor);
+
+		/*
+		ShapeQuadTexture cursorShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_camera"), "wall.png");
+		EntityActor cursor = new EntityActor(cursorShape);
+		add(cursor);
+		*/
+	}
+
+	protected void setProgramUniform(ShaderProgram program) {
+		program.bind();
+		program.setUniform(Uniform.projection, current_camera.getProjection());
+		program.setUniform(Uniform.view, current_camera.getMatrixView());
+		program.setUniform(Uniform.zfar, current_camera.getzFar());
+	}
+
+	protected void setProgramsUniform() {
+		setProgramUniform(programTexture);
+		setProgramUniform(programColor);
+		setProgramUniform(programTexBill);
+		setProgramUniform(programTexCamera);
+		setProgramUniform(programTexCameraInstanced);
+		setProgramUniform(programTexBillInstanced);
+		setProgramUniform(programTexInstanced);
+
+		ShaderProgram.unbind();
 	}
 
 	@Override
@@ -237,23 +280,13 @@ public class WolfenGameState extends GameState {
 
 		current_camera.apply();
 
-		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
-			ShaderProgram program = entry.getValue();
-
-			program.bind();
-			program.setUniform("u_projection", current_camera.getProjection());
-			program.setUniform("u_view", current_camera.getMatrixView());
-		}
-		ShaderProgram.unbind();
+		setProgramsUniform();
 
 		displayableList.render();
-
+		player.render();
 		textPos.render();
 		textFps.render();
 		textMemory.render();
-
-		player.render();
-
 		frameBuffer.render();
 
 		FrameBuffer.unbind();
@@ -261,6 +294,7 @@ public class WolfenGameState extends GameState {
 
 	@Override
 	public void update(float dt) {
+		// dt *= 0.1f;
 		current_camera.update(dt);
 		player.update(dt);
 
@@ -273,8 +307,7 @@ public class WolfenGameState extends GameState {
 
 		textMemory.setText("Total Memory: " + (Runtime.getRuntime().totalMemory() / mb) + "MB\nFree Memory: "
 				+ (Runtime.getRuntime().freeMemory() / mb) + "MB\nUsed Memory: "
-				+ ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / mb) + "MB\nMax Memory: "
-				+ (Runtime.getRuntime().maxMemory() / mb) + "MB");
+				+ ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / mb) + "MB");
 
 		textPos.update(dt);
 		textFps.update(dt);
@@ -290,15 +323,6 @@ public class WolfenGameState extends GameState {
 
 	protected void setZfar(float zFar) {
 		current_camera.setzFar(zFar);
-
-		for (Entry<String, ShaderProgram> entry : ShaderProgram.getAllPrograms()) {
-			ShaderProgram program = entry.getValue();
-
-			program.bind();
-			program.setUniform("u_zfar", zFar);
-		}
-
-		ShaderProgram.unbind();
 	}
 
 	public Player getPlayer() {

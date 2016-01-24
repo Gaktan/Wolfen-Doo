@@ -1,4 +1,4 @@
-package engine.generator;
+package game.generator;
 
 /**
  * The Generator class is used to generate any kind of 2D map

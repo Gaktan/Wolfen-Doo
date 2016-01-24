@@ -17,7 +17,7 @@ public class MapLoadingState extends MenuState {
 	public void init() {
 		super.init();
 
-		ShapeQuadTexture buttonShape = new ShapeQuadTexture(screenProgram, "menu/button.png");
+		buttonShape = new ShapeQuadTexture(programScreen, "menu/button.png");
 
 		File mapsFolder = new File("./res/maps");
 
@@ -26,7 +26,6 @@ public class MapLoadingState extends MenuState {
 		backButton.setText("Back");
 
 		backButton.setOnButtonRelease(new ButtonRelease() {
-
 			@Override
 			public void onButtonRelease(boolean mouseInside) {
 				if (mouseInside) {

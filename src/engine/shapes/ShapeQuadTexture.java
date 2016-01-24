@@ -5,7 +5,6 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
@@ -25,7 +24,6 @@ public class ShapeQuadTexture extends TexturedShape {
 	@Override
 	public Shape copy() {
 		ShapeQuadTexture shape = new ShapeQuadTexture(shaderProgram, textureID);
-		shape.init();
 		return shape;
 	}
 
@@ -35,10 +33,24 @@ public class ShapeQuadTexture extends TexturedShape {
 	}
 
 	@Override
+	protected void setAttribs() {
+		GL20.glEnableVertexAttribArray(0);
+		// 0 - Position in layout (see shader)
+		// 1 - Amount of elements for the current layout
+		// 2 - Normalized ?
+		// 3 - Size of a line(index * FLOAT_SIZE)
+		// 4 - Where to start in the line ? (index * FLOAT_SIZE)
+		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 4 * FLOAT_SIZE, 0);
+
+		GL20.glEnableVertexAttribArray(1);
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 4 * FLOAT_SIZE, 2 * FLOAT_SIZE);
+	}
+
+	@Override
 	protected void init() {
 		FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 4);
 		vertices.put(new float[] {
-			// pos tex coord
+			// pos, tex coord
 		-0.5f, -0.5f, 0.f, 0.f,//
 		-0.5f, +0.5f, 0.f, 1.f,//
 		+0.5f, +0.5f, 1.f, 1.f,//
@@ -50,33 +62,10 @@ public class ShapeQuadTexture extends TexturedShape {
 		indices.put(new int[] { 0, 1, 2, 0, 2, 3 });
 		indices.flip();
 
-		VAO = GL30.glGenVertexArrays();
-		VBO = GL15.glGenBuffers();
-		EBO = GL15.glGenBuffers();
-
-		// VAO
-		GL30.glBindVertexArray(VAO);
-
-		// VBO
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertices, GL15.GL_STATIC_DRAW);
-
-		// EBO
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
-
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-
-		GL20.glEnableVertexAttribArray(0);
-		// v - position in layout (see shader)
-		// v - Nb of component per vertex (2 for 2D (x, y))
-		// v - Normalized ? (between 0 - 1)
-		// v - Offset between things (size of a line)
-		// v - Where to start ?
-		GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 4 * FLOAT_SIZE, 0);
-
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 4 * FLOAT_SIZE, 2 * FLOAT_SIZE);
+		createArrayObject();
+		loadVertices(vertices);
+		loadIndices(indices);
+		setAttribs();
 
 		// Unbinds the VAO
 		GL30.glBindVertexArray(0);

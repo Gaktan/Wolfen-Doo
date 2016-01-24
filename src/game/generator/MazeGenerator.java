@@ -6,11 +6,6 @@ import java.util.Stack;
 
 import org.lwjgl.util.vector.Vector2f;
 
-import engine.entities.EntityActor;
-import engine.generator.Generator;
-import engine.generator.Map;
-import engine.shapes.ShaderProgram;
-import engine.shapes.ShapeInsideOutCubeColor;
 import engine.util.Vector3;
 
 /**
@@ -110,11 +105,7 @@ public class MazeGenerator extends Generator {
 
 		Vector3 downColor = new Vector3();
 		Vector3 upColor = new Vector3(1f);
-
-		ShapeInsideOutCubeColor skyShape = new ShapeInsideOutCubeColor(ShaderProgram.getProgram("color"), upColor,
-				downColor);
-
-		mapR.setSky(new EntityActor(skyShape));
+		mapR.setSky(upColor, downColor);
 
 		mapR.buildMapFromString(map.toString());
 		return mapR;
