@@ -2,19 +2,20 @@ package game.game.states;
 
 import org.newdawn.slick.Color;
 
-import engine.BitMapFont;
-import engine.Displayable;
-import engine.DisplayableInstancedList;
-import engine.DisplayableList;
-import engine.DisplayableText;
-import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
+import engine.entities.BitMapFont;
 import engine.entities.Camera;
+import engine.entities.Displayable;
+import engine.entities.DisplayableInstancedList;
+import engine.entities.DisplayableList;
+import engine.entities.DisplayableText;
+import engine.entities.DisplayableText.TextPosition;
 import engine.entities.EntityActor;
 import engine.entities.EntityLine;
 import engine.game.Controls;
 import engine.game.Fps;
 import engine.game.FrameBuffer;
+import engine.game.FrameBuffer.RenderLast;
 import engine.game.Game;
 import engine.game.Player;
 import engine.game.states.GameState;
@@ -23,7 +24,6 @@ import engine.shapes.ShaderProgram;
 import engine.shapes.ShaderProgram.Uniform;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.shapes.ShapeInstancedSprite;
-import engine.shapes.ShapeQuadTexture;
 import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
@@ -60,6 +60,10 @@ public class WolfenGameState extends GameState {
 	protected ShaderProgram programTexCameraInstanced;
 	protected ShaderProgram programTexBillInstanced;
 	protected ShaderProgram programTexInstanced;
+
+	/* Shapes */
+	protected ShapeInstancedSprite itemShape;
+	protected ShapeInstancedQuadTexture bulletShape;
 
 	/* TEMP STUFF */
 
@@ -102,6 +106,9 @@ public class WolfenGameState extends GameState {
 		programTexCameraInstanced.dispose();
 		programTexBillInstanced.dispose();
 		programTexInstanced.dispose();
+
+		itemShape.dispose();
+		bulletShape.dispose();
 
 		frameBuffer.dispose();
 
@@ -161,7 +168,7 @@ public class WolfenGameState extends GameState {
 		Controls.addMouseListener(player);
 
 		// Items
-		ShapeInstancedSprite itemShape = new ShapeInstancedSprite(programTexBillInstanced, "items.png", 128, 64, 32, 32);
+		itemShape = new ShapeInstancedSprite(programTexBillInstanced, "items.png", 128, 64, 32, 32);
 		itemList = new ItemList(itemShape, player);
 		addItem(map.getStartingPoint().getAdd(-1f, 0f, -1f), 0, 100);
 		addItem(map.getStartingPoint().getAdd(0f, 0f, -1f), 1, 100);
@@ -175,18 +182,9 @@ public class WolfenGameState extends GameState {
 		textFps = bmf.createString(new Vector3(-1f, .9f, 0), "", 0.85f);
 		textMemory = bmf.createString(new Vector3(-1f, 0.7f, 0), "", 0.6f);
 
-		/*
-		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
-		gui.position.x = 0f;
-		gui.position.y = -0.9f;
-		gui.scale.x = 20f;
-		gui.scale.y = 2f;
-		ac.add(gui);
-		*/
-
 		// Bullets
-		bulletHoles = new DisplayableInstancedList<EntityActor>(new ShapeInstancedQuadTexture(programTexInstanced,
-				"bullet_impact.png"), false);
+		bulletShape = new ShapeInstancedQuadTexture(programTexInstanced, "bullet_impact.png");
+		bulletHoles = new DisplayableInstancedList<EntityActor>(bulletShape, false);
 		add(bulletHoles);
 
 		// -- Test area --
@@ -240,17 +238,13 @@ public class WolfenGameState extends GameState {
 		add(line_y);
 		add(line_z);
 
-		// Speech bubbles
-		ShapeQuadTexture bubbleShape = new ShapeQuadTexture(programTexBill, "speech_bubble.png");
-		EntityActor bubbleActor = new EntityActor(bubbleShape);
-		bubbleActor.position.set(13f, 0f, 2f);
-		bubbleActor.scale.setY(0.5f);
-		add(bubbleActor);
-
 		/*
-		ShapeQuadTexture cursorShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_camera"), "wall.png");
-		EntityActor cursor = new EntityActor(cursorShape);
-		add(cursor);
+		EntityActor gui = new EntityActor(new ShapeQuadTexture(shaderProgramTexCamera, "gui"));
+		gui.position.x = 0f;
+		gui.position.y = -0.9f;
+		gui.scale.x = 20f;
+		gui.scale.y = 2f;
+		ac.add(gui);
 		*/
 	}
 
@@ -283,10 +277,17 @@ public class WolfenGameState extends GameState {
 		setProgramsUniform();
 
 		displayableList.render();
-		player.render();
-		textPos.render();
-		textFps.render();
-		textMemory.render();
+
+		frameBuffer.addRenderLast(new RenderLast() {
+			@Override
+			public void renderLast() {
+				player.render();
+				textPos.render();
+				textFps.render();
+				textMemory.render();
+			}
+		});
+
 		frameBuffer.render();
 
 		FrameBuffer.unbind();

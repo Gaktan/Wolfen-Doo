@@ -4,6 +4,7 @@ import java.nio.FloatBuffer;
 
 import org.newdawn.slick.Color;
 
+import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 
@@ -15,6 +16,7 @@ import engine.util.Vector3;
 public class Particle {
 
 	protected static final Vector3 GRAVITY = new Vector3(0, -0.4f, 0);
+	protected static final float FRICTION = 0.8f;
 	public Vector3 position;
 	public Color color;
 	public Vector3 velocity;
@@ -77,7 +79,6 @@ public class Particle {
 	}
 
 	public boolean update(float dt) {
-
 		life -= dt;
 
 		if (life <= 0)
@@ -89,6 +90,7 @@ public class Particle {
 		dt = dt * .005f;
 
 		velocity.add(GRAVITY.getScale(dt));
+		velocity.scale(MathUtil.pow(FRICTION, dt));
 		position.add(velocity.getScale(dt));
 
 		// position of the floor - size of Particle

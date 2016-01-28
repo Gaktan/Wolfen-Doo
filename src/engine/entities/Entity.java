@@ -1,6 +1,5 @@
 package engine.entities;
 
-import engine.Displayable;
 import engine.util.Vector3;
 
 /**

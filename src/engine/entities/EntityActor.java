@@ -42,4 +42,8 @@ public class EntityActor extends Entity {
 		shape.getShaderProgram().setUniform(Uniform.model, model);
 		shape.getShaderProgram().setUniform(Uniform.spriteNumber, -1f);
 	}
+
+	public AABB getAABB() {
+		return new AABBRectangle(this);
+	}
 }

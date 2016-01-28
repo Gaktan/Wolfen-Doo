@@ -1,6 +1,7 @@
 package engine.game;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -13,11 +14,20 @@ import engine.util.Vector3;
 
 public class FrameBuffer {
 
+	public interface RenderLast {
+		public void renderLast();
+	}
+
 	protected int renderBuffer;
 	protected int frameBuffer;
 	protected int textureID;
 	protected ShapeQuadTexture screenShape;
 	protected ShaderProgram program;
+	protected ArrayList<RenderLast> renderLastList;
+
+	public FrameBuffer() {
+		renderLastList = new ArrayList<RenderLast>();
+	}
 
 	public void bind() {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
@@ -92,6 +102,11 @@ public class FrameBuffer {
 		screenShape.postRender();
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+		for (RenderLast r : renderLastList) {
+			r.renderLast();
+		}
+		renderLastList.clear();
 	}
 
 	public static void unbind() {
@@ -100,5 +115,9 @@ public class FrameBuffer {
 
 	public int getTextureID() {
 		return textureID;
+	}
+
+	public void addRenderLast(RenderLast renderLast) {
+		renderLastList.add(renderLast);
 	}
 }

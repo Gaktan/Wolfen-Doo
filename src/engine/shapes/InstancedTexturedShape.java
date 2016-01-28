@@ -24,6 +24,7 @@ public abstract class InstancedTexturedShape extends TexturedShape {
 
 	@Override
 	public void render() {
+		// You should be calling render(int amount) instead
 	}
 
 	public abstract void render(int amount);

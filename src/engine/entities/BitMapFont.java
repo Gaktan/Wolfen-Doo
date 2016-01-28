@@ -1,8 +1,8 @@
-package engine;
+package engine.entities;
 
 import org.newdawn.slick.Color;
 
-import engine.DisplayableText.TextPosition;
+import engine.entities.DisplayableText.TextPosition;
 import engine.shapes.Shape;
 import engine.shapes.ShapeInstancedSprite;
 import engine.util.Vector3;

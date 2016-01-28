@@ -2,6 +2,8 @@ package engine.shapes;
 
 import java.util.HashMap;
 
+import javax.management.RuntimeErrorException;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -265,6 +267,10 @@ public class ShaderProgram {
 	}
 
 	public static ShaderProgram getProgram(String name) {
+		ShaderProgram program = allPrograms.get(name);
+		if (program == null) {
+			throw new RuntimeErrorException(new Error(), "Could not find program " + name);
+		}
 		return allPrograms.get(name);
 	}
 

@@ -1,10 +1,9 @@
-package engine;
+package engine.entities;
 
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 
-import engine.entities.EntityActor;
 import engine.shapes.InstancedTexturedShape;
 import engine.util.Matrix4;
 

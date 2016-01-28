@@ -1,4 +1,4 @@
-package engine;
+package engine.entities;
 
 /**
  * Highest interface of the engine. Allows you to update and render any object

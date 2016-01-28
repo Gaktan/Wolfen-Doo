@@ -43,6 +43,17 @@ public class EAngle {
 			yaw -= 360;
 	}
 
+	public void lookAt(Vector3 position, Vector3 target) {
+		Vector3 v = target.getSub(position);
+
+		float r = MathUtil.sqrt(v.x * v.x + v.z * v.z);
+		float yaw = MathUtil.atan2(v.z, v.x);
+		float pitch = MathUtil.atan2(-v.y, r);
+
+		this.yaw = MathUtil.toDegrees(yaw) + 90f;
+		this.pitch = MathUtil.toDegrees(pitch);
+	}
+
 	@Override
 	public String toString() {
 		return "EAngle [p:" + pitch + ", y:" + yaw + ", r:" + roll + "]";

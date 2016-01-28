@@ -123,6 +123,23 @@ public class Vector3 {
 	}
 
 	/**
+	 * If two vectors are close enough to each other, they're probably equals,
+	 * right ? That's what this function do
+	 *
+	 * @param vec
+	 *            Vector to test with
+	 * @param margin
+	 *            Error margin (max distance between the two vectors to consider
+	 *            them equals)
+	 * @return True if they are almost equals
+	 */
+	public boolean almostEquals(Vector3 vec, float margin) {
+		float distance = getSub(vec).length();
+
+		return (distance <= margin);
+	}
+
+	/**
 	 * Returns Vector + xyz
 	 *
 	 * @param xyz

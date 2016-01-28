@@ -1,4 +1,4 @@
-package engine;
+package engine.entities;
 
 import java.nio.FloatBuffer;
 
@@ -114,64 +114,61 @@ public class DisplayableText implements Displayable {
 	 * You should probably want to use setText instead
 	 */
 	public void updateText() {
-		FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * (3 + 16 + 1));
+		charCount = text.replace(" ", "").replace("\n", "").length();
+		FloatBuffer fb = BufferUtils.createFloatBuffer(charCount * (3 + 16 + 1));
 
-		Vector3 newPosition = new Vector3();
 		Vector3 halfDir = new Vector3(0.1f * textSize, 0, 0);
-		Vector3 startingPosition = new Vector3(position);
 
-		if (textPosition == TextPosition.RIGHT) {
-			startingPosition.addX(-text.length() * 0.1f * textSize);
-			startingPosition.addY(0.09f * textSize);
-		}
-		else if (textPosition == TextPosition.CENTER) {
-			startingPosition.addX((-text.length() * 0.1f * textSize) * 0.5f);
-			startingPosition.addY((0.1f * textSize) * 0.5f);
-		}
+		String[] lines = text.split("\n");
+		for (int i = 0; i < lines.length; i++) {
+			String line = lines[i];
+			Vector3 newPosition = new Vector3();
+			Vector3 startingPosition = new Vector3(position);
+			startingPosition.addY(-0.11f * textSize * (i - (lines.length - 1) * 0.5f));
 
-		charCount = 0;
-
-		for (char c : text.toCharArray()) {
-			if (c == '\n') {
-				newPosition.set(0f, 0f, 0f);
-				startingPosition.addY(-0.11f * textSize);
-				continue;
+			if (textPosition == TextPosition.RIGHT) {
+				startingPosition.addX(-line.length() * 0.1f * textSize);
+				startingPosition.addY(0.09f * textSize);
+			}
+			else if (textPosition == TextPosition.CENTER) {
+				startingPosition.addX((-line.length() * 0.1f * textSize) * 0.5f);
+				startingPosition.addY((0.1f * textSize) * 0.5f);
 			}
 
-			if (c != ' ') {
-				Vector3 pos = new Vector3(startingPosition);
+			for (char c : line.toCharArray()) {
+				if (c != ' ') {
+					Vector3 pos = new Vector3(startingPosition);
 
-				pos.addX(((0.1f * textSize) * 0.5f) + newPosition.getX());
-				pos.addY(((-0.1f * textSize) * 0.5f) + newPosition.getY());
-				pos.addZ(((0.1f * textSize) * 0.5f) + newPosition.getZ());
+					pos.addX(((0.1f * textSize) * 0.5f) + newPosition.getX());
+					pos.addY(((-0.1f * textSize) * 0.5f) + newPosition.getY());
+					pos.addZ(((0.1f * textSize) * 0.5f) + newPosition.getZ());
 
-				float[] array = new float[3];
-				array[0] = color.r;
-				array[1] = color.g;
-				array[2] = color.b;
-				fb.put(array);
+					float[] array = new float[3];
+					array[0] = color.r;
+					array[1] = color.g;
+					array[2] = color.b;
+					fb.put(array);
 
-				Matrix4 model = Matrix4.createIdentityMatrix();
+					Matrix4 model = Matrix4.createIdentityMatrix();
 
-				if (rotation != 0) {
-					model.translate(position);
-					model.rotate(rotation, Matrix4.Y_AXIS);
-					model.translate(position.getNegate());
-					model.translate(pos);
+					if (rotation != 0) {
+						model.translate(position);
+						model.rotate(rotation, Matrix4.Y_AXIS);
+						model.translate(position.getNegate());
+						model.translate(pos);
+					}
+					else {
+						model.setPosition(pos);
+					}
+					model.scale(new Vector3(0.1f * textSize));
+					model.store(fb);
+
+					fb.put(c);
 				}
-				else {
-					model.setPosition(pos);
-				}
-				model.scale(new Vector3(0.1f * textSize));
-				model.store(fb);
 
-				fb.put(c);
-
-				charCount++;
-			}
-
-			newPosition.add(halfDir);
-		}
+				newPosition.add(halfDir);
+			} // for char
+		} // for lines
 
 		fb.flip();
 		shape.setData(fb);

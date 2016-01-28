@@ -14,6 +14,8 @@ public final class MathUtil {
 	private static Random random = new Random();
 
 	public static final float PI = 3.14159265f;
+	public static final float ATAN2_COEFF_1 = PI * 0.25f;
+	public static final float ATAN2_COEFF_2 = ATAN2_COEFF_1 * 3f;
 
 	/**
 	 * Approaches a float from start to end with a percentage
@@ -165,8 +167,32 @@ public final class MathUtil {
 		return (float) Math.atan(x);
 	}
 
-	public static float atan2(float x, float y) {
-		return (float) Math.atan2(x, y);
+	/**
+	 *
+	 * Credit https://gist.github.com/volkansalma/2972237
+	 *
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static float atan2(float y, float x) {
+		// return (float) Math.atan2(x, y);
+
+		float r, angle;
+		float abs_y = abs(y) + 1e-10f; // kludge to prevent 0/0 condition
+		if (x < 0.0f) {
+			r = (x + abs_y) / (abs_y - x);
+			angle = ATAN2_COEFF_2;
+		}
+		else {
+			r = (x - abs_y) / (x + abs_y);
+			angle = ATAN2_COEFF_1;
+		}
+		angle += (0.1963f * r * r - 0.9817f) * r;
+		if (y < 0.0f)
+			return (-angle); // negate if in quad III or IV
+		else
+			return (angle);
 	}
 
 	public static float toDegrees(float angleRad) {
@@ -207,5 +233,17 @@ public final class MathUtil {
 
 	public static float signum(float x) {
 		return Math.signum(x);
+	}
+
+	public static float getPositive(float x) {
+		return (x > 0) ? x : -x;
+	}
+
+	public static float getNegative(float x) {
+		return -getPositive(x);
+	}
+
+	public static float pow(float x, float y) {
+		return (float) Math.pow(x, y);
 	}
 }

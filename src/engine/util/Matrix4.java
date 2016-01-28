@@ -554,7 +554,6 @@ public class Matrix4 {
 		// Move the camera
 		Vector3 newPos = position.getNegate();
 		view.translate(newPos);
-		// Matrix4.translate(newPos, view, view);
 
 		return view;
 	}

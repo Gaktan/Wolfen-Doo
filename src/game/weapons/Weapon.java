@@ -2,11 +2,11 @@ package game.weapons;
 
 import org.lwjgl.opengl.GL11;
 
-import engine.BitMapFont;
-import engine.Displayable;
-import engine.DisplayableText;
-import engine.DisplayableText.TextPosition;
 import engine.animations.AnimatedActor;
+import engine.entities.BitMapFont;
+import engine.entities.Displayable;
+import engine.entities.DisplayableText;
+import engine.entities.DisplayableText.TextPosition;
 import engine.game.Player;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedSprite;

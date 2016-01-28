@@ -7,10 +7,10 @@ import java.util.Map.Entry;
 
 import org.lwjgl.BufferUtils;
 
-import engine.Displayable;
-import engine.DisplayableList;
 import engine.entities.AABB;
 import engine.entities.AABBRectangle;
+import engine.entities.Displayable;
+import engine.entities.DisplayableList;
 import engine.entities.Entity;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
@@ -238,6 +238,11 @@ public class Map implements Displayable {
 			Shape shape = info.getShape();
 			shape.dispose();
 		}
+		for (EntityActor a : actorsList) {
+			a.dispose();
+		}
+		sky.shape.dispose();
+		sky.dispose();
 	}
 
 	public ShapeInfo get(int x, int y) {
@@ -452,19 +457,19 @@ public class Map implements Displayable {
 
 		if (entities) {
 			for (EntityActor e : getActors(x, z)) {
-				rect = new AABBRectangle(e);
-				rect.position.setY(0f);
+				rect = e.getAABB();
 				if (rect.collide(aabb)) {
 					result.add(aabb.resolveCollision(rect));
 				}
-
 			}
 		}
 
 		ShapeInfo info = get(x, z);
 		if (info != null && info.isSolid()) {
 			rect = new AABBRectangle(new Vector3(x, 0, z));
-			rect.position.setY(0f);
+			if (info.isBillboard()) {
+				rect.scale.set(0.5f, 1f, 0.5f);
+			}
 			if (rect.collide(aabb)) {
 				result.add(aabb.resolveCollision(rect));
 			}
@@ -481,7 +486,6 @@ public class Map implements Displayable {
 	 *            Bounding Box of the object to resolve
 	 */
 	public void resolveCollision(AABB aabb) {
-		// TODO: fix corner collisions
 		int x = (int) (aabb.position.getX() + 0.5f);
 		int z = (int) (aabb.position.getZ() + 0.5f);
 

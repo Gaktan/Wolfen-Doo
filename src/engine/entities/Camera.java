@@ -68,6 +68,13 @@ public class Camera extends Entity {
 		return viewAngle;
 	}
 
+	public EAngle getCorrectedViewAngle() {
+		EAngle viewAngle = new EAngle(this.viewAngle);
+		viewAngle.yaw -= 90f;
+		viewAngle.pitch = -viewAngle.pitch;
+		return viewAngle;
+	}
+
 	public float getzFar() {
 		return zFar;
 	}

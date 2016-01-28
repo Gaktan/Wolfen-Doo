@@ -47,30 +47,6 @@ public class EntityDoor extends EntityActor {
 	}
 
 	/**
-	 * Force close
-	 */
-	public void close() {
-		if (state == DoorState.OPENING || state == DoorState.OPEN)
-			toggle();
-	}
-
-	public Vector3 getOpeningPosition() {
-		return openingPosition;
-	}
-
-	public float getOpeningTime() {
-		return openingTime;
-	}
-
-	public Vector3 getOriginialPosition() {
-		return originialPosition;
-	}
-
-	public DoorState getState() {
-		return state;
-	}
-
-	/**
 	 * Force open
 	 */
 	public void open() {
@@ -78,16 +54,12 @@ public class EntityDoor extends EntityActor {
 			toggle();
 	}
 
-	public void setOpeningPosition(Vector3 openingPosition) {
-		this.openingPosition = openingPosition;
-	}
-
-	public void setOpeningTime(float openingTime) {
-		this.openingTime = openingTime;
-	}
-
-	public void setOriginialPosition(Vector3 originialPosition) {
-		this.originialPosition = originialPosition;
+	/**
+	 * Force close
+	 */
+	public void close() {
+		if (state == DoorState.OPENING || state == DoorState.OPEN)
+			toggle();
 	}
 
 	/**
@@ -95,7 +67,7 @@ public class EntityDoor extends EntityActor {
 	 */
 	public void toggle() {
 		lastKnownPosition.set(position);
-		timeStamp = 0;
+		timeStamp = 0f;
 
 		if (state == DoorState.CLOSED || state == DoorState.CLOSING) {
 			state = DoorState.OPENING;
@@ -110,11 +82,7 @@ public class EntityDoor extends EntityActor {
 	public boolean update(float dt) {
 		boolean result = super.update(dt);
 
-		if (state == DoorState.CLOSED) {
-			return result;
-		}
-
-		if (state == DoorState.OPEN) {
+		if (state == DoorState.CLOSED || state == DoorState.OPEN) {
 			return result;
 		}
 
@@ -153,5 +121,33 @@ public class EntityDoor extends EntityActor {
 		setUniforms();
 		((ShapeCubeTexture) shape).render(Orientation.ALL);
 		shape.postRender();
+	}
+
+	public Vector3 getOpeningPosition() {
+		return openingPosition;
+	}
+
+	public float getOpeningTime() {
+		return openingTime;
+	}
+
+	public Vector3 getOriginialPosition() {
+		return originialPosition;
+	}
+
+	public DoorState getState() {
+		return state;
+	}
+
+	public void setOpeningPosition(Vector3 openingPosition) {
+		this.openingPosition = openingPosition;
+	}
+
+	public void setOpeningTime(float openingTime) {
+		this.openingTime = openingTime;
+	}
+
+	public void setOriginialPosition(Vector3 originialPosition) {
+		this.originialPosition = originialPosition;
 	}
 }

@@ -1,4 +1,4 @@
-package engine;
+package engine.entities;
 
 import java.util.ArrayList;
 import java.util.Iterator;

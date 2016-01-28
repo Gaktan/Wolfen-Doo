@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL30;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShaderProgram.Uniform;
 import engine.shapes.Shape;
+import engine.util.MathUtil;
 import engine.util.Matrix4;
 import engine.util.Vector3;
 
@@ -48,6 +49,88 @@ public class EntityLine extends Entity {
 		this.program = program;
 		VAO = GL30.glGenVertexArrays();
 		VBO = GL15.glGenBuffers();
+	}
+
+	/**
+	 * Line - AABB Intersection
+	 *
+	 * @param aabb
+	 * @return Null if there is no intersection. Otherwise intersection point
+	 */
+	public Vector3 collide(AABB aabb) {
+		float low = 0;
+		float high = 1;
+
+		Vector3 aabbMin = new Vector3(aabb.position);
+		Vector3 aabbMax = new Vector3(aabb.position);
+		aabbMin.add(aabb.scale.getScale(-0.5f));
+		aabbMax.add(aabb.scale.getScale(0.5f));
+
+		Vector3 result = clipLine(aabbMin.getX(), aabbMax.getX(), position.getX(), positionB.getX(), low, high);
+		if (result == null) {
+			return null;
+		}
+		low = result.getX();
+		high = result.getY();
+
+		result = clipLine(aabbMin.getY(), aabbMax.getY(), position.getY(), positionB.getY(), low, high);
+		if (result == null) {
+			return null;
+		}
+		low = result.getX();
+		high = result.getY();
+
+		result = clipLine(aabbMin.getZ(), aabbMax.getZ(), position.getZ(), positionB.getZ(), low, high);
+		if (result == null) {
+			return null;
+		}
+		low = result.getX();
+		high = result.getY();
+
+		// The formula for I: http://youtu.be/USjbg5QXk3g?t=6m24s
+		Vector3 b = positionB.getSub(position);
+		Vector3 intersection = position.getAdd(b.getScale(low));
+
+		return intersection;
+	}
+
+	private Vector3 clipLine(float aabbMin, float aabbMax, float v0, float v1, float low, float high) {
+		// low and high are the results from all clipping so far.
+
+		// dim_low and dim_high are the results we're calculating for this
+		// current dimension.
+		float dim_low, dim_high;
+
+		// Find the point of intersection in this dimension only as a fraction
+		// of the total vector http://youtu.be/USjbg5QXk3g?t=3m12s
+		dim_low = (aabbMin - v0) / (v1 - v0);
+		dim_high = (aabbMax - v0) / (v1 - v0);
+
+		// Make sure low is less than high
+		if (dim_high < dim_low) {
+			float temp = dim_high;
+			dim_high = dim_low;
+			dim_low = temp;
+		}
+
+		// If this dimension's high is less than the low we got then we
+		// definitely missed. http://youtu.be/USjbg5QXk3g?t=7m16s
+		if (dim_high < low)
+			return null;
+
+		// Likewise if the low is less than the high.
+		if (dim_low > high)
+			return null;
+
+		// Add the clip from this dimension to the previous results
+		// http://youtu.be/USjbg5QXk3g?t=5m32s
+		low = MathUtil.max(dim_low, low);
+		high = MathUtil.min(dim_high, high);
+
+		if (low > high)
+			return null;
+
+		return new Vector3(low, high, 0f);
 	}
 
 	@Override

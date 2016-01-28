@@ -1,6 +1,6 @@
 package game.menu;
 
-import engine.BitMapFont;
+import engine.entities.BitMapFont;
 import engine.game.Controls;
 import engine.game.Controls.ControlsCharListener;
 import engine.shapes.Shape;

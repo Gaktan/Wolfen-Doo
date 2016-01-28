@@ -1,7 +1,7 @@
 package game.game.states;
 
-import engine.DisplayableText;
-import engine.DisplayableText.TextPosition;
+import engine.entities.DisplayableText;
+import engine.entities.DisplayableText.TextPosition;
 import engine.game.Controls.ControlsCharListener;
 import engine.game.states.GameStateManager;
 import engine.util.Vector3;

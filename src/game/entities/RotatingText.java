@@ -2,8 +2,8 @@ package game.entities;
 
 import org.newdawn.slick.Color;
 
-import engine.BitMapFont;
-import engine.DisplayableText;
+import engine.entities.BitMapFont;
+import engine.entities.DisplayableText;
 import engine.util.Vector3;
 
 public class RotatingText extends DisplayableText {

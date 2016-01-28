@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
 
-import engine.Displayable;
+import engine.entities.Displayable;
 import engine.shapes.ShapeInstancedQuadTexture;
 import engine.util.MathUtil;
 import engine.util.Vector3;

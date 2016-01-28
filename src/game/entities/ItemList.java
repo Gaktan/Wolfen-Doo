@@ -4,8 +4,8 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 
-import engine.DisplayableInstancedList;
 import engine.entities.AABBRectangle;
+import engine.entities.DisplayableInstancedList;
 import engine.shapes.ShapeInstancedSprite;
 import engine.util.Matrix4;
 import game.game.WolfenPlayer;

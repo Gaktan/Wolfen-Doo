@@ -1,8 +1,8 @@
 package engine.game;
 
-import engine.Displayable;
 import engine.entities.AABBRectangle;
 import engine.entities.Camera;
+import engine.entities.Displayable;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Matrix4;
@@ -48,10 +48,11 @@ public abstract class Player implements Displayable {
 	}
 
 	public EAngle getViewAngle() {
-		EAngle viewAngle = new EAngle(camera.getViewAngle());
-		viewAngle.yaw -= 90f;
-		viewAngle.pitch = -viewAngle.pitch;
-		return viewAngle;
+		return camera.getCorrectedViewAngle();
+	}
+
+	public EAngle getCameraViewAngle() {
+		return camera.getViewAngle();
 	}
 
 	@Override

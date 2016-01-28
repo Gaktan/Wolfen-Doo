@@ -2,9 +2,10 @@ package game.entities;
 
 import java.util.ArrayList;
 
+import engine.entities.AABB;
+import engine.entities.AABBRectangle;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
-import engine.entities.EntityDoor.DoorState;
 import engine.entities.EntityLine;
 import engine.game.states.GameStateManager;
 import engine.shapes.ShaderProgram;
@@ -112,16 +113,20 @@ public class EntityProjectile extends EntityLine {
 			ArrayList<EntityActor> hitList = map.getActors(x, z);
 			for (EntityActor a : hitList) {
 				if (a instanceof EntityDoor) {
-					EntityDoor door = (EntityDoor) a;
-					if (door.getState() == DoorState.OPEN) {
-						continue;
+					AABB r = a.getAABB();
+					Vector3 result = collide(r);
+					if (result != null) {
+						createParticles(result, new Vector3(velocity), normal);
+						return false;
 					}
-					createParticles(impactPosition, new Vector3(velocity), normal);
-					return false;
 				}
 				else {
-					createBlood(a.position);
-					return false;
+					AABB r = new AABBRectangle(a.position, new Vector3(0.25f, 1f, 0.25f));
+					Vector3 result = collide(r);
+					if (result != null) {
+						createBlood(a.position);
+						return false;
+					}
 				}
 			}
 
@@ -131,8 +136,14 @@ public class EntityProjectile extends EntityLine {
 					continue;
 				}
 				if (info.isBillboard()) {
-					createParticles(impactPosition, new Vector3(velocity), normal);
-					return false;
+					AABB r = new AABBRectangle(new Vector3(x, 0f, z), new Vector3(0.5f, 1f, 0.5f));
+					Vector3 result = collide(r);
+					if (result != null) {
+						createParticles(result, new Vector3(velocity), normal);
+						return false;
+					}
+
+					continue;
 				}
 				b = true;
 				break;

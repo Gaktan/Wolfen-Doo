@@ -1,9 +1,9 @@
 package game.menu;
 
-import engine.BitMapFont;
-import engine.DisplayableText;
-import engine.DisplayableText.TextPosition;
+import engine.entities.BitMapFont;
+import engine.entities.DisplayableText;
 import engine.entities.EntityActor;
+import engine.entities.DisplayableText.TextPosition;
 import engine.shapes.Shape;
 import engine.util.Vector3;
 
