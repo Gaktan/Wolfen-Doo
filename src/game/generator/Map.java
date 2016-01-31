@@ -111,28 +111,28 @@ public class Map implements Displayable {
 
 				if (i > 0) {
 					ShapeInfo info = shapeMap.get(map[i - 1][j]);
-					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.WEST;
 						faces++;
 					}
 				}
 				if (i < sizeY - 1) {
 					ShapeInfo info = shapeMap.get(map[i + 1][j]);
-					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.EAST;
 						faces++;
 					}
 				}
 				if (j > 0) {
 					ShapeInfo info = shapeMap.get(map[i][j - 1]);
-					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.NORTH;
 						faces++;
 					}
 				}
 				if (j < sizeX - 1) {
 					ShapeInfo info = shapeMap.get(map[i][j + 1]);
-					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.SOUTH;
 						faces++;
 					}
@@ -464,7 +464,7 @@ public class Map implements Displayable {
 		}
 
 		ShapeInfo info = get(x, z);
-		if (info != null && info.isSolid()) {
+		if (info != null && info.isSolid() && !(info instanceof DoorShapeInfo)) {
 			rect = new AABBRectangle(new Vector3(x, 0, z));
 			if (info.isBillboard()) {
 				rect.scale.set(0.5f, 1f, 0.5f);

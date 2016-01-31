@@ -255,15 +255,17 @@ public class ShaderProgram {
 	}
 
 	/**
-	 * Sets a uniform vector variable
+	 * Sets a uniform Vector4f variable
 	 *
 	 * @param name
-	 *            The name of the uniform
-	 * @param v
-	 *            The value of the vector
+	 *            Name of the uniform
+	 * @param f0
+	 * @param f1
+	 * @param f2
+	 * @param f3
 	 */
-	public void setUniform(Uniform name, float f1, float f2, float f3, float f4) {
-		GL20.glUniform4f(uniforms[name.getValue()], f1, f2, f3, f4);
+	public void setUniform(Uniform name, float f0, float f1, float f2, float f3) {
+		GL20.glUniform4f(uniforms[name.getValue()], f0, f1, f2, f3);
 	}
 
 	public static ShaderProgram getProgram(String name) {

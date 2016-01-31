@@ -127,7 +127,7 @@ public class EntityAI extends AnimatedActor {
 	public void setDestination(Vector3 dest) {
 		long start = Sys.getTime();
 
-		List<Pair> pairs = MapUtil.createPath(map, position, dest);
+		List<Pair> pairs = MapUtil.createPath(map, position, dest, true);
 		if (pairs != null) {
 			animationState = AnimationState.WALKING;
 			for (Pair p : pairs) {

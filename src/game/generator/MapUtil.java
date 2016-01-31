@@ -23,7 +23,7 @@ public class MapUtil {
 
 		public DoorShapeInfo(Shape shape, InstancedTexturedShape sideShape, Vector3 openingPosition, Vector3 scale,
 				float time) {
-			super(shape, false, true, false);
+			super(shape, true, true);
 			this.sideShape = sideShape;
 			this.openingPosition = openingPosition;
 			this.scale = scale;
@@ -59,13 +59,11 @@ public class MapUtil {
 		protected int amount;
 		protected boolean solid;
 		protected boolean wall;
-		protected boolean billboard;
 
-		public ShapeInfo(Shape shape, boolean solid, boolean wall, boolean billboard) {
+		public ShapeInfo(Shape shape, boolean solid, boolean wall) {
 			this.shape = shape;
 			this.solid = solid;
 			this.wall = wall;
-			this.billboard = billboard;
 			amount = 0;
 		}
 
@@ -74,7 +72,7 @@ public class MapUtil {
 		}
 
 		public boolean isBillboard() {
-			return billboard;
+			return !wall;
 		}
 
 		public boolean isSolid() {
@@ -83,6 +81,10 @@ public class MapUtil {
 
 		public boolean isWall() {
 			return wall;
+		}
+
+		public boolean isDoor() {
+			return this instanceof DoorShapeInfo;
 		}
 
 		public int getAmount() {
@@ -180,9 +182,11 @@ public class MapUtil {
 	 *            Position of the start
 	 * @param goal
 	 *            Position of the goal
+	 * @param canOpenDoors
+	 *            Tells if the path can go through doors or not
 	 * @return A list containing the points to go through from start to end
 	 */
-	public static List<Pair> createPath(Map map, Vector3 start, Vector3 goal) {
+	public static List<Pair> createPath(Map map, Vector3 start, Vector3 goal, boolean canOpenDoors) {
 		int x = (int) (start.getX() + 0.5f);
 		int z = (int) (start.getZ() + 0.5f);
 		Pair p_start = new Pair(x, z);
@@ -225,7 +229,7 @@ public class MapUtil {
 				}
 
 				ShapeInfo info = map.get(x2, y2);
-				if (info != null && info.isSolid()) {
+				if (info != null && info.isSolid() && !(info instanceof DoorShapeInfo && canOpenDoors)) {
 					continue;
 				}
 
@@ -260,7 +264,7 @@ public class MapUtil {
 
 	public static ShapeInfo newBillboard(String texture, boolean solid) {
 		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(
-				ShaderProgram.getProgram("texture_billboard_instanced"), texture), solid, false, true);
+				ShaderProgram.getProgram("texture_billboard_instanced"), texture), solid, false);
 
 		return info;
 	}
@@ -279,7 +283,7 @@ public class MapUtil {
 
 	public static ShapeInfo newWall(String texture, boolean solid) {
 		ShapeInfo info = new ShapeInfo(new ShapeInstancedQuadTexture(ShaderProgram.getProgram("texture_instanced"),
-				texture), solid, true, false);
+				texture), solid, true);
 
 		return info;
 	}

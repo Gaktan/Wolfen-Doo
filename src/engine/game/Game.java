@@ -5,6 +5,8 @@ import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
+import engine.game.states.GameStateManager;
+
 public abstract class Game {
 
 	protected static Game instance;
@@ -44,7 +46,11 @@ public abstract class Game {
 	/**
 	 * Dispose created resources.
 	 */
-	public abstract void dispose();
+	public void dispose() {
+		if (GameStateManager.getCurrentGameState() != null) {
+			GameStateManager.getCurrentGameState().dispose();
+		}
+	}
 
 	public int getHeight() {
 		return Display.getHeight();
@@ -62,7 +68,9 @@ public abstract class Game {
 	/**
 	 * Render to screen.
 	 */
-	public abstract void render();
+	public void render() {
+		GameStateManager.getCurrentGameState().render();
+	}
 
 	/**
 	 * Display is resized
@@ -72,10 +80,13 @@ public abstract class Game {
 	/**
 	 * Update the logic of the game.
 	 *
-	 * @param f
+	 * @param dt
 	 *            Time elapsed since last frame.
 	 */
-	public abstract void update(float f);
+	public void update(float dt) {
+		GameStateManager.updateState();
+		GameStateManager.getCurrentGameState().update(dt);
+	}
 
 	protected void gameLoop() {
 		float lastFrame = getCurrentTime();

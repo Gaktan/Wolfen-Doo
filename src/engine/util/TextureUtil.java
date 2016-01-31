@@ -3,13 +3,12 @@ package engine.util;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.util.vector.Vector4f;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -72,20 +71,6 @@ public final class TextureUtil {
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 1, 1, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, bb2);
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-	}
-
-	/**
-	 * Turns a Color into a Vector3
-	 */
-	public static Vector3 colorToVector3(Color color) {
-		return new Vector3(color.r, color.g, color.b);
-	}
-
-	/**
-	 * Turns a Color into a Vector4f
-	 */
-	public static Vector4f colorToVector4f(Color color) {
-		return new Vector4f(color.r, color.g, color.b, color.a);
 	}
 
 	/**
@@ -164,13 +149,12 @@ public final class TextureUtil {
 		return textureID;
 	}
 
-	public static void deleteTexture(int textureID) {
-		GL11.glDeleteTextures(textureID);
-	}
-
-	public static void deleteTexture(String textureName) {
-		int id = getTextureID(textureName);
-		deleteTexture(id);
+	public static void deleteTextures() {
+		for (Entry<String, Integer> e : textureMap.entrySet()) {
+			int textureID = e.getValue();
+			GL11.glDeleteTextures(textureID);
+		}
+		textureMap.clear();
 	}
 
 	public static int getTextureID(String textureName) {

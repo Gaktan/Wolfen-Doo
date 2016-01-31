@@ -1,5 +1,7 @@
 package engine.game.states;
 
+import engine.util.TextureUtil;
+
 public class GameStateManager {
 
 	private static GameState currentGameState;
@@ -15,9 +17,9 @@ public class GameStateManager {
 
 	public static void updateState() {
 		if (nextGameState != null) {
-
 			if (currentGameState != null) {
 				currentGameState.dispose();
+				TextureUtil.deleteTextures();
 			}
 			currentGameState = nextGameState;
 			nextGameState = null;

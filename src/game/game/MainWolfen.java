@@ -3,7 +3,6 @@ package game.game;
 public class MainWolfen {
 
 	public static void main(String... args) {
-
 		int width = 800;
 		int height = 600;
 		boolean fullScreen = false;

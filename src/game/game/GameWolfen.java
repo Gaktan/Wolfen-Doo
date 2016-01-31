@@ -20,13 +20,6 @@ public class GameWolfen extends Game {
 	}
 
 	@Override
-	public void dispose() {
-		if (GameStateManager.getCurrentGameState() != null) {
-			GameStateManager.getCurrentGameState().dispose();
-		}
-	}
-
-	@Override
 	public void init() {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glViewport(0, 0, getWidth(), getHeight());
@@ -58,8 +51,7 @@ public class GameWolfen extends Game {
 	@Override
 	public void render() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-		GameStateManager.getCurrentGameState().render();
+		super.render();
 	}
 
 	@Override
@@ -81,10 +73,9 @@ public class GameWolfen extends Game {
 	}
 
 	@Override
-	public void update(float elapsedTime) {
-
-		if (elapsedTime > MAX_DELTA) {
-			elapsedTime = MAX_DELTA;
+	public void update(float dt) {
+		if (dt > MAX_DELTA) {
+			dt = MAX_DELTA;
 		}
 
 		// Timescale!
@@ -92,8 +83,7 @@ public class GameWolfen extends Game {
 
 		Controls.update();
 
-		GameStateManager.updateState();
-		GameStateManager.getCurrentGameState().update(elapsedTime);
+		super.update(dt);
 	}
 
 	public static GameWolfen getInstance() {
