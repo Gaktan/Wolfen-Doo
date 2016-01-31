@@ -1,12 +1,17 @@
 package game.generator;
 
-import engine.shapes.Orientation;
-import engine.util.FileUtil;
-import engine.util.MathUtil;
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
+
 import engine.util.Vector3;
 
 /**
- * NewMapReader class is used to read a map from a .map file
+ * MapReader class is used to read a map from a .map file
  *
  * For an example, see res/maps/map.example
  *
@@ -15,16 +20,21 @@ import engine.util.Vector3;
 public class MapReader {
 
 	// Commands
-	protected static final String COMMAND_NAME = "name";
-	protected static final String COMMAND_WIDTH = "width";
-	protected static final String COMMAND_HEIGHT = "height";
-	protected static final String COMMAND_BILLBOARD = "billboard";
-	protected static final String COMMAND_WALL = "wall";
-	protected static final String COMMAND_ANIMATION = "animation";
-	protected static final String COMMAND_DOOR = "door";
-	protected static final String COMMAND_MAP = "map";
-	protected static final String COMMAND_SKY = "sky";
-	protected static final String COMMAND_START = "start";
+	protected static final String KEY_NAME = "name";
+	protected static final String KEY_WIDTH = "width";
+	protected static final String KEY_HEIGHT = "height";
+	protected static final String KEY_BILLBOARDS = "billboards";
+	protected static final String KEY_WALLS = "walls";
+	protected static final String KEY_DOORS = "doors";
+	protected static final String KEY_MAP = "map";
+	protected static final String KEY_SKY = "sky";
+	protected static final String KEY_START = "start";
+	protected static final String KEY_X = "x";
+	protected static final String KEY_Y = "y";
+	protected static final String KEY_Z = "z";
+	protected static final String KEY_R = "r";
+	protected static final String KEY_G = "g";
+	protected static final String KEY_B = "b";
 
 	protected String mapData;
 	protected String name;
@@ -50,179 +60,243 @@ public class MapReader {
 	 * @return Map created from designated file
 	 */
 	public Map createMap(String path) {
-		map = new Map();
+		try {
+			Object obj = JSONValue.parseWithException(new FileReader("res/maps/" + path));
+			JSONObject root = (JSONObject) obj;
 
-		startingPoint = new Vector3();
+			Map map = new Map();
 
-		readFile(path);
+			getString(root, KEY_NAME, false);
+			int width = getInt(root, KEY_WIDTH, true);
+			int height = getInt(root, KEY_HEIGHT, true);
 
-		map.setSize(width, height);
-		map.buildMapFromString(mapData);
-		map.setStartingPoint(startingPoint);
-		map.setSky(upColor, downColor);
+			map.setSize(width, height);
 
-		for (int i = 0; i < height; i++) {
-			System.out.println(mapData.substring(i * height, (i + 1) * height));
-		}
+			// -- Start
+			{
+				JSONObject start = getObject(root, KEY_START, false);
+				float x = getFloat(start, KEY_X, false);
+				float y = getFloat(start, KEY_Y, false);
 
-		return map;
-	}
-
-	protected void createShape(String command, String value) {
-		String[] values = value.split(", ");
-
-		char ch = values[0].charAt(0);
-		String s_image = values[1];
-
-		if (command.equals(COMMAND_ANIMATION)) {
-			// TODO
-			return;
-		}
-
-		else if (command.equals(COMMAND_BILLBOARD)) {
-			if (values.length != 3) {
-				System.err.println("Error with command \"" + command + "\". Usage : " + command
-						+ "{char, texture, solidity (0 for not solid, 1 for solid)}");
-				System.err.println("Values given : {" + value + "}.");
-				return;
-			}
-			String s_solid = values[2];
-			boolean solid = (MathUtil.parseInt(s_solid) == 1);
-			map.newBillboard(ch, s_image, solid);
-		}
-
-		else if (command.equals(COMMAND_WALL)) {
-			if (values.length != 3) {
-				System.err.println("Error with command \"" + command + "\". Usage : " + command
-						+ "{char, texture, solidity (0 for not solid, 1 for solid)}");
-				System.err.println("Values given : {" + value + "}.");
-				return;
-			}
-			String s_solid = values[2];
-			boolean solid = (MathUtil.parseInt(s_solid) == 1);
-			map.newWall(ch, s_image, solid);
-		}
-
-		else if (command.equals(COMMAND_DOOR)) {
-
-			if (values.length != 6) {
-				System.err.println("Error with command \"" + command + "\". Usage : " + command
-						+ "{char, texture, sideTexture, opening direction (x y z), "
-						+ " orientation (0 for vertical, 1 for horizontal), opening time}");
-				System.err.println("Values given : {" + value + "}.");
-				return;
+				map.setStartingPoint(new Vector3(x, 0f, y));
 			}
 
-			String side_image = values[2];
-			Vector3 openingPosition = readVector3(values[3]);
-			int orientation = ((MathUtil.parseInt(values[4]) == 1) ? Orientation.NORTH : Orientation.EAST);
-			float openingTime = MathUtil.parseFloat(values[5]);
+			// -- Sky
+			{
+				JSONObject sky = getObject(root, KEY_SKY, false);
+				JSONObject sky_down = getObject(sky, "down", false);
+				JSONObject sky_up = getObject(sky, "up", false);
 
-			map.newDoor(ch, s_image, side_image, openingPosition, orientation, openingTime);
-		}
-	}
+				int r = getInt(sky_down, KEY_R, false);
+				int g = getInt(sky_down, KEY_G, false);
+				int b = getInt(sky_down, KEY_B, false);
 
-	protected void performCommand(String command, String value) {
+				// 0,00390625 = 1 / 255
+				float colorScale = 0.00390625f;
 
-		if (command.equals(COMMAND_WIDTH))
-			width = MathUtil.parseInt(value);
+				Vector3 down = new Vector3(r, g, b);
+				down.scale(colorScale);
 
-		else if (command.equals(COMMAND_HEIGHT))
-			height = MathUtil.parseInt(value);
+				r = getInt(sky_up, KEY_R, false);
+				g = getInt(sky_up, KEY_G, false);
+				b = getInt(sky_up, KEY_B, false);
 
-		else if (command.equals(COMMAND_NAME))
-			name = value;
+				Vector3 up = new Vector3(r, g, b);
+				up.scale(colorScale);
 
-		else if (command.equals(COMMAND_BILLBOARD) || command.equals(COMMAND_WALL) || command.equals(COMMAND_ANIMATION)
-				|| command.equals(COMMAND_DOOR))
-			createShape(command, value);
-
-		else if (command.equals(COMMAND_MAP))
-			mapData = value.replace("\n", "");
-
-		else if (command.equals(COMMAND_SKY))
-			setSky(value);
-
-		else if (command.equals(COMMAND_START))
-			setStartingPosition(value);
-
-	}
-
-	protected void readFile(String path) {
-		String data = FileUtil.readFromFile("res/maps/" + path);
-
-		int start = 0;
-		int end = 0;
-
-		String command = null;
-
-		for (char ch : data.toCharArray()) {
-			if (ch == '{') {
-				command = data.substring(start, end).trim().toLowerCase();
-
-				start = end + 1;
+				map.setSky(up, down);
 			}
-			else if (ch == '}') {
-				String value;
 
-				if (!command.equals(COMMAND_MAP))
-					value = data.substring(start, end).trim();
-				else
-					value = data.substring(start, end);
+			// -- Walls
+			{
+				JSONArray walls = getArray(root, KEY_WALLS, true);
 
-				start = end + 1;
+				for (Object o : walls) {
+					if (!(o instanceof JSONObject)) {
+						System.err.println("Error in walls. Element is not a JSONObject");
+						continue;
+					}
+					JSONObject wall = (JSONObject) o;
+					boolean solid = getBoolean(wall, "solid", false);
+					char c = getChar(wall, "char", true);
+					String texture = getString(wall, "texture", true);
 
-				performCommand(command, value);
-				command = null;
+					map.newWall(c, texture, solid);
+				}
 			}
-			end++;
+
+			// -- Billboards
+			{
+				JSONArray billboards = getArray(root, KEY_BILLBOARDS, true);
+
+				for (Object o : billboards) {
+					if (!(o instanceof JSONObject)) {
+						System.err.println("Error in walls. Element is not a JSONObject");
+						continue;
+					}
+					JSONObject billboard = (JSONObject) o;
+					boolean solid = getBoolean(billboard, "solid", false);
+					char c = getChar(billboard, "char", true);
+					String texture = getString(billboard, "texture", true);
+
+					map.newBillboard(c, texture, solid);
+				}
+			}
+
+			// -- Doors
+			{
+				JSONArray doors = getArray(root, KEY_DOORS, true);
+
+				for (Object o : doors) {
+					if (!(o instanceof JSONObject)) {
+						System.err.println("Error in walls. Element is not a JSONObject");
+						continue;
+					}
+					JSONObject door = (JSONObject) o;
+					char c = getChar(door, "char", true);
+					float time = getFloat(door, "time", true);
+					String texture = getString(door, "texture", true);
+					String texture_side = getString(door, "texture_side", true);
+
+					JSONObject openDirection = getObject(door, "open_direction", true);
+					float x = getFloat(openDirection, KEY_X, false);
+					float y = getFloat(openDirection, KEY_Y, false);
+					float z = getFloat(openDirection, KEY_Z, false);
+					Vector3 openingPosition = new Vector3(x, y, z);
+
+					JSONObject scale = getObject(door, "scale", true);
+					x = getFloat(scale, KEY_X, false);
+					x = (x == 0) ? 1f : x;
+					y = getFloat(scale, KEY_Y, false);
+					y = (y == 0) ? 1f : y;
+					z = getFloat(scale, KEY_Z, false);
+					z = (z == 0) ? 1f : z;
+					Vector3 scaleVector = new Vector3(x, y, z);
+
+					map.newDoor(c, texture, texture_side, openingPosition, scaleVector, time);
+				}
+			}
+
+			// -- Map
+			{
+				String mapData = getString(root, KEY_MAP, true);
+				mapData = mapData.replaceAll("(\n|\r\n|\t)", "");
+				map.buildMapFromString(mapData);
+			}
+
+			return map;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		return null;
 	}
 
-	protected Vector3 readVector3(String value) {
-		String[] v = value.split(" ");
-
-		if (v.length != 3) {
-			System.err.println("Error with value \"" + value + "\". Usage : \"x y z\".");
-			return new Vector3();
+	protected JSONArray getArray(JSONObject json, String key, boolean displayError) {
+		try {
+			JSONArray array = (JSONArray) json.get(key);
+			if (array == null) {
+				System.err.println("Cannot find \"" + key + "\".");
+				return new JSONArray();
+			}
+			return array;
+		} catch (ClassCastException e) {
+			System.err.println("Error with key \"" + key + "\" :");
+			System.err.println(e.getMessage());
 		}
 
-		float x = MathUtil.parseFloat(v[0]);
-		float y = MathUtil.parseFloat(v[1]);
-		float z = MathUtil.parseFloat(v[2]);
-
-		return new Vector3(x, y, z);
+		return new JSONArray();
 	}
 
-	protected void setStartingPosition(String value) {
-		String[] v = value.split(",");
-
-		if (v.length != 2) {
-			System.err.println("Error with command \"" + COMMAND_START + "\". Usage : " + COMMAND_START + "{x, y}");
-			return;
+	protected JSONObject getObject(JSONObject json, String key, boolean displayError) {
+		try {
+			JSONObject obj = (JSONObject) json.get(key);
+			if (obj == null) {
+				if (displayError) {
+					System.err.println("Cannot find \"" + key + "\".");
+				}
+				return new JSONObject();
+			}
+			return obj;
+		} catch (ClassCastException e) {
+			System.err.println("Error with key \"" + key + "\" :");
+			System.err.println(e.getMessage());
 		}
 
-		float x = MathUtil.parseFloat(v[0]);
-		float y = MathUtil.parseFloat(v[1]);
-
-		startingPoint.set(x, 0f, y);
+		return new JSONObject();
 	}
 
-	protected void setSky(String value) {
-		String[] values = value.split(",");
-
-		if (values.length != 2) {
-			System.err.println("Error with command \"" + COMMAND_START + "\". Usage : " + COMMAND_START
-					+ "{r1 g1 b1, r2 g2 b2}");
-			return;
+	protected String getString(JSONObject json, String key, boolean displayError) {
+		try {
+			String s = (String) json.get(key);
+			if (s == null) {
+				if (displayError) {
+					System.err.println("Cannot find \"" + key + "\".");
+				}
+				return "";
+			}
+			return s;
+		} catch (ClassCastException e) {
+			System.err.println("Error with key \"" + key + "\" :");
+			System.err.println(e.getMessage());
 		}
 
-		downColor = readVector3(values[0].trim());
-		upColor = readVector3(values[1].trim());
+		return "";
+	}
 
-		// 0,00390625 = 1 / 255
-		float colorScale = 0.00390625f;
-		downColor.scale(colorScale);
-		upColor.scale(colorScale);
+	protected char getChar(JSONObject json, String key, boolean displayError) {
+		String s = getString(json, key, displayError);
+
+		if (!s.isEmpty()) {
+			return s.charAt(0);
+		}
+
+		return 0;
+	}
+
+	protected int getInt(JSONObject json, String key, boolean displayError) {
+		return getNumber(json, key, displayError).intValue();
+	}
+
+	protected float getFloat(JSONObject json, String key, boolean displayError) {
+		return getNumber(json, key, displayError).floatValue();
+	}
+
+	protected Number getNumber(JSONObject json, String key, boolean displayError) {
+		try {
+			Number i = (Number) json.get(key);
+			if (i == null) {
+				if (displayError) {
+					System.err.println("Cannot find \"" + key + "\"." + json.toString());
+				}
+				return 0;
+			}
+			return i;
+		} catch (ClassCastException e) {
+			System.err.println("Error with key \"" + key + "\" :");
+			System.err.println(e.getMessage());
+		}
+
+		return 0;
+	}
+
+	protected boolean getBoolean(JSONObject json, String key, boolean displayError) {
+		try {
+			Boolean b = (Boolean) json.get(key);
+			if (b == null) {
+				if (displayError) {
+					System.err.println("Cannot find \"" + key + "\".");
+				}
+				return false;
+			}
+			return b.booleanValue();
+		} catch (ClassCastException e) {
+			System.err.println("Error with key \"" + key + "\" :");
+			System.err.println(e.getMessage());
+		}
+
+		return false;
 	}
 }

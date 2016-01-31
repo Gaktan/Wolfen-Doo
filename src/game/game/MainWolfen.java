@@ -57,6 +57,21 @@ public class MainWolfen {
 				System.out.println("Fullscreen mode");
 				fullScreen = true;
 			}
+			else if (arg.equals("-help")) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Available commands:").append("\n");
+				sb.append("-help").append("\n\t").append("displays this message").append("\n");
+				sb.append("-fullscreen").append("\n\t").append("sets the game in fulscreen").append("\n");
+				sb.append("-width x").append("\n\t").append("sets the window width (where x is an integer)")
+						.append("\n");
+				sb.append("-height y").append("\n\t").append("sets the window height (where y is an integer)")
+						.append("\n");
+				sb.append("-skipmenu").append("\n\t").append("Skips the main menu and starts the game right away")
+						.append("\n");
+
+				System.out.println(sb.toString());
+
+			}
 			else {
 				System.err.println("Unknown parameter " + arg + ".");
 			}

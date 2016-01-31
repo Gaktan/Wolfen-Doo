@@ -18,16 +18,22 @@ public class MapUtil {
 
 		protected InstancedTexturedShape sideShape;
 		protected Vector3 openingPosition;
-		protected int orientation;
+		protected Vector3 scale;
 		protected float time;
 
-		public DoorShapeInfo(Shape shape, InstancedTexturedShape sideShape, Vector3 openingPosition, int orientation,
+		public DoorShapeInfo(Shape shape, InstancedTexturedShape sideShape, Vector3 openingPosition, Vector3 scale,
 				float time) {
 			super(shape, false, true, false);
 			this.sideShape = sideShape;
 			this.openingPosition = openingPosition;
-			this.orientation = orientation;
+			this.scale = scale;
 			this.time = time;
+		}
+
+		@Override
+		public void dispose() {
+			sideShape.dispose();
+			super.dispose();
 		}
 
 		public InstancedTexturedShape getSideShape() {
@@ -38,8 +44,8 @@ public class MapUtil {
 			return openingPosition;
 		}
 
-		protected int getOrientation() {
-			return orientation;
+		protected Vector3 getScale() {
+			return scale;
 		}
 
 		protected float getTime() {
@@ -61,6 +67,10 @@ public class MapUtil {
 			this.wall = wall;
 			this.billboard = billboard;
 			amount = 0;
+		}
+
+		public void dispose() {
+			shape.dispose();
 		}
 
 		public boolean isBillboard() {
@@ -255,14 +265,14 @@ public class MapUtil {
 		return info;
 	}
 
-	public static DoorShapeInfo newDoor(String texture, String sideTexture, Vector3 openingPosition, int orientation,
+	public static DoorShapeInfo newDoor(String texture, String sideTexture, Vector3 openingPosition, Vector3 scale,
 			float time) {
 		ShapeCubeTexture shape = new ShapeCubeTexture(ShaderProgram.getProgram("texture"), texture);
 
 		ShapeInstancedQuadTexture sideShape = new ShapeInstancedQuadTexture(
 				ShaderProgram.getProgram("texture_instanced"), sideTexture);
 
-		DoorShapeInfo info = new DoorShapeInfo(shape, sideShape, openingPosition, orientation, time);
+		DoorShapeInfo info = new DoorShapeInfo(shape, sideShape, openingPosition, scale, time);
 
 		return info;
 	}

@@ -54,11 +54,16 @@ public class Map implements Displayable {
 	/**
 	 * Builds a map on a given string
 	 *
-	 * @param st
+	 * @param mapData
 	 */
-	public void buildMapFromString(String st) {
+	public void buildMapFromString(String mapData) {
+		if (mapData.length() != (sizeX * sizeY)) {
+			System.err.println("Warning! Map data doesn't match given map size. Either you didn't set the correct"
+					+ " size or map data is wrong");
+			return;
+		}
 		for (int i = 0; i < sizeX * sizeY; i++) {
-			char c = st.charAt(i);
+			char c = mapData.charAt(i);
 
 			if (c == ' ')
 				continue;
@@ -78,12 +83,7 @@ public class Map implements Displayable {
 				EntityDoor door = new EntityDoor((ShapeCubeTexture) doorInfo.getShape());
 
 				door.position = new Vector3(x, 0, y);
-				if ((doorInfo.getOrientation() & (Orientation.NORTH | Orientation.SOUTH)) != 0) {
-					door.scale.setX(0.1f);
-				}
-				else {
-					door.scale.setZ(0.1f);
-				}
+				door.scale.set(doorInfo.getScale());
 
 				door.setOriginialPosition(new Vector3(x, 0, y));
 				Vector3 openingPosition = new Vector3(doorInfo.getOpeningPosition());
@@ -111,28 +111,28 @@ public class Map implements Displayable {
 
 				if (i > 0) {
 					ShapeInfo info = shapeMap.get(map[i - 1][j]);
-					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.WEST;
 						faces++;
 					}
 				}
 				if (i < sizeY - 1) {
 					ShapeInfo info = shapeMap.get(map[i + 1][j]);
-					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.EAST;
 						faces++;
 					}
 				}
 				if (j > 0) {
 					ShapeInfo info = shapeMap.get(map[i][j - 1]);
-					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.NORTH;
 						faces++;
 					}
 				}
 				if (j < sizeX - 1) {
 					ShapeInfo info = shapeMap.get(map[i][j + 1]);
-					if (info == null || (!info.isSolid() || !info.isWall()) || info.isBillboard()) {
+					if (info == null || (!info.isSolid() && !info.isWall()) || info.isBillboard()) {
 						orientationArray[i][j] += Orientation.SOUTH;
 						faces++;
 					}
@@ -235,8 +235,7 @@ public class Map implements Displayable {
 	public void dispose() {
 		for (Entry<Character, ShapeInfo> entry : shapeMap.entrySet()) {
 			ShapeInfo info = entry.getValue();
-			Shape shape = info.getShape();
-			shape.dispose();
+			info.dispose();
 		}
 		for (EntityActor a : actorsList) {
 			a.dispose();
@@ -322,13 +321,13 @@ public class Map implements Displayable {
 	/**
 	 * @param openingPosition
 	 *            Relative position when opened
-	 * @param orientation
-	 *            See engine.shapes.Orientation Class
+	 * @param scale
+	 *            Door scale
 	 * @param time
 	 *            Time to open
 	 */
-	public void newDoor(char c, String texture, String sideTexture, Vector3 openingPosition, int orientation, float time) {
-		shapeMap.put(c, MapUtil.newDoor(texture, sideTexture, openingPosition, orientation, time));
+	public void newDoor(char c, String texture, String sideTexture, Vector3 openingPosition, Vector3 scale, float time) {
+		shapeMap.put(c, MapUtil.newDoor(texture, sideTexture, openingPosition, scale, time));
 	}
 
 	public void newWall(char c, String texture, boolean solid) {

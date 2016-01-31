@@ -23,6 +23,7 @@ import org.newdawn.slick.opengl.TextureLoader;
  */
 public final class TextureUtil {
 
+	public static final int MISSING_TEXTURE;
 	public static final int NO_TEXTURE;
 
 	public static HashMap<String, Integer> textureMap;
@@ -30,19 +31,19 @@ public final class TextureUtil {
 	static {
 		textureMap = new HashMap<String, Integer>();
 
-		NO_TEXTURE = GL11.glGenTextures();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, NO_TEXTURE);
-
+		// -- Missing texture
+		MISSING_TEXTURE = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, MISSING_TEXTURE);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL13.GL_CLAMP_TO_BORDER);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL13.GL_CLAMP_TO_BORDER);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
-		ByteBuffer bb = BufferUtils.createByteBuffer(3 * 4 * 4);
-
 		byte[] magenta = new byte[] { (byte) 255, 0, (byte) 255 };
 		byte[] black = new byte[] { 0, 0, 0 };
+		byte[] transparent = new byte[] { 0, 0, 0, 0 };
 
+		ByteBuffer bb = BufferUtils.createByteBuffer(3 * 4 * 4);
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				if ((j + i) % 2 == 0) {
@@ -53,10 +54,22 @@ public final class TextureUtil {
 				}
 			}
 		}
-
 		bb.flip();
-
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, 4, 4, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, bb);
+
+		// -- No Texture
+		NO_TEXTURE = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, NO_TEXTURE);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL13.GL_CLAMP_TO_BORDER);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL13.GL_CLAMP_TO_BORDER);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+		ByteBuffer bb2 = BufferUtils.createByteBuffer(3 * 4 * 4);
+		bb2.put(transparent);
+		bb2.flip();
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 1, 1, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, bb2);
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
@@ -83,6 +96,10 @@ public final class TextureUtil {
 	 * @return OpenGL texture ID
 	 */
 	public static int loadTexture(String fileName) {
+
+		if (fileName.endsWith("none")) {
+			return NO_TEXTURE;
+		}
 
 		int id = getTextureID(fileName);
 
@@ -137,7 +154,7 @@ public final class TextureUtil {
 
 		} catch (Exception e) {
 			System.err.println("Texture \"" + fileName + "\" missing.");
-			return NO_TEXTURE;
+			return MISSING_TEXTURE;
 		} finally {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		}

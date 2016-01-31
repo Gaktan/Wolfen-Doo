@@ -1,38 +1,98 @@
-name{coucou}
-width{20}
-height{20}
-start{2, 18}
-
-sky{237 157 95, 252 231 227}
-
-wall{O, wall.png, 1}
-wall{U, wall_portrait.png, 1}
-billboard{X, pillar.png, 1}
-wall{A, wall_hole.png, 0}
-animation{W, mul_test.png, 1}
-door{-, door.png, door_side.png, -0.9 0 0, 0, 1000}
-door{|, xdoor.png, door_side.png, 0 0 0.9, 1, 350}
-door{_, pillar.png, wall.png, 0 -0.9 0, 0, 1000}
-
-map{
-OOOOOOOOOOOOOOOOOOOO
-OX                 O
-O     OO  OO  OO   O
-O     OO  OO  OO   O
-O     O        O   O
-O X   |   XX   OX XO
-OOO-O-OO OOOO OOO_OO
-O               X XO
-O                  O
-O    A             O
-U    O    OXO  O   O
-O         O    O   O
-O         OOOAAO   O
-U     X            O
-O                  O
-O          X X  O  O
-U   W       X OOOO O
-O          X X  O  O
-O                  O
-OOOOOUOOOOOOOOOOOOOO
+{
+	"name" : "coucou",
+	"width" : 20,
+	"height" : 20,
+	"start" : {
+		"x" : 2,
+		"y" : 18
+	},
+	"sky" : {
+		"down" : {
+			"r" : 237,
+			"g" : 157,
+			"b" : 95
+		}
+		"up" : {
+			"r" : 252,
+			"g" : 231,
+			"b" : 227
+		}
+	},
+	"walls" : [{
+			"char" : "O",
+			"texture" : "wall.png",
+			"solid" : true
+		}, {
+			"char" : "U",
+			"texture" : "wall_portrait.png",
+			"solid" : true
+		}, {
+			"char" : "A",
+			"texture" : "wall_hole.png",
+			"solid" : false
+		}
+	],
+	"billboards" : [{
+			"char" : "X",
+			"texture" : "pillar.png",
+			"solid" : true
+		}
+	],
+	"doors" : [{
+			"char" : "-",
+			"texture" : "door.png",
+			"texture_side" : "door_side.png",
+			"open_direction" : {
+				"x" : -0.95
+			},
+			"scale": {
+                "z" : 0.1
+            },
+			"time" : 1000
+		}, {
+			"char" : "|",
+			"texture" : "missing_door.png",
+			"texture_side" : "door_side.png",
+			"open_direction" : {
+				"z" : 0.95
+			},
+			"scale": {
+                "x" : 0.75,
+            },
+			"time" : 350
+		}{
+			"char" : "_",
+			"texture" : "pillar.png",
+			"texture_side" : "wall.png",
+			"open_direction" : {
+				"y" : -0.95
+			},
+			"scale": {
+                "z" : 0.1
+            },
+			"time" : 1000
+		}
+	],
+	"map" : "
+	OOOOOOOOOOOOOOOOOOOO
+	OX                 O
+	O     OO  OO  OO   O
+	O     OO  OO  OO   O
+	O     O        O   O
+	O X   |   XX   OX XO
+	OOO-O-OO OOOO OOO_OO
+	O               X XO
+	O                  O
+	O    A             O
+	U    O    OXO  O   O
+	O         O    O   O
+	O         OOOAAO   O
+	U     X            O
+	O                  O
+	O          X X  O  O
+	U   W       X OOOO O
+	O          X X  O  O
+	O                  O
+	OOOOOUOOOOOOOOOOOOOO
+	"
 }

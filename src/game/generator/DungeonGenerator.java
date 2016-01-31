@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import engine.shapes.Orientation;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 
@@ -369,8 +368,8 @@ public class DungeonGenerator extends Generator {
 
 		map.newWall(WALL, "wall.png", true);
 		map.newWall(PORTRAIT, "wall_portrait.png", true);
-		map.newDoor(DOOR_EAST, "door.png", "door_side.png", new Vector3(-0.95f, 0, 0), Orientation.EAST, 800f);
-		map.newDoor(DOOR_NORTH, "door.png", "door_side.png", new Vector3(0, 0, 0.95f), Orientation.NORTH, 800f);
+		map.newDoor(DOOR_EAST, "door.png", "door_side.png", new Vector3(-0.95f, 0, 0), new Vector3(1f, 1f, 0.1f), 800f);
+		map.newDoor(DOOR_NORTH, "door.png", "door_side.png", new Vector3(0, 0, 0.95f), new Vector3(0.1f, 1f, 1f), 800f);
 
 		StringBuilder sb = new StringBuilder();
 

@@ -1,67 +1,90 @@
-* Maps are formatted with a custom config syntax 
-* first put the command name then the value between { }
-* like so : command{value}
-
-* Some commands require you to have a string, character, integer, or real value
-
-* Will define the name of the map (currently not used) {string}
--> name{coucou}
-
-* Defines the width of the map (x) {int}
--> width{20}
-
-* Defines the height of the map (y) {int}
--> height{20}
-
-* defines the floor and ceiling color 
-* {int(floor red) int(floor green) int(floor blue), 
-* int(ceiling red) int(ceiling green) int(ceiling blue)}
--> sky{237 157 95, 252 231 227}
-
-* Creates a wall identified by a character. This character has
-* to be placed on the map wherever the wall must be placed
-* {character, string(texture name), int(1 for solid, 0 for not solid)
--> wall{O, wall, 1}
--> wall{U, wall_portrait, 1}
--> wall{A, wall_hole, 0}
-
-* Same as wall, but for billboards
--> billboard{X, pillar, 0}
-
-* Same as wall, but for animated objects (might be subject to changes)
--> animation{W, mul_test, 1}
-
-* Same as wall, but for making doors. You can choose the opening direction and the speed
-* {character, string, float(x) float(y) float(z), 
-* int(direction: 0 is vertical. 1 is horizontal. or the other way around), float(opening time)}
--> door{-, wall_portrait, 0 0 -0.9, 1, 1000}
--> door{|, wall_portrait, 0.9 0 0, 0, 350}
--> door{_, pillar, 0 -0.9 0, 1, 1000}
-
-* Map is used to represent what the map will look like in game, using 
-* previously defined characters
-* Width and height MUST match previously defined values
-* Any non-existant character will be ignored
-* Map must be surrounded by walls otherwise player might escape
--> map{
-OOOOOOOOOOOOOOOOOOOO
-OX                 O
-O     OO  OO  OO   O
-O     OO  OO  OO   O
-O     O        O   O
-O X   |   XX   OX XO
-OOO-O-OO OOOO OOO_OO
-O               X XO
-O                  O
-O    A             O
-U    O    OXO  O   O
-O         O    O   O
-O         OOOAAO   O
-U     X            O
-O                  O
-O          X X  O  O
-O   W       X OOOO O
-U           X   O  O
-O                  O
-OOOOOUOOOOOOOOOOOOOO
+{
+	"name" : (map name),
+	"width" : (int),
+	"height" : (int),
+	"start" : {
+		"x" : (float),
+		"y" : (float)
+	},
+	"sky" : {
+		"down" : {
+			"r" : (int / 255),
+			"g" : (int / 255),
+			"b" : (int / 255)
+		}
+		"up" : { // example
+			"r" : 255,
+			"g" : 0,
+			"b" : 255
+		}
+	},
+	"walls" : [{ // This must be an array
+			"char" : (char) to be represented in the map data,
+			"texture" : (string) texture name,
+			"solid" : boolean
+		}, { // example
+			"char" : "O",
+			"texture" : "wall.png",
+			"solid" : true
+		}
+	],
+	"billboards" : [{ // Same as walls
+			"char" : "X",
+			"texture" : "pillar.png",
+			"solid" : true
+		}
+	],
+	"doors" : [{
+			"char" : (char) to be represented in the map data,
+			"texture" : (string) texture name,
+			"texture_side" : (string) side wall texture,
+			"open_direction" : { // Open door position relative to the 
+				"x" : (float),
+                "y" : (float),
+                "z" : (float)
+			},
+			"scale": { // Door scale
+                "x" : (float),
+                "y" : (float),
+                "z" : (float)
+            },
+			"time" : 1000
+		}, {
+			"char" : "|",
+			"texture" : "missing_door.png", // Missing texture will be displayed with in magenta and black, "none" for no texture
+			"texture_side" : "door_side.png",
+			"open_direction" : { // Missing parameters will have a default value of 0 for numbers
+				"z" : 0.95
+			},
+			"scale": { // Default value is 1
+                "z" : 0.1
+            },
+			"time" : 350
+		}
+	],
+    // '\r\n', '\n', and '\t' will be replaced. Anything else will count as a character.
+    // Total amount of character must be equal to width * height
+    // It is highly recommended to enclose the map completely
+	"map" : "
+		OOOOOOOOOOOOOOOOOOOO
+		OX                 O
+		O     OO  OO  OO   O
+		O     OO  OO  OO   O
+		O     O        O   O
+		O X   |   XX   OX XO
+		OOO-O-OO OOOO OOO_OO
+		O               X XO
+		O                  O
+		O    A             O
+		U    O    OXO  O   O
+		O         O    O   O
+		O         OOOAAO   O
+		U     X            O
+		O                  O
+		O          X X  O  O
+		U   W       X OOOO O
+		O          X X  O  O
+		O                  O
+		OOOOOUOOOOOOOOOOOOOO
+		"
 }

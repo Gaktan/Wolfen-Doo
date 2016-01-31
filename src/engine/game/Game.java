@@ -27,9 +27,7 @@ public abstract class Game {
 
 			Display.create();
 			setDisplayMode(width, height, fullScreen);
-			Display.setResizable(true);
-
-			// setFullscreen(true);
+			Display.setResizable(false);
 
 			if (limitFPS <= 0)
 				Display.setVSyncEnabled(false);
