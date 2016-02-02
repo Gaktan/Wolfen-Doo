@@ -1,5 +1,8 @@
 package game.weapons;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import engine.animations.AnimatedActor;
 import engine.game.Player;
 import engine.game.states.GameStateManager;
@@ -35,28 +38,28 @@ public class WeaponShotgun extends Weapon {
 	}
 
 	@Override
-	protected void fire() {
-		if (!canFire())
-			return;
-
+	protected List<EntityProjectile> fire(Vector3 position, EAngle angle) {
 		int shots = (int) MathUtil.random(5f, 10.5f);
+		List<EntityProjectile> list = new ArrayList<EntityProjectile>();
 
 		for (int i = 0; i < shots; i++) {
-			Vector3 linePosition = new Vector3(player.position);
-
+			Vector3 linePosition = new Vector3(position);
 			linePosition.addY(MathUtil.random(-0.2f, 0f));
 
-			EAngle angle = new EAngle(player.getViewAngle());
-			angle.yaw += MathUtil.random(-5f, 5f);
+			EAngle direction = new EAngle(angle);
+			direction.yaw += MathUtil.random(-5f, 5f);
 
-			Vector3 lineVector = angle.toVector();
+			Vector3 lineVector = direction.toVector();
 			lineVector.normalize();
 
-			((WolfenGameState) GameStateManager.getCurrentGameState()).add(new EntityProjectile(linePosition,
-					lineVector, ((WolfenGameState) GameStateManager.getCurrentGameState()).getMap()));
+			EntityProjectile projectile = new EntityProjectile(linePosition, lineVector,
+					((WolfenGameState) GameStateManager.getCurrentGameState()).getMap());
+			list.add(projectile);
 		}
 
 		weaponSprite.setAnimation("shotgun_fire");
+
+		return list;
 	}
 
 	@Override
@@ -68,5 +71,10 @@ public class WeaponShotgun extends Weapon {
 		}
 
 		return true;
+	}
+
+	@Override
+	public void stop() {
+		weaponSprite.setAnimation("shotgun_idle");
 	}
 }

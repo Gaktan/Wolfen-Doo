@@ -1,5 +1,13 @@
 package game.generator;
 
+import static engine.util.JSONUtil.getArray;
+import static engine.util.JSONUtil.getBoolean;
+import static engine.util.JSONUtil.getChar;
+import static engine.util.JSONUtil.getFloat;
+import static engine.util.JSONUtil.getInt;
+import static engine.util.JSONUtil.getObject;
+import static engine.util.JSONUtil.getString;
+
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -36,30 +44,12 @@ public class MapReader {
 	protected static final String KEY_G = "g";
 	protected static final String KEY_B = "b";
 
-	protected String mapData;
-	protected String name;
-
-	protected int width;
-	protected int height;
-
-	protected Vector3 startingPoint;
-
-	protected Map map;
-	protected Vector3 upColor;
-	protected Vector3 downColor;
-
-	public MapReader() {
-		startingPoint = new Vector3();
-		upColor = new Vector3();
-		downColor = new Vector3();
-	}
-
 	/**
 	 * Starts the process of reading the map
 	 *
 	 * @return Map created from designated file
 	 */
-	public Map createMap(String path) {
+	public static Map createMap(String path) {
 		try {
 			Object obj = JSONValue.parseWithException(new FileReader("res/maps/" + path));
 			JSONObject root = (JSONObject) obj;
@@ -192,111 +182,5 @@ public class MapReader {
 		}
 
 		return null;
-	}
-
-	protected JSONArray getArray(JSONObject json, String key, boolean displayError) {
-		try {
-			JSONArray array = (JSONArray) json.get(key);
-			if (array == null) {
-				System.err.println("Cannot find \"" + key + "\".");
-				return new JSONArray();
-			}
-			return array;
-		} catch (ClassCastException e) {
-			System.err.println("Error with key \"" + key + "\" :");
-			System.err.println(e.getMessage());
-		}
-
-		return new JSONArray();
-	}
-
-	protected JSONObject getObject(JSONObject json, String key, boolean displayError) {
-		try {
-			JSONObject obj = (JSONObject) json.get(key);
-			if (obj == null) {
-				if (displayError) {
-					System.err.println("Cannot find \"" + key + "\".");
-				}
-				return new JSONObject();
-			}
-			return obj;
-		} catch (ClassCastException e) {
-			System.err.println("Error with key \"" + key + "\" :");
-			System.err.println(e.getMessage());
-		}
-
-		return new JSONObject();
-	}
-
-	protected String getString(JSONObject json, String key, boolean displayError) {
-		try {
-			String s = (String) json.get(key);
-			if (s == null) {
-				if (displayError) {
-					System.err.println("Cannot find \"" + key + "\".");
-				}
-				return "";
-			}
-			return s;
-		} catch (ClassCastException e) {
-			System.err.println("Error with key \"" + key + "\" :");
-			System.err.println(e.getMessage());
-		}
-
-		return "";
-	}
-
-	protected char getChar(JSONObject json, String key, boolean displayError) {
-		String s = getString(json, key, displayError);
-
-		if (!s.isEmpty()) {
-			return s.charAt(0);
-		}
-
-		return 0;
-	}
-
-	protected int getInt(JSONObject json, String key, boolean displayError) {
-		return getNumber(json, key, displayError).intValue();
-	}
-
-	protected float getFloat(JSONObject json, String key, boolean displayError) {
-		return getNumber(json, key, displayError).floatValue();
-	}
-
-	protected Number getNumber(JSONObject json, String key, boolean displayError) {
-		try {
-			Number i = (Number) json.get(key);
-			if (i == null) {
-				if (displayError) {
-					System.err.println("Cannot find \"" + key + "\"." + json.toString());
-				}
-				return 0;
-			}
-			return i;
-		} catch (ClassCastException e) {
-			System.err.println("Error with key \"" + key + "\" :");
-			System.err.println(e.getMessage());
-		}
-
-		return 0;
-	}
-
-	protected boolean getBoolean(JSONObject json, String key, boolean displayError) {
-		try {
-			Boolean b = (Boolean) json.get(key);
-			if (b == null) {
-				if (displayError) {
-					System.err.println("Cannot find \"" + key + "\".");
-				}
-				return false;
-			}
-			return b.booleanValue();
-		} catch (ClassCastException e) {
-			System.err.println("Error with key \"" + key + "\" :");
-			System.err.println(e.getMessage());
-		}
-
-		return false;
 	}
 }

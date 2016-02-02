@@ -24,6 +24,12 @@ public class MenuTextField extends MenuButton implements ControlsCharListener {
 	}
 
 	@Override
+	public void dispose() {
+		Controls.removeControlsCharListener(this);
+		super.dispose();
+	}
+
+	@Override
 	public void onKeyPress(char key) {
 		if (controlsCharListener != null) {
 			setText(text.getText().replace(CURSOR_CHAR, ""));
@@ -37,8 +43,14 @@ public class MenuTextField extends MenuButton implements ControlsCharListener {
 
 	@Override
 	public boolean update(float dt) {
-		if (!currentlyEditing && editingChanged) {
-			Controls.removeControlsCharListener(this);
+		if (editingChanged) {
+			if (!currentlyEditing) {
+				Controls.removeControlsCharListener(this);
+			}
+			else {
+				Controls.addControlsCharListener(this);
+			}
+			editingChanged = false;
 		}
 		if (currentlyEditing) {
 			cursorTimer -= dt;
@@ -59,16 +71,13 @@ public class MenuTextField extends MenuButton implements ControlsCharListener {
 	}
 
 	public void setEditing(boolean editing) {
-
 		if (editing && !currentlyEditing) {
 			currentlyEditing = true;
-			Controls.addControlsCharListener(this);
 		}
 		else {
 			setText(text.getText().replace(CURSOR_CHAR, ""));
 			currentlyEditing = false;
 		}
-
 		editingChanged = true;
 	}
 }

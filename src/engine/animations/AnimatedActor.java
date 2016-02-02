@@ -52,4 +52,16 @@ public class AnimatedActor extends EntityActor {
 
 		return super.update(dt);
 	}
+
+	public void stop() {
+		a_current.stop();
+	}
+
+	public void pause() {
+		a_current.pause();
+	}
+
+	public void resume() {
+		a_current.resume();
+	}
 }

@@ -158,7 +158,7 @@ public class WolfenGameState extends GameState {
 			map = generator.generate();
 		}
 		else {
-			map = new MapReader().createMap(mapName);
+			map = MapReader.createMap(mapName);
 		}
 		add(map);
 

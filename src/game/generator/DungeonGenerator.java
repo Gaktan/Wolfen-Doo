@@ -90,54 +90,62 @@ public class DungeonGenerator extends Generator {
 	}
 
 	@Override
-	public DungeonGenerator setSizeX(int sizeX) {
-		return (DungeonGenerator) super.setSizeX(sizeX);
-	}
+	public Map generate() {
+		System.out.println("Generating map with seed : " + seed);
+		System.out.println("SizeX : " + sizeX + ", SizeY : " + sizeY);
 
-	@Override
-	public DungeonGenerator setSizeY(int sizeY) {
-		return (DungeonGenerator) super.setSizeY(sizeY);
-	}
+		realSizeX = sizeX;
+		realSizeY = sizeY;
 
-	/**
-	 * Sets the seed
-	 *
-	 * @param seed
-	 *            Seed
-	 */
-	public DungeonGenerator setSeed(long seed) {
-		this.seed = seed;
-		return this;
-	}
+		long time_start = System.currentTimeMillis();
 
-	/**
-	 * Sets the rooms size
-	 *
-	 * @param roomSize
-	 *            Rooms size
-	 */
-	public DungeonGenerator setRoomSize(int roomSize) {
-		this.roomSize = roomSize;
-		if (this.roomSize < 3)
-			this.roomSize = 3;
+		random = new Random(seed);
 
-		realRoomSize = this.roomSize + 1;
-		if (realRoomSize % 2 != 0)
-			realRoomSize--;
+		map = new ArrayList<Pair>(sizeX * sizeY);
 
-		return this;
-	}
+		for (int i = 0; i < sizeX * sizeY; i++) {
+			int x = i % sizeX;
+			int y = i / sizeX;
 
-	/**
-	 * Sets if one room can be connected with several rooms. If not, it will be
-	 * a one-way dungeon, similar to a maze
-	 *
-	 * @param intersections
-	 *            Interestions
-	 */
-	public DungeonGenerator setIntersections(boolean intersections) {
-		this.intersections = intersections;
-		return this;
+			map.add(y * sizeX + x, new Pair(x, y));
+		}
+
+		int posX = random(0, sizeX);
+		int posY = random(0, sizeY);
+
+		buildMap(posX, posY);
+		print();
+
+		char[][] charMap = buildRealMap();
+
+		Map map = new Map(charMap[0].length, charMap.length);
+		map.setStartingPoint(startingPoint);
+
+		map.newWall(WALL, "wall.png", true);
+		map.newWall(PORTRAIT, "wall_portrait.png", true);
+		map.newDoor(DOOR_NORTH, "door.png", "door_side.png", new Vector3(-0.95f, 0, 0), new Vector3(1f, 1f, 0.1f), 800f);
+		map.newDoor(DOOR_EAST, "door.png", "door_side.png", new Vector3(0, 0, 0.95f), new Vector3(0.1f, 1f, 1f), 800f);
+
+		StringBuilder sb = new StringBuilder();
+
+		for (char[] cc : charMap) {
+			sb.append(cc);
+		}
+
+		// colorScale = 1 / 256
+		float colorScale = 0.00390625f;
+
+		Vector3 downColor = new Vector3(237f, 157f, 95f).getScale(colorScale);
+		Vector3 upColor = new Vector3(252f, 231f, 227f).getScale(colorScale);
+		map.setSky(upColor, downColor);
+
+		map.buildMapFromString(sb.toString());
+
+		long time_end = System.currentTimeMillis();
+
+		System.out.println("Done.\nGeneration took : " + (time_end - time_start) + "ms.");
+
+		return map;
 	}
 
 	public void buildMap(int posX, int posY) {
@@ -283,13 +291,11 @@ public class DungeonGenerator extends Generator {
 					int medX = ((x + realRoomSize / 2) + (xf + realRoomSize / 2)) / 2;
 					int medY = ((y + realRoomSize / 2) + (yf + realRoomSize / 2)) / 2;
 
-					newMap[medY][medX] = DOOR_NORTH;
-
 					if (xf != x) {
-						newMap[medY][medX] = DOOR_NORTH;
+						newMap[medY][medX] = DOOR_EAST;
 					}
 					else {
-						newMap[medY][medX] = DOOR_EAST;
+						newMap[medY][medX] = DOOR_NORTH;
 					}
 				} // Door
 
@@ -332,65 +338,6 @@ public class DungeonGenerator extends Generator {
 		}
 
 		return newMap;
-	}
-
-	@Override
-	public Map generate() {
-		System.out.println("Generating map with seed : " + seed);
-		System.out.println("SizeX : " + sizeX + ", SizeY : " + sizeY);
-
-		realSizeX = sizeX;
-		realSizeY = sizeY;
-
-		long time_start = System.currentTimeMillis();
-
-		random = new Random(seed);
-
-		map = new ArrayList<Pair>(sizeX * sizeY);
-
-		for (int i = 0; i < sizeX * sizeY; i++) {
-			int x = i % sizeX;
-			int y = i / sizeX;
-
-			map.add(y * sizeX + x, new Pair(x, y));
-		}
-
-		int posX = random(0, sizeX);
-		int posY = random(0, sizeY);
-
-		buildMap(posX, posY);
-		print();
-
-		char[][] charMap = buildRealMap();
-
-		Map map = new Map(charMap[0].length, charMap.length);
-		map.setStartingPoint(startingPoint);
-
-		map.newWall(WALL, "wall.png", true);
-		map.newWall(PORTRAIT, "wall_portrait.png", true);
-		map.newDoor(DOOR_EAST, "door.png", "door_side.png", new Vector3(-0.95f, 0, 0), new Vector3(1f, 1f, 0.1f), 800f);
-		map.newDoor(DOOR_NORTH, "door.png", "door_side.png", new Vector3(0, 0, 0.95f), new Vector3(0.1f, 1f, 1f), 800f);
-
-		StringBuilder sb = new StringBuilder();
-
-		for (char[] cc : charMap) {
-			sb.append(cc);
-		}
-
-		// colorScale = 1 / 256
-		float colorScale = 0.00390625f;
-
-		Vector3 downColor = new Vector3(237f, 157f, 95f).getScale(colorScale);
-		Vector3 upColor = new Vector3(252f, 231f, 227f).getScale(colorScale);
-		map.setSky(upColor, downColor);
-
-		map.buildMapFromString(sb.toString());
-
-		long time_end = System.currentTimeMillis();
-
-		System.out.println("Done.\nGeneration took : " + (time_end - time_start) + "ms.");
-
-		return map;
 	}
 
 	public Pair get(int x, int y) {
@@ -470,5 +417,56 @@ public class DungeonGenerator extends Generator {
 
 	public void setChar(char c, int x, int y, char[][] map) {
 		map[y][x] = c;
+	}
+
+	@Override
+	public DungeonGenerator setSizeX(int sizeX) {
+		return (DungeonGenerator) super.setSizeX(sizeX);
+	}
+
+	@Override
+	public DungeonGenerator setSizeY(int sizeY) {
+		return (DungeonGenerator) super.setSizeY(sizeY);
+	}
+
+	/**
+	 * Sets the seed
+	 *
+	 * @param seed
+	 *            Seed
+	 */
+	public DungeonGenerator setSeed(long seed) {
+		this.seed = seed;
+		return this;
+	}
+
+	/**
+	 * Sets the rooms size
+	 *
+	 * @param roomSize
+	 *            Rooms size
+	 */
+	public DungeonGenerator setRoomSize(int roomSize) {
+		this.roomSize = roomSize;
+		if (this.roomSize < 3)
+			this.roomSize = 3;
+
+		realRoomSize = this.roomSize + 1;
+		if (realRoomSize % 2 != 0)
+			realRoomSize--;
+
+		return this;
+	}
+
+	/**
+	 * Sets if one room can be connected with several rooms. If not, it will be
+	 * a one-way dungeon, similar to a maze
+	 *
+	 * @param intersections
+	 *            Interestions
+	 */
+	public DungeonGenerator setIntersections(boolean intersections) {
+		this.intersections = intersections;
+		return this;
 	}
 }

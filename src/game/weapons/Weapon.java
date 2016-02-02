@@ -1,5 +1,7 @@
 package game.weapons;
 
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 
 import engine.animations.AnimatedActor;
@@ -8,10 +10,14 @@ import engine.entities.Displayable;
 import engine.entities.DisplayableText;
 import engine.entities.DisplayableText.TextPosition;
 import engine.game.Player;
+import engine.game.states.GameStateManager;
 import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeInstancedSprite;
+import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Vector3;
+import game.entities.EntityProjectile;
+import game.game.states.WolfenGameState;
 
 public abstract class Weapon implements Displayable {
 
@@ -104,7 +110,30 @@ public abstract class Weapon implements Displayable {
 		bmf.dispose();
 	}
 
-	protected abstract void fire();
+	protected void fire() {
+		if (currentCooldown > 0f)
+			return;
+
+		if (shotsLeft <= 0) {
+			return;
+		}
+		shotsLeft--;
+		currentCooldown = cooldownTime;
+		updateAmmoText();
+
+		bobbingState = BobbingState.TO_CENTER;
+
+		Vector3 linePosition = new Vector3(player.position);
+		EAngle angle = new EAngle(player.getViewAngle());
+
+		List<EntityProjectile> list = fire(linePosition, angle);
+
+		for (EntityProjectile projectile : list) {
+			((WolfenGameState) GameStateManager.getCurrentGameState()).add(projectile);
+		}
+	}
+
+	protected abstract List<EntityProjectile> fire(Vector3 position, EAngle angle);
 
 	public void forceReload() {
 		if (shotsLeft > 0 && shotsLeft < shotsCapacity && totalAmmo > 0) {
@@ -146,7 +175,6 @@ public abstract class Weapon implements Displayable {
 			bobbingState = BobbingState.randomDir();
 		else
 			bobbingState = BobbingState.TO_CENTER;
-
 	}
 
 	@Override
@@ -205,23 +233,6 @@ public abstract class Weapon implements Displayable {
 		return true;
 	}
 
-	protected boolean canFire() {
-		if (currentCooldown > 0f)
-			return false;
-
-		if (shotsLeft <= 0) {
-			return false;
-		}
-
-		shotsLeft--;
-		currentCooldown = cooldownTime;
-		updateAmmoText();
-
-		bobbingState = BobbingState.TO_CENTER;
-
-		return true;
-	}
-
 	protected void moveToPosition(Vector3 start, Vector3 goal) {
 		float diff = goal.getSub(start).length();
 
@@ -266,6 +277,8 @@ public abstract class Weapon implements Displayable {
 		reloading = false;
 		updateAmmoText();
 	}
+
+	public abstract void stop();
 
 	protected void updateAmmoText() {
 		ammoText.setText(shotsLeft + "/" + totalAmmo);

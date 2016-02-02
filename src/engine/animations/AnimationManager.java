@@ -77,7 +77,7 @@ public class AnimationManager {
 
 			String path = f.getName();
 
-			HashMap<String, Animation> animations = new AnimationReader().readFromFile(path);
+			HashMap<String, Animation> animations = AnimationReader.readFromFile(path);
 
 			holders.put(path, new AnimationHolder(animations));
 		}

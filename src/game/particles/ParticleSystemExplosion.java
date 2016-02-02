@@ -16,7 +16,7 @@ public class ParticleSystemExplosion extends ParticleSystem {
 
 		newParticlesPerFrame = 1;
 		maxParticles = 100;
-		particlesLife = 480.f;
+		particlesLife = 600.f;
 	}
 
 	@Override

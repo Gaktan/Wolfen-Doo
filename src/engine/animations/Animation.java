@@ -4,12 +4,11 @@ import java.util.Arrays;
 
 /**
  * Single animation
- * 
+ *
  * @author Gaktan
  */
 public class Animation {
 	private int[] frames;
-
 	private float[] delays;
 
 	private int currentIndex;
@@ -25,7 +24,6 @@ public class Animation {
 	public Animation(Animation animation) {
 		frames = animation.frames;
 		delays = animation.delays;
-
 		currentDelay = 0;
 		currentIndex = 0;
 	}
@@ -44,6 +42,9 @@ public class Animation {
 		if (currentIndex >= frames.length) {
 			currentIndex = 0;
 		}
+		if (delays[currentIndex] < 0) {
+			pause();
+		}
 	}
 
 	public void pause() {
@@ -54,11 +55,11 @@ public class Animation {
 		pause = false;
 	}
 
-	public void setDelay(float delay) {
+	public void setDelay(float delay, int size) {
 		if (delays == null) {
-			delays = new float[frames.length];
+			delays = new float[size];
 		}
-		Arrays.fill(this.delays, delay);
+		Arrays.fill(delays, delay);
 	}
 
 	public void setDelays(float[] delays) {

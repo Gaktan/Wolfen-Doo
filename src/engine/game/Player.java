@@ -12,7 +12,6 @@ public abstract class Player implements Displayable {
 
 	public Vector3 position;
 	protected Vector3 velocity;
-	protected Vector3 rotation;
 	protected Vector3 scale;
 
 	protected Camera camera;
@@ -31,10 +30,8 @@ public abstract class Player implements Displayable {
 	protected float slipperyLevel;
 
 	public Player(Camera camera) {
-
 		position = new Vector3();
 		velocity = new Vector3();
-		rotation = new Vector3();
 		scale = new Vector3();
 
 		this.camera = camera;
@@ -42,7 +39,6 @@ public abstract class Player implements Displayable {
 		movementGoal = new Vector3();
 		movement = new Vector3();
 		slipperyLevel = 100.0f;
-		rotation.setX(-90f);
 		scale.set(0.5f);
 		collisionBox = new AABBRectangle(position, scale);
 	}
@@ -79,7 +75,6 @@ public abstract class Player implements Displayable {
 		right.scale(movement.getZ());
 		velocity.set(forward.getAdd(right));
 		velocity.setY(movement.getY());
-		rotation.setZ(-camera.getViewAngle().yaw);
 
 		return true;
 	}

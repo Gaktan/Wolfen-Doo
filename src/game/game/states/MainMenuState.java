@@ -12,6 +12,10 @@ import game.menu.MenuTextField;
 
 public class MainMenuState extends MenuState {
 
+	public MainMenuState(Vector3 mousePosition) {
+		super(mousePosition);
+	}
+
 	protected DisplayableText gameTitle;
 	protected DisplayableText seedLabel;
 
@@ -32,7 +36,6 @@ public class MainMenuState extends MenuState {
 		final MenuTextField seedField = new MenuTextField(buttonShape, "", new Vector3(0.25f, 0.35f, 0f), 1f, font);
 		seedField.scale.setX(0.5f);
 		seedField.setOnButtonRelease(new ButtonRelease() {
-
 			@Override
 			public void onButtonRelease(boolean mouseInside) {
 				if (mouseInside) {
@@ -41,7 +44,6 @@ public class MainMenuState extends MenuState {
 			}
 		});
 		seedField.setControlsCharListener(new ControlsCharListener() {
-
 			@Override
 			public void onKeyPress(char key) {
 				// NULL
@@ -78,10 +80,10 @@ public class MainMenuState extends MenuState {
 
 		final MenuButton playButton = new MenuButton(buttonShape, "Generate map", new Vector3(0f, 0.05f, 0f), 1.f, font);
 		playButton.setOnButtonRelease(new ButtonRelease() {
-
 			@Override
 			public void onButtonRelease(boolean mouseInside) {
 				if (mouseInside) {
+					seedField.setEditing(false);
 					String s_seed = seedField.getText().getText().replace(MenuTextField.CURSOR_CHAR, "");
 					long seed = 0;
 
@@ -97,11 +99,10 @@ public class MainMenuState extends MenuState {
 
 		final MenuButton openButton = new MenuButton(buttonShape, "Open map...", new Vector3(0f, -0.3f, 0f), 1f, font);
 		openButton.setOnButtonRelease(new ButtonRelease() {
-
 			@Override
 			public void onButtonRelease(boolean mouseInside) {
 				if (mouseInside) {
-					GameStateManager.changeGameState(new MapLoadingState());
+					GameStateManager.changeGameState(new MapLoadingState(mouseCursor.position));
 				}
 			}
 		});
@@ -109,7 +110,6 @@ public class MainMenuState extends MenuState {
 
 		final MenuButton quitButton = new MenuButton(buttonShape, "Quit", new Vector3(0f, -0.75f, 0f), 1f, font);
 		quitButton.setOnButtonRelease(new ButtonRelease() {
-
 			@Override
 			public void onButtonRelease(boolean mouseInside) {
 				if (mouseInside) {
@@ -124,14 +124,12 @@ public class MainMenuState extends MenuState {
 	public void render() {
 		gameTitle.render();
 		seedLabel.render();
-
 		super.render();
 	}
 
 	@Override
 	public void update(float dt) {
 		super.update(dt);
-
 		gameTitle.update(dt);
 		seedLabel.update(dt);
 	}

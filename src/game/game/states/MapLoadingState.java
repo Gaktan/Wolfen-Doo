@@ -13,6 +13,10 @@ import game.menu.MenuTextField;
 
 public class MapLoadingState extends MenuState {
 
+	public MapLoadingState(Vector3 mousePosition) {
+		super(mousePosition);
+	}
+
 	@Override
 	public void init() {
 		super.init();
@@ -29,7 +33,7 @@ public class MapLoadingState extends MenuState {
 			@Override
 			public void onButtonRelease(boolean mouseInside) {
 				if (mouseInside) {
-					GameStateManager.changeGameState(new MainMenuState());
+					goBack();
 				}
 			}
 		});
@@ -75,7 +79,11 @@ public class MapLoadingState extends MenuState {
 	@Override
 	public void onKeyRelease(int key) {
 		if (key == Keyboard.KEY_ESCAPE) {
-			GameStateManager.changeGameState(new MainMenuState());
+			goBack();
 		}
+	}
+
+	private void goBack() {
+		GameStateManager.changeGameState(new MainMenuState(mouseCursor.position));
 	}
 }

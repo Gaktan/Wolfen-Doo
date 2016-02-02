@@ -1,5 +1,8 @@
 package game.weapons;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import engine.animations.AnimatedActor;
 import engine.game.Player;
 import engine.game.states.GameStateManager;
@@ -25,7 +28,7 @@ public class WeaponFist extends Weapon {
 		addAmmo(0);
 		setBobbingTime(500f);
 
-		punchCooldown = 300f;
+		punchCooldown = 150f;
 		currentPunchCooldown = punchCooldown;
 
 		updateAmmoText();
@@ -41,21 +44,22 @@ public class WeaponFist extends Weapon {
 	}
 
 	@Override
-	public void fire() {
-		if (shotsLeft - 9 <= 0)
-			return;
+	protected void fire() {
+		if (shotsLeft - 9 > 0) {
+			super.fire();
+		}
+	}
 
-		if (!canFire())
-			return;
+	@Override
+	protected List<EntityProjectile> fire(Vector3 position, EAngle angle) {
+		addAmmo(-9);
 
 		Vector3 linePosition = new Vector3(player.position);
-
 		linePosition.addY(MathUtil.random(-0.1f, 0f));
 
-		EAngle angle = new EAngle(player.getViewAngle());
-		angle.yaw += MathUtil.random(-1f, 1f);
-
-		Vector3 lineVector = angle.toVector();
+		EAngle direction = new EAngle(angle);
+		direction.yaw += MathUtil.random(-1f, 1f);
+		Vector3 lineVector = direction.toVector();
 		lineVector.normalize();
 
 		EntityProjectile proj = new EntityProjectile(linePosition, lineVector,
@@ -64,9 +68,9 @@ public class WeaponFist extends Weapon {
 		// hack
 		proj.update(16f);
 
-		addAmmo(-9);
-
 		weaponSprite.setAnimation("fist_fire");
+
+		return new ArrayList<EntityProjectile>();
 	}
 
 	@Override
@@ -96,5 +100,10 @@ public class WeaponFist extends Weapon {
 		}
 
 		updateAmmoText();
+	}
+
+	@Override
+	public void stop() {
+		weaponSprite.setAnimation("fist_idle");
 	}
 }

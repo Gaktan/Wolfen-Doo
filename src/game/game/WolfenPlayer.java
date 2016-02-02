@@ -12,6 +12,7 @@ import engine.game.Controls.ControlsListener;
 import engine.game.Controls.MouseListener;
 import engine.game.Player;
 import engine.game.states.GameStateManager;
+import engine.util.Vector3;
 import game.game.states.MainMenuState;
 import game.generator.Map;
 import game.weapons.Weapon;
@@ -172,7 +173,7 @@ public class WolfenPlayer extends Player implements ControlsListener, MouseListe
 				GameWolfen.end();
 			}
 			else {
-				GameStateManager.changeGameState(new MainMenuState());
+				GameStateManager.changeGameState(new MainMenuState(new Vector3()));
 			}
 		}
 		else if (key >= Keyboard.KEY_1 && key <= Keyboard.KEY_0) {
@@ -181,6 +182,7 @@ public class WolfenPlayer extends Player implements ControlsListener, MouseListe
 			if (weaponIndex != this.weaponIndex && weaponIndex < weaponList.size()) {
 				this.weaponIndex = weaponIndex;
 				weaponList.get(this.weaponIndex).setFiring(false);
+				weaponList.get(this.weaponIndex).stop();
 			}
 		}
 	}
@@ -189,7 +191,6 @@ public class WolfenPlayer extends Player implements ControlsListener, MouseListe
 	public void onMouseMoved(int x, int y) {
 		camera.getViewAngle().pitch -= y * mouseSensitivity;
 		camera.getViewAngle().yaw += x * mouseSensitivity;
-
 		camera.getViewAngle().normalize();
 	}
 

@@ -26,6 +26,7 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 	protected ShaderProgram programTexCameraInstanced;
 
 	protected ShapeQuadTexture mouseShape;
+	private Vector3 mousePosition;
 	protected EntityActor mouseCursor;
 
 	protected BitMapFont font;
@@ -33,6 +34,10 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 	protected ShapeQuadTexture buttonShape;
 	protected DisplayableList<MenuButton> buttons;
 	protected MenuButton selectedButton;
+
+	public MenuState(Vector3 mousePosition) {
+		this.mousePosition = mousePosition;
+	}
 
 	@Override
 	public void dispose() {
@@ -69,6 +74,7 @@ public abstract class MenuState extends GameState implements MouseListener, Cont
 		mouseShape = new ShapeQuadTexture(programScreen, "menu/cursor.png");
 
 		mouseCursor = new EntityActor(mouseShape);
+		mouseCursor.position.set(mousePosition);
 		mouseCursor.scale.set(0.075f);
 
 		font = new BitMapFont(new ShapeInstancedSprite(programTexCameraInstanced, "scumm_font.png", 128, 256, 8, 11));
