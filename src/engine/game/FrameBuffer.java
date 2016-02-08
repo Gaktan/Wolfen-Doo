@@ -74,7 +74,7 @@ public class FrameBuffer {
 				renderBuffer);
 
 		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
-			System.err.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+			System.err.println("ERROR! Framebuffer is not complete!");
 			Game.end();
 			return;
 		}

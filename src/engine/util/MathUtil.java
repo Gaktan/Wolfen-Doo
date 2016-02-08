@@ -60,38 +60,6 @@ public final class MathUtil {
 	}
 
 	/**
-	 * Parse string value into float
-	 *
-	 * @return 0.f if there was an error
-	 */
-	public static float parseFloat(String value) {
-		try {
-			return Float.parseFloat(value);
-		} catch (NumberFormatException e) {
-			System.err.println("Number Format Exception in : " + value);
-			e.printStackTrace();
-		}
-
-		return 0.f;
-	}
-
-	/**
-	 * Parse string value into int
-	 *
-	 * @return 0 if there was an error
-	 */
-	public static int parseInt(String value) {
-		try {
-			return Integer.parseInt(value);
-		} catch (NumberFormatException e) {
-			System.err.println("Number Format Exception in : " + value);
-			e.printStackTrace();
-		}
-
-		return 0;
-	}
-
-	/**
 	 * Gets a random number
 	 *
 	 * @param min

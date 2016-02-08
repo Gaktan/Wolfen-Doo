@@ -14,7 +14,7 @@ public class MainWolfen {
 				continue;
 			}
 
-			String arg = args[i].trim();
+			String arg = args[i].trim().toLowerCase();
 
 			if (arg.equals("-skipmenu")) {
 				GameWolfen.SKIP_MENU = true;
@@ -67,9 +67,12 @@ public class MainWolfen {
 						.append("\n");
 				sb.append("-skipmenu").append("\n\t").append("Skips the main menu and starts the game right away")
 						.append("\n");
+				sb.append("-debug").append("\n\t").append("Displays debug messages").append("\n");
 
 				System.out.println(sb.toString());
-
+			}
+			else if (arg.equals("-debug")) {
+				GameWolfen.DEBUG = true;
 			}
 			else {
 				System.err.println("Unknown parameter " + arg + ".");

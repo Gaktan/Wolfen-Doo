@@ -16,12 +16,17 @@ import engine.shapes.ShaderProgram;
 import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
-import game.animations.CustomAnimatedActorExample.AnimationState;
+import game.game.GameWolfen;
 import game.generator.Map;
 import game.generator.MapUtil;
 import game.generator.MapUtil.Pair;
 
 public class EntityAI extends AnimatedActor {
+
+	public class AnimationState {
+		public static final int IDLE = 0;
+		public static final int WALKING = 1;
+	}
 
 	public interface OnArrival {
 		public void onArrival();
@@ -48,8 +53,11 @@ public class EntityAI extends AnimatedActor {
 
 		closesDoor = true;
 
-		lookingDirection = new Vector3();
+		lookingDirection = new Vector3(1f, 0f, 1f);
 		lookingPoint = new Vector3();
+
+		scale.set(0.75f);
+		position.setY(-0.5f + 0.5f * scale.getY());
 
 		dirLine = new EntityLine(position, lookingPoint, ShaderProgram.getProgram("color"));
 		goal = new EntityLine(new Vector3(), new Vector3(), ShaderProgram.getProgram("color"));
@@ -66,8 +74,7 @@ public class EntityAI extends AnimatedActor {
 
 	private void followPath() {
 		if (path.isEmpty()) {
-			animationState = AnimationState.IDLE;
-			forceChangeOrientation(orientation);
+			changeOrientation(orientation, AnimationState.IDLE);
 			velocity.set(0f);
 
 			if (onArrival != null) {
@@ -76,7 +83,7 @@ public class EntityAI extends AnimatedActor {
 			}
 			return;
 		}
-		animationState = AnimationState.WALKING;
+		changeOrientation(orientation, AnimationState.WALKING);
 
 		Vector3 objective;
 		if (path.size() == 1) {
@@ -124,26 +131,31 @@ public class EntityAI extends AnimatedActor {
 		}
 	}
 
-	public void setDestination(Vector3 dest) {
+	public void setDestination(Vector3 dest, boolean openDoors) {
 		long start = Sys.getTime();
 
-		List<Pair> pairs = MapUtil.createPath(map, position, dest, true);
+		List<Pair> pairs = MapUtil.createPath(map, position, dest, openDoors);
 		if (pairs != null) {
-			animationState = AnimationState.WALKING;
+			changeOrientation(orientation, AnimationState.WALKING);
 			for (Pair p : pairs) {
 				path.add(p.toVector3());
 			}
 			goal.position.set(path.get(path.size() - 1));
+			goal.position.setY(-0.5f);
 			goal.positionB.set(goal.position);
 			goal.positionB.setY(10f);
 		}
 		else {
-			animationState = AnimationState.IDLE;
-			System.err.println("Can't go there");
+			changeOrientation(orientation, AnimationState.IDLE);
+			if (GameWolfen.DEBUG) {
+				System.err.println("Can't go to " + dest);
+			}
 		}
 
-		long end = Sys.getTime();
-		System.out.println("Pathfinding took " + (end - start) + "ms.");
+		if (GameWolfen.DEBUG) {
+			long end = Sys.getTime();
+			System.out.println("Pathfinding took " + (end - start) + "ms.");
+		}
 	}
 
 	@Override
@@ -167,26 +179,30 @@ public class EntityAI extends AnimatedActor {
 			angle += 360f;
 
 		if (angle < 90f || angle > 360f) {
-			changeOrientation(Orientation.EAST);
+			changeOrientation(Orientation.EAST, animationState);
 		}
 		else if (angle >= 90f && angle < 180f) {
-			changeOrientation(Orientation.SOUTH);
+			changeOrientation(Orientation.SOUTH, animationState);
 		}
 		else if (angle >= 180f && angle < 270f) {
-			changeOrientation(Orientation.WEST);
+			changeOrientation(Orientation.WEST, animationState);
 		}
 		else {
-			changeOrientation(Orientation.NORTH);
+			changeOrientation(Orientation.NORTH, animationState);
 		}
 
 		return result;
 	}
 
-	private void forceChangeOrientation(int newOrientation) {
+	private void changeOrientation(int newOrientation, int newAnimationState) {
+		if (orientation == newOrientation && animationState == newAnimationState) {
+			return;
+		}
+
 		orientation = newOrientation;
+		animationState = newAnimationState;
 
 		String action = "";
-
 		if (animationState == AnimationState.IDLE) {
 			action = "idle";
 		}
@@ -208,13 +224,6 @@ public class EntityAI extends AnimatedActor {
 			setAnimation("a_" + action + "_back");
 		break;
 		}
-	}
-
-	private void changeOrientation(int newOrientation) {
-		if (orientation == newOrientation)
-			return;
-
-		forceChangeOrientation(newOrientation);
 	}
 
 	@Override

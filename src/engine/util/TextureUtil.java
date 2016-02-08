@@ -1,6 +1,8 @@
 package engine.util;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -137,8 +139,11 @@ public final class TextureUtil {
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, method, t.getImageWidth(), t.getImageHeight(), 0, method,
 					GL11.GL_UNSIGNED_BYTE, b);
 
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			System.err.println("Texture \"" + fileName + "\" missing.");
+			return MISSING_TEXTURE;
+		} catch (IOException e) {
+			e.printStackTrace();
 			return MISSING_TEXTURE;
 		} finally {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);

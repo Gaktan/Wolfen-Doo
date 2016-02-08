@@ -28,6 +28,7 @@ import engine.shapes.ShapeSprite;
 import engine.util.MathUtil;
 import engine.util.Vector3;
 import game.animations.CustomAnimatedActorExample;
+import game.animations.CustomEnemy;
 import game.entities.Item;
 import game.entities.ItemList;
 import game.entities.RotatingText;
@@ -194,6 +195,9 @@ public class WolfenGameState extends GameState {
 		AnimatedActor animatedActorTest = new CustomAnimatedActorExample(shapeGuybrush, "guybrush.animation",
 				"a_walking_front", map);
 		map.addActor(animatedActorTest);
+
+		CustomEnemy enemy = new CustomEnemy(shapeGuybrush, "guybrush.animation", "a_walking_front", map);
+		map.addActor(enemy);
 
 		// explosion
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(programTexBillInstanced, "exp2.png", 256, 256,

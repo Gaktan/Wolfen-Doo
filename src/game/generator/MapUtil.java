@@ -228,6 +228,13 @@ public class MapUtil {
 					y2--;
 				}
 
+				if (x2 < 0 || x2 > map.getSizeX()) {
+					continue;
+				}
+				if (y2 < 0 || y2 > map.getSizeY()) {
+					continue;
+				}
+
 				ShapeInfo info = map.get(x2, y2);
 				if (info != null && info.isSolid() && !(info instanceof DoorShapeInfo && canOpenDoors)) {
 					continue;

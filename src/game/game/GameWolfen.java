@@ -15,6 +15,7 @@ public class GameWolfen extends Game {
 	protected static final float MAX_DELTA = 40.f;
 
 	public static boolean SKIP_MENU;
+	public static boolean DEBUG;
 
 	public GameWolfen(int width, int height, boolean fullScreen) {
 		super(width, height, fullScreen);

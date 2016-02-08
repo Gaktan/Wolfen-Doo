@@ -7,6 +7,7 @@ import engine.entities.AABBRectangle;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.entities.EntityLine;
+import engine.game.Player;
 import engine.game.states.GameStateManager;
 import engine.shapes.ShaderProgram;
 import engine.util.MathUtil;
@@ -109,6 +110,17 @@ public class EntityProjectile extends EntityLine {
 				normal.setX(0f);
 				normal.setZ(-normal.getZ());
 				impactPosition.setZ((int) impactPosition.getZ() + 0.5f);
+			}
+
+			{
+				Player player = ((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer();
+				AABB playerRect = player.getCollisionBox();
+				Vector3 result = collide(playerRect);
+				if (result != null) {
+					// TODO: hurt player
+					createBlood(player.position);
+					return false;
+				}
 			}
 
 			ArrayList<EntityActor> hitList = map.getActors(x, z);

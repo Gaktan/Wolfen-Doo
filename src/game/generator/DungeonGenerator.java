@@ -6,6 +6,7 @@ import java.util.Random;
 
 import engine.util.MathUtil;
 import engine.util.Vector3;
+import game.game.GameWolfen;
 
 public class DungeonGenerator extends Generator {
 
@@ -91,13 +92,14 @@ public class DungeonGenerator extends Generator {
 
 	@Override
 	public Map generate() {
-		System.out.println("Generating map with seed : " + seed);
-		System.out.println("SizeX : " + sizeX + ", SizeY : " + sizeY);
+		if (GameWolfen.DEBUG) {
+			System.out.println("Generating map with seed : " + seed);
+			System.out.println("SizeX : " + sizeX + ", SizeY : " + sizeY);
+		}
+		long time_start = System.currentTimeMillis();
 
 		realSizeX = sizeX;
 		realSizeY = sizeY;
-
-		long time_start = System.currentTimeMillis();
 
 		random = new Random(seed);
 
@@ -114,7 +116,10 @@ public class DungeonGenerator extends Generator {
 		int posY = random(0, sizeY);
 
 		buildMap(posX, posY);
-		print();
+
+		if (GameWolfen.DEBUG) {
+			print();
+		}
 
 		char[][] charMap = buildRealMap();
 
@@ -126,12 +131,6 @@ public class DungeonGenerator extends Generator {
 		map.newDoor(DOOR_NORTH, "door.png", "door_side.png", new Vector3(-0.95f, 0, 0), new Vector3(1f, 1f, 0.1f), 800f);
 		map.newDoor(DOOR_EAST, "door.png", "door_side.png", new Vector3(0, 0, 0.95f), new Vector3(0.1f, 1f, 1f), 800f);
 
-		StringBuilder sb = new StringBuilder();
-
-		for (char[] cc : charMap) {
-			sb.append(cc);
-		}
-
 		// colorScale = 1 / 256
 		float colorScale = 0.00390625f;
 
@@ -139,11 +138,16 @@ public class DungeonGenerator extends Generator {
 		Vector3 upColor = new Vector3(252f, 231f, 227f).getScale(colorScale);
 		map.setSky(upColor, downColor);
 
+		StringBuilder sb = new StringBuilder();
+		for (char[] cc : charMap) {
+			sb.append(cc);
+		}
 		map.buildMapFromString(sb.toString());
 
-		long time_end = System.currentTimeMillis();
-
-		System.out.println("Done.\nGeneration took : " + (time_end - time_start) + "ms.");
+		if (GameWolfen.DEBUG) {
+			long time_end = System.currentTimeMillis();
+			System.out.println("Done.\nGeneration took : " + (time_end - time_start) + "ms.");
+		}
 
 		return map;
 	}

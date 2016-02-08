@@ -15,11 +15,6 @@ import game.generator.Map;
 
 public class CustomAnimatedActorExample extends EntityAI {
 
-	public class AnimationState {
-		public static final int IDLE = 0;
-		public static final int WALKING = 1;
-	}
-
 	protected ShapeQuadTexture bubbleShape;
 	protected DisplayableList<EntityBubble> bubbles;
 
@@ -29,10 +24,10 @@ public class CustomAnimatedActorExample extends EntityAI {
 		bubbleShape = new ShapeQuadTexture(ShaderProgram.getProgram("texture_billboard"), "speech_bubble.png");
 		bubbles = new DisplayableList<EntityBubble>();
 
-		scale.set(0.75f);
-		position.set(3, -0.5f + 0.5f * scale.getY(), 5);
+		position.setX(3f);
+		position.setZ(5f);
 
-		setDestination(new Vector3(22f, 0f, 10f));
+		setDestination(new Vector3(22f, 0f, 10f), true);
 		setOnArrival(new OnArrival() {
 			@Override
 			public void onArrival() {
