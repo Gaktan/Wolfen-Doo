@@ -1,5 +1,6 @@
 package game.game;
 
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import engine.entities.Camera;
@@ -23,6 +24,10 @@ public class GameWolfen extends Game {
 
 	@Override
 	public void init() {
+		if (!DEBUG) {
+			limitFPS = 60;
+			Display.setVSyncEnabled(true);
+		}
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glViewport(0, 0, getWidth(), getHeight());
 

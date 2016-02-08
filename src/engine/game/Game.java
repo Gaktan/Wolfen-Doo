@@ -14,7 +14,7 @@ public abstract class Game {
 	/**
 	 * limit the fps <= 0 for no limit
 	 */
-	private int limitFPS = -1;
+	protected int limitFPS = -1;
 
 	public Game() {
 		this(800, 600, false);

@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.Sys;
 
 import engine.animations.AnimatedActor;
+import engine.entities.AABB;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.entities.EntityDoor.DoorState;
@@ -36,7 +37,6 @@ public class EntityAI extends AnimatedActor {
 
 	protected Vector3 lookingPoint;
 	protected Vector3 lookingDirection;
-	protected EntityLine goal;
 	protected EntityLine dirLine;
 	protected int orientation;
 	protected int animationState;
@@ -60,7 +60,6 @@ public class EntityAI extends AnimatedActor {
 		position.setY(-0.5f + 0.5f * scale.getY());
 
 		dirLine = new EntityLine(position, lookingPoint, ShaderProgram.getProgram("color"));
-		goal = new EntityLine(new Vector3(), new Vector3(), ShaderProgram.getProgram("color"));
 
 		path = new ArrayList<Vector3>();
 	}
@@ -68,7 +67,6 @@ public class EntityAI extends AnimatedActor {
 	@Override
 	public void dispose() {
 		dirLine.dispose();
-		goal.dispose();
 		super.dispose();
 	}
 
@@ -140,10 +138,6 @@ public class EntityAI extends AnimatedActor {
 			for (Pair p : pairs) {
 				path.add(p.toVector3());
 			}
-			goal.position.set(path.get(path.size() - 1));
-			goal.position.setY(-0.5f);
-			goal.positionB.set(goal.position);
-			goal.positionB.setY(10f);
 		}
 		else {
 			changeOrientation(orientation, AnimationState.IDLE);
@@ -162,9 +156,13 @@ public class EntityAI extends AnimatedActor {
 	public boolean update(float dt) {
 		boolean result = super.update(dt);
 
+		AABB aabb = getAABB();
+		map.resolveCollision(aabb);
+		position.setX(aabb.position.getX());
+		position.setZ(aabb.position.getZ());
+
 		followPath();
 
-		goal.update(dt);
 		dirLine.update(dt);
 		lookingPoint.set(position.getAdd(lookingDirection));
 
@@ -229,8 +227,9 @@ public class EntityAI extends AnimatedActor {
 	@Override
 	public void render() {
 		super.render();
-		dirLine.render();
-		goal.render();
+		if (GameWolfen.DEBUG) {
+			dirLine.render();
+		}
 	}
 
 	public void setOnArrival(OnArrival onArrival) {

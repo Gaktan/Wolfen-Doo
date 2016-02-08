@@ -196,8 +196,10 @@ public class WolfenGameState extends GameState {
 				"a_walking_front", map);
 		map.addActor(animatedActorTest);
 
-		CustomEnemy enemy = new CustomEnemy(shapeGuybrush, "guybrush.animation", "a_walking_front", map);
-		map.addActor(enemy);
+		for (int i = 0; i < 50; i++) {
+			CustomEnemy enemy = new CustomEnemy(shapeGuybrush, "guybrush.animation", "a_walking_front", map);
+			map.addActor(enemy);
+		}
 
 		// explosion
 		ShapeInstancedSprite shapeExplosion = new ShapeInstancedSprite(programTexBillInstanced, "exp2.png", 256, 256,

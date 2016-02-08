@@ -7,6 +7,7 @@ import engine.shapes.ShapeSprite;
 import engine.util.EAngle;
 import engine.util.MathUtil;
 import engine.util.Vector3;
+import game.game.GameWolfen;
 import game.game.states.WolfenGameState;
 import game.generator.Map;
 
@@ -19,6 +20,9 @@ public class AIEnemy extends EntityAI {
 
 		@Override
 		public void start(float dt) {
+			if (GameWolfen.DEBUG) {
+				color.set(0f, 1f, 1f);
+			}
 			Vector3 goal = new Vector3(position);
 			goal.addX(MathUtil.random(-2f, 2f));
 			goal.addZ(MathUtil.random(-2f, 2f));
@@ -80,6 +84,9 @@ public class AIEnemy extends EntityAI {
 
 		@Override
 		public void start(float dt) {
+			if (GameWolfen.DEBUG) {
+				color.set(1f, 0.5f, 0.5f);
+			}
 			Vector3 goal = new Vector3(player.position);
 			setDestination(goal, true);
 
@@ -146,6 +153,7 @@ public class AIEnemy extends EntityAI {
 
 	public AIEnemy(ShapeSprite shape, String file, String currentAnimation, Map map) {
 		super(shape, file, currentAnimation, map);
+		closesDoor = false;
 		player = ((WolfenGameState) GameStateManager.getCurrentGameState()).getPlayer();
 		setState(new StateWalking());
 	}

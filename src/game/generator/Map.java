@@ -360,6 +360,11 @@ public class Map implements Displayable {
 			int x = (int) (position.getX() + (ray.getX() * i) + 0.5f);
 			int z = (int) (position.getZ() + (ray.getZ() * i) + 0.5f);
 
+			ShapeInfo info = get(x, z);
+			if (info != null && info.isSolid() && !info.isDoor()) {
+				break;
+			}
+
 			Entity d = getActor(x, z);
 			if (d != null) {
 				return d;
@@ -456,6 +461,9 @@ public class Map implements Displayable {
 
 		if (entities) {
 			for (EntityActor e : getActors(x, z)) {
+				if (aabb.position.equals(e.position)) {
+					continue;
+				}
 				rect = e.getAABB();
 				if (rect.collide(aabb)) {
 					result.add(aabb.resolveCollision(rect));

@@ -44,6 +44,7 @@ public class EntityActor extends Entity {
 	}
 
 	public AABB getAABB() {
-		return new AABBRectangle(this);
+		AABBRectangle rect = new AABBRectangle(new Vector3(position), new Vector3(scale));
+		return rect;
 	}
 }
