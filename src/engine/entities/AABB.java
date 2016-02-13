@@ -42,4 +42,11 @@ public abstract class AABB {
 	}
 
 	public abstract Vector3 resolveCollision(AABBRectangle b);
+
+	/**
+	 * Performs a deep copy and returns a new AABB
+	 * 
+	 * @return
+	 */
+	public abstract AABB copy();
 }

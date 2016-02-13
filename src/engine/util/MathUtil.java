@@ -55,8 +55,11 @@ public final class MathUtil {
 		return v;
 	}
 
+	/**
+	 * Clamps f value between min and max
+	 */
 	public static float clamp(float f, float min, float max) {
-		return Math.max(min, Math.min(max, f));
+		return max(min, min(max, f));
 	}
 
 	/**
@@ -136,12 +139,7 @@ public final class MathUtil {
 	}
 
 	/**
-	 *
 	 * Credit https://gist.github.com/volkansalma/2972237
-	 *
-	 * @param x
-	 * @param y
-	 * @return
 	 */
 	public static float atan2(float y, float x) {
 		// return (float) Math.atan2(x, y);
@@ -183,20 +181,12 @@ public final class MathUtil {
 		return Math.round(x);
 	}
 
-	public static float max(float x, float y) {
-		return Math.max(x, y);
+	public static <T extends Comparable<T>> T max(T x, T y) {
+		return (x.compareTo(y) > 0) ? x : y;
 	}
 
-	public static float min(float x, float y) {
-		return Math.min(x, y);
-	}
-
-	public static int max(int x, int y) {
-		return Math.max(x, y);
-	}
-
-	public static int min(int x, int y) {
-		return Math.min(x, y);
+	public static <T extends Comparable<T>> T min(T x, T y) {
+		return (x.compareTo(y) < 0) ? x : y;
 	}
 
 	public static float signum(float x) {
@@ -213,5 +203,12 @@ public final class MathUtil {
 
 	public static float pow(float x, float y) {
 		return (float) Math.pow(x, y);
+	}
+
+	/**
+	 * @return True if min <= n < max
+	 */
+	public static <T extends Comparable<T>> boolean inRange(T n, T min, T max) {
+		return (n.compareTo(min) < 0) ? false : (n.compareTo(max) >= 0) ? false : true;
 	}
 }

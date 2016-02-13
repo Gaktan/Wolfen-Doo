@@ -9,7 +9,6 @@ public abstract class Generator {
 
 	public static final int MIN_SIZE = 3;
 	protected int sizeX;
-
 	protected int sizeY;
 
 	/**

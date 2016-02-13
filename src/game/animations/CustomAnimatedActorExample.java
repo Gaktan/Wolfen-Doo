@@ -82,6 +82,7 @@ public class CustomAnimatedActorExample extends EntityAI {
 	public AABB getAABB() {
 		AABBRectangle r = new AABBRectangle(new Vector3(position), new Vector3(scale));
 		r.scale.scale(0.01f);
+		r.scale.setY(1f);
 		return r;
 	}
 }

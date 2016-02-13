@@ -113,4 +113,10 @@ public class AABBRectangle extends AABB {
 
 		return ret;
 	}
+
+	@Override
+	public AABBRectangle copy() {
+		AABBRectangle copy = new AABBRectangle(new Vector3(position), new Vector3(scale));
+		return copy;
+	}
 }

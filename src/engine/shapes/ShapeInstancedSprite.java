@@ -30,7 +30,6 @@ public class ShapeInstancedSprite extends ShapeInstancedQuadTexture {
 	public Shape copy() {
 		Shape shape = new ShapeInstancedSprite(shaderProgram, textureID, imageWidth, imageHeight, spritesWidth,
 				spritesHeight);
-		shape.init();
 		return shape;
 	}
 

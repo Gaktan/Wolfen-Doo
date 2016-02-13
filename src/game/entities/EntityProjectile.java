@@ -15,7 +15,7 @@ import engine.util.Vector3;
 import game.game.states.WolfenGameState;
 import game.generator.Map;
 import game.generator.MapUtil;
-import game.generator.MapUtil.DoorShapeInfo;
+import game.generator.MapUtil.ShapeInfoDoor;
 import game.particles.ParticleSystemBlood;
 import game.particles.ParticleSystemImpact;
 
@@ -145,7 +145,7 @@ public class EntityProjectile extends EntityLine {
 
 			MapUtil.ShapeInfo info = map.get(x, z);
 			if (info != null) {
-				if (!info.isSolid() || (info instanceof DoorShapeInfo)) {
+				if (!info.isSolid() || (info instanceof ShapeInfoDoor)) {
 					continue;
 				}
 				if (info.isBillboard()) {

@@ -26,8 +26,6 @@ public class ShapeInstancedQuadTexture extends InstancedTexturedShape {
 	@Override
 	public Shape copy() {
 		ShapeInstancedQuadTexture shape = new ShapeInstancedQuadTexture(shaderProgram, textureID);
-		shape.init();
-
 		return shape;
 	}
 

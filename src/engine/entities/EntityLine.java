@@ -28,6 +28,7 @@ public class EntityLine extends Entity {
 
 	protected ShaderProgram program;
 
+	// TODO: change to cube
 	protected int VBO;
 	protected int VAO;
 

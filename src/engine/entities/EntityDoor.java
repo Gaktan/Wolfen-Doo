@@ -1,6 +1,5 @@
 package engine.entities;
 
-import engine.shapes.Orientation;
 import engine.shapes.ShapeCubeTexture;
 import engine.util.MathUtil;
 import engine.util.Vector3;
@@ -113,14 +112,6 @@ public class EntityDoor extends EntityActor {
 		timeStamp += dt;
 
 		return result;
-	}
-
-	@Override
-	public void render() {
-		shape.preRender();
-		setUniforms();
-		((ShapeCubeTexture) shape).render(Orientation.ALL);
-		shape.postRender();
 	}
 
 	public Vector3 getOpeningPosition() {

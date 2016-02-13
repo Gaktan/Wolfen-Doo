@@ -15,6 +15,7 @@ import engine.game.states.GameStateManager;
 import engine.util.Vector3;
 import game.game.states.MainMenuState;
 import game.generator.Map;
+import game.generator.MapUtil;
 import game.weapons.Weapon;
 import game.weapons.WeaponFist;
 import game.weapons.WeaponRevolver;
@@ -87,7 +88,8 @@ public class WolfenPlayer extends Player implements ControlsListener, MouseListe
 		currentWeapon.update(dt);
 
 		// Collision on map
-		map.resolveCollision(collisionBox);
+		Vector3 collisionResolution = MapUtil.resolveCollision(map, collisionBox);
+		position.add(collisionResolution);
 
 		return result;
 	}
@@ -158,7 +160,7 @@ public class WolfenPlayer extends Player implements ControlsListener, MouseListe
 			weaponList.get(weaponIndex).forceReload();
 		}
 		else if (key == Keyboard.KEY_E) {
-			Entity e = map.rayCast(position, getViewAngle().toVector(), 1f);
+			Entity e = MapUtil.rayCast(map, position, getViewAngle().toVector(), 1f);
 			if (e == null) {
 				return;
 			}

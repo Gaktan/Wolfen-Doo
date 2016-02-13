@@ -1,6 +1,7 @@
 package game.entities;
 
 import engine.entities.Entity;
+import engine.entities.EntityDoor;
 import engine.game.Player;
 import engine.game.states.GameStateManager;
 import engine.shapes.ShapeSprite;
@@ -10,10 +11,15 @@ import engine.util.Vector3;
 import game.game.GameWolfen;
 import game.game.states.WolfenGameState;
 import game.generator.Map;
+import game.generator.MapUtil;
+
+import java.util.List;
 
 public class AIEnemy extends EntityAI {
 
 	public class StateWalking extends AIState {
+
+		protected static final float DISTANCE_TO_SPOT = 10f;
 
 		protected float idleDelay;
 		protected float idleTimer;
@@ -59,19 +65,32 @@ public class AIEnemy extends EntityAI {
 		}
 
 		public void lookForPlayer() {
-			Vector3 playerAngle = player.getViewAngle().toVector();
+			Vector3 toPlayer = position.getSub(player.position);
 
-			float dot = playerAngle.dot(lookingDirection);
+			if (toPlayer.length() > DISTANCE_TO_SPOT) {
+				return;
+			}
 
-			if (dot < -0.5f) {
+			float dot = toPlayer.getNormalize().dot(lookingDirection);
+
+			if (dot < -0.6f) {
 				Vector3 ray = position.getSub(player.position);
-				Entity e = map.rayCast(player.position, ray, 10f);
+				List<Entity> list = MapUtil.rayCastMultiple(map, player.position, ray, DISTANCE_TO_SPOT);
 
-				if (e == AIEnemy.this) {
-					setState(new StateAttack());
+				for (Entity e : list) {
+					if (e instanceof EntityDoor) {
+						EntityDoor door = (EntityDoor) e;
+						if (door.getState() == EntityDoor.DoorState.CLOSED) {
+							return;
+						}
+					}
+					else if (e == AIEnemy.this) {
+						setState(new StateAttack());
+						break;
+					}
 				}
 			}
-		}
+		} // lookForPlayer()
 	}
 
 	public class StateAttack extends AIState {
@@ -89,22 +108,19 @@ public class AIEnemy extends EntityAI {
 			}
 			Vector3 goal = new Vector3(player.position);
 			setDestination(goal, true);
-
-			setOnArrival(new OnArrival() {
-				@Override
-				public void onArrival() {
-					setDone();
-				}
-			});
 		}
 
 		@Override
 		public void progress(float dt) {
 			float distance = position.getDistance(player.position);
-			if (distance < DISTANCE_TO_SHOOT) {
-				path.clear();
+			if (path.isEmpty()) {
+				nextState();
 			}
-			if (distance > DISTANCE_TO_FORGET) {
+			else if (distance < DISTANCE_TO_SHOOT) {
+				path.clear();
+				nextState();
+			}
+			else if (distance > DISTANCE_TO_FORGET) {
 				path.clear();
 				setState(new StateWalking());
 			}

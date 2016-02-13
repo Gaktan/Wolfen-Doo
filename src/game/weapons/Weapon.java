@@ -125,7 +125,7 @@ public abstract class Weapon implements Displayable {
 
 		Vector3 linePosition = new Vector3(player.position);
 		EAngle angle = new EAngle(player.getViewAngle());
-		linePosition.add(angle.toVector().getScale(0.25f));
+		linePosition.add(angle.toVector().getScale(0.5f));
 
 		List<EntityProjectile> list = fire(linePosition, angle);
 

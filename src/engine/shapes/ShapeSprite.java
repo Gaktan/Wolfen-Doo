@@ -29,7 +29,6 @@ public class ShapeSprite extends ShapeQuadTexture {
 	@Override
 	public Shape copy() {
 		Shape shape = new ShapeSprite(shaderProgram, textureID, imageWidth, imageHeight, spritesWidth, spritesHeight);
-		shape.init();
 		return shape;
 	}
 

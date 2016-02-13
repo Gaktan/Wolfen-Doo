@@ -6,7 +6,6 @@ import java.util.List;
 import org.lwjgl.Sys;
 
 import engine.animations.AnimatedActor;
-import engine.entities.AABB;
 import engine.entities.EntityActor;
 import engine.entities.EntityDoor;
 import engine.entities.EntityDoor.DoorState;
@@ -156,10 +155,9 @@ public class EntityAI extends AnimatedActor {
 	public boolean update(float dt) {
 		boolean result = super.update(dt);
 
-		AABB aabb = getAABB();
-		map.resolveCollision(aabb);
-		position.setX(aabb.position.getX());
-		position.setZ(aabb.position.getZ());
+		Vector3 collisionResolution = MapUtil.resolveCollision(map, getAABB());
+		position.addX(collisionResolution.getX());
+		position.addZ(collisionResolution.getZ());
 
 		followPath();
 

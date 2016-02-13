@@ -195,6 +195,16 @@ public class Vector3 {
 		return getSub(vec).length();
 	}
 
+	/**
+	 * Gets distance squared from an other Vector
+	 *
+	 * @param vec
+	 * @return
+	 */
+	public float getDistanceSquared(Vector3 vec) {
+		return getSub(vec).lengthSquared();
+	}
+
 	public Vector3 getNegate() {
 		Vector3 v = new Vector3(this);
 		v.negate();
